@@ -158,6 +158,7 @@ function mazeQuestionsArr($mazeInit,$listQuestions) {
           $qObj->qTxt = $jsonArr[$indexQ]->question;
           $qObj->listAnswers = $jsonArr[$indexQ]->answers;
           $qObj->validAnswer = $jsonArr[$indexQ]->correctAnswer;
+          $qObj->questionURL = $jsonArr[$indexQ]->questionURL;
           $indexQ++;
           //$listQuestions
         } else {
@@ -169,6 +170,7 @@ function mazeQuestionsArr($mazeInit,$listQuestions) {
           $qObj->qTxt = "";
           $qObj->listAnswers = null;
           $qObj->validAnswer = -1;
+          $qObj->questionURL = "";
         }
         // echo 'objId: '.$qObj->qId.'<br>';
         // echo 'objTXT: '.$qObj->qTxt.'<br>';
@@ -360,10 +362,9 @@ function uuid()
     );
 }
 
-
 function getAllQuestions($table, $connStr)
 {
-    $sql = "SELECT qId, qTxt, qIsTaken, qIsAnswered FROM ".$table;
+    $sql = "SELECT qId, qTxt, qIsTaken, qIsAnswered, questionurl FROM ".$table;
     $result = $connStr->query($sql);
       if ($result->num_rows > 0) {
         $listQuestions = [];
@@ -374,6 +375,7 @@ function getAllQuestions($table, $connStr)
                 $nextQuestion->qTxt = $row["qTxt"];
                 $nextQuestion->qIsTaken = $row["qIsTaken"];
                 $nextQuestion->qIsAnswered = $row["qIsAnswered"];
+                $nextQuestion->questionURL = $row["questionurl"];
 
                 //$sql = "SELECT ansId, ansTxt, ansQId, ansIsValid FROM tabanswers WHERE ansQId=".$row["qId"];
                 //echo "Object: ".$nextQuestion->get_qTxt();
@@ -394,6 +396,7 @@ function getAllQuestions($table, $connStr)
                   }
               $nextQuestion->listAnswers = $listAnswers;
               $listQuestions[] = $nextQuestion;
+
           }
 
       } else {

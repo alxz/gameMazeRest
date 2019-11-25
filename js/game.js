@@ -1,6 +1,6 @@
 var App = function() {};
 
-App.prototype.start = function() 
+App.prototype.start = function()
 {
     var config = {
         type: Phaser.AUTO,
@@ -35,10 +35,12 @@ App.prototype.start = function()
         var _this;
         var position = {x: 0, y: 0};
 
-        var doorsHolder = { right: {image: 'jpg/doorR.png', key: 'doorR', offsetX: 340, offsetY: 20 }, 
-                            down: {image: 'jpg/doorD.png', key: 'doorD', offsetX: -20, offsetY: 120 }}
+        var doorsHolder = { right: {image: 'jpg/doorR.png', key: 'doorR', offsetX: 340, offsetY: 60 },
+                            down: {image: 'jpg/doorD.png', key: 'doorD', offsetX: -20, offsetY: 220 },
+                            up: {image: 'jpg/doorU.png', key: 'doorU', offsetX: -20, offsetY: -200 },
+                            left: {image: 'jpg/doorL.png', key: 'doorL', offsetX: -340, offsetY: 60 }}
 
-        var doorsArray = [[doorsHolder.right, doorsHolder.down],[doorsHolder.right]];
+        var doorsArray = [[doorsHolder.right, doorsHolder.down],[doorsHolder.up,doorsHolder.right],[doorsHolder.left,doorsHolder.right]];
 
         function preload ()
         {
@@ -48,8 +50,11 @@ App.prototype.start = function()
             this.load.image('u0d1l1r0', 'jpg/u0d1l1r0.jpg');
             this.load.image('u1d0l0r1', 'jpg/u1d0l0r1.jpg');
             this.load.image('u1d0l1r1', 'jpg/u1d0l1r1.jpg');
-            
-            
+
+            this.load.image('u0d0l1r1', 'jpg/u0d0l1r1.jpg');
+            this.load.image('u1d0l1r0', 'jpg/u1d0l1r0.jpg');
+
+
             this.load.image('wall400x230', 'jpg/glassWall400x230.png');
             this.load.image('wall400x300', 'jpg/glassWall400x300.png');
             _this = this;
@@ -58,11 +63,11 @@ App.prototype.start = function()
                     _this.load.image(door.key, door.image);
                     console.log(door);
             });
-            
+
             this.load.image('star', 'assets/star.png');
             this.load.image('bomb', 'assets/bomb.png');
-            this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
-
+            //this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
+            this.load.spritesheet('dude', 'png/docMUHCR4U1L4.png', { frameWidth: 50, frameHeight: 100 });
 
         }
 
@@ -70,20 +75,15 @@ App.prototype.start = function()
         {
             // init other states
             megaMAP = game.cache.json.get('megaMAP');
-            showMazeGfx(megaMAP.doorsMAP, "mazeWDrsRmsMap");            
+            showMazeGfx(megaMAP.doorsMAP, "mazeWDrsRmsMap");
             //  A simple background for our game
             buildWorld(this);
-
-            // The player and its settings
-            player = this.physics.add.sprite(400, 270, 'dude');
-            initPlayer(this);
 
             cursors = this.input.keyboard.createCursorKeys();
             scoreText = this.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
 
-            this.cameras.main.startFollow(player);
-
             walls = this.physics.add.staticGroup();
+
             walls.create(160, 450, 'wall400x230').setScale(0.8).refreshBody();
             walls.create(640, 450, 'wall400x230').setScale(0.8).refreshBody();
             walls.create(160, 120, 'wall400x300').setScale(0.8).refreshBody();
@@ -98,13 +98,28 @@ App.prototype.start = function()
             //     d.settings = { key: door.key };
             //     console.log(d);
             // }
+            var arrAllDoorsRooms = [];
             megaMAP.doorsMAP.forEach( (mapDoors,y) => mapDoors.forEach( function(mapDoor,x) {
-                 // TODO: 
-                 // console.log('generateArrayMap mapDoor: ', mapDoor);
-                 // console.log('', { x:x, y:y, mapDoor: mapDoor});
-               }) 
+                 // TODO:
+                  console.log('generateArrayMap mapDoor: ', mapDoor);
+                  console.log('Coordinates: ', { x:x, y:y, mapDoor: mapDoor});
+                  var arrDoorsInRoom = [];
+                  if (mapDoor.U === 1) {
+                    arrDoorsInRoom.push ({up: {image: 'jpg/doorU.png', key: 'doorU', offsetX: -20, offsetY: -200 }});
+                  }
+                  if (mapDoor.D === 1) {
+                    arrDoorsInRoom.push ({ down: {image: 'jpg/doorD.png', key: 'doorD', offsetX: -20, offsetY: 220 }});
+                  }
+                  if (mapDoor.L === 1) {
+                    arrDoorsInRoom.push ({ left: {image: 'jpg/doorL.png', key: 'doorL', offsetX: -340, offsetY: 60 }});
+                  }
+                  if (mapDoor.R === 1) {
+                    arrDoorsInRoom.push ({ right: {image: 'jpg/doorR.png', key: 'doorR', offsetX: 340, offsetY: 60 }});
+                  }
+                  console.log('generateArrayMap arrDoorsInRoom: ', arrDoorsInRoom);
+               })
+               //arrAllDoorsRooms.push (arrDoorsInRoom);
             );
-
             doorsArray.forEach( (mapDoors,y) => mapDoors.forEach( function(door,x) {
                     var indX = 800 * x;
                     var indY = 540 * y;
@@ -114,8 +129,12 @@ App.prototype.start = function()
                     console.log(d);
               })
             );
+
+            // The player and its settings
+            player = this.physics.add.sprite(400, 300, 'dude');
+            initPlayer(this);
             // walls.create(400, 270, 'hollowRoom').setScale(0.8).refreshBody();
-            
+            this.cameras.main.startFollow(player);
             this.physics.add.collider(player, walls);
 
             this.physics.add.overlap(player, doors, hitTheDoor, null, this);
@@ -131,7 +150,7 @@ App.prototype.start = function()
             // platforms.create(50, 250, 'ground');
             // platforms.create(750, 220, 'ground');
             //  Input Events
-      
+
             //  Some stars to collect, 12 in total, evenly spaced 70 pixels apart along the x axis
             // stars = this.physics.add.group({
             //     key: 'star',
@@ -173,7 +192,7 @@ App.prototype.start = function()
 
         }
 
-        function hitTheDoor(player, door) { 
+        function hitTheDoor(player, door) {
             console.log(door.settings);
         }
 
@@ -182,6 +201,12 @@ App.prototype.start = function()
              scene.add.image(400+800, 270, 'u0d1l1r0').setScale(0.8);
              scene.add.image(400, 270 + 540, 'u1d0l0r1').setScale(0.8);
              scene.add.image(400+800, 270 + 540, 'u1d0l1r1').setScale(0.8);
+
+             scene.add.image(400+1600, 270, 'u0d0l1r1').setScale(0.8);
+             scene.add.image(400+2400, 270, 'u0d1l1r0').setScale(0.8);
+             scene.add.image(400+1600, 270 + 540, 'u0d0l1r1').setScale(0.8);
+             scene.add.image(400+2400, 270 + 540, 'u1d0l1r0').setScale(0.8);
+
         }
 
         function collectStar (player, star)
@@ -298,7 +323,7 @@ App.prototype.start = function()
 
 window.onload = function()
 {
-    'use strict';    
+    'use strict';
     var app = new App();
     app.start();
 }

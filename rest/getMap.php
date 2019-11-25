@@ -1,6 +1,4 @@
-
 <?php
-
         require_once('../lib/config.php');
         require_once('../lib/functions.php');
         require_once('../lib/classes.php');
@@ -13,6 +11,7 @@
       //going over a llist of questions to create a JSON array:
       $qId = $question->get_qId();
       $text = $question->get_qTxt();
+      $questionURL = $question->get_questionURL();
       $jsonListAllAns = [];
       $answers = $question->get_listAnswers();
       $ansIndex = 0;
@@ -27,8 +26,9 @@
           }
           $ansIndex++;
         }
-      $arr = array ('qId'=>$qId , 'question'=>$text , 'answers'=>$jsonListAllAns, 'correctAnswer'=> $correctAns);
-      $jsonListAllQ[] = $arr;
+        $arr = array ('qId'=>$qId , 'question'=>$text , 'answers'=>$jsonListAllAns, 'correctAnswer'=> $correctAns, 'questionURL' => $questionURL);
+        //echo "<br/>".$arr['questionurl']."<br/>";
+        $jsonListAllQ[] = $arr;
     }
     shuffle($jsonListAllQ);
     // echo '<br>=====<br>';
@@ -37,7 +37,7 @@
     $maxXSize = count(reset($mazeMapArr)) - 1;
 
     $jsonListAllQ = json_encode($jsonListAllQ);
-    
+
     $mazeQuestionsArr = mazeQuestionsArr($mazeMapArr,$jsonListAllQ); // create questionMAP
     $mazeWithRoomsDoors = mazeRoomsDoors($mazeMapArr); // create DoorsMap
 
@@ -46,8 +46,6 @@
     // $arrMazeInit = json_encode($mazeMapArr);
     // $mazeQuestionsArr = json_encode($mazeQuestionsArr);
     // $mazeWithRoomsDoors = json_encode($mazeWithRoomsDoors);
-
-
 header('Content-Type: application/json');
 echo json_encode($megaMAP);
 
