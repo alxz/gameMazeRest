@@ -5,7 +5,7 @@ App.prototype.start = function()
     var config = {
         type: Phaser.AUTO,
         width: 800,
-        height: 540,
+        height: 520,
         physics: {
             default: 'arcade',
             arcade: {
@@ -21,6 +21,7 @@ App.prototype.start = function()
     };
 
         var megaMAP;
+        var roomsMAP;
         var player;
         var room;
         var stars;
@@ -35,26 +36,49 @@ App.prototype.start = function()
         var _this;
         var position = {x: 0, y: 0};
 
-        var doorsHolder = { right: {image: 'jpg/doorR.png', key: 'doorR', offsetX: 340, offsetY: 60 },
-                            down: {image: 'jpg/doorD.png', key: 'doorD', offsetX: -20, offsetY: 220 },
-                            up: {image: 'jpg/doorU.png', key: 'doorU', offsetX: -20, offsetY: -200 },
-                            left: {image: 'jpg/doorL.png', key: 'doorL', offsetX: -340, offsetY: 60 }}
+        var doorsHolder = { right: {image: 'png/doorR.png', key: 'doorR', offsetX: 340, offsetY: 80 },
+                            down: {image: 'png/doorD.png', key: 'doorD', offsetX: -20, offsetY: 160 },
+                            up: {image: 'png/doorU.png', key: 'doorU', offsetX: -20, offsetY: -180 },
+                            left: {image: 'png/doorL.png', key: 'doorL', offsetX: -340, offsetY: 80 }}
 
-        var doorsArray = [[doorsHolder.right, doorsHolder.down],[doorsHolder.up,doorsHolder.right],[doorsHolder.left,doorsHolder.right]];
+        var doorsArray = [];//[[doorsHolder.right, doorsHolder.down],[doorsHolder.up,doorsHolder.right],[doorsHolder.left,doorsHolder.right]];
 
         function preload ()
         {
             this.load.json('megaMAP', 'rest/getMap.php');
             this.load.image('sky', 'assets/sky.png');
+            // loading rooms assets: 16 rooms types in total!
             this.load.image('u0d1l0r1', 'jpg/u0d1l0r1.jpg');
             this.load.image('u0d1l1r0', 'jpg/u0d1l1r0.jpg');
             this.load.image('u1d0l0r1', 'jpg/u1d0l0r1.jpg');
             this.load.image('u1d0l1r1', 'jpg/u1d0l1r1.jpg');
-
             this.load.image('u0d0l1r1', 'jpg/u0d0l1r1.jpg');
             this.load.image('u1d0l1r0', 'jpg/u1d0l1r0.jpg');
+            this.load.image('u0d0l0r0', 'jpg/u0d0l0r0.jpg');
+            this.load.image('u0d0l0r1', 'jpg/u0d0l0r1.jpg');
+            this.load.image('u0d0l1r0', 'jpg/u0d0l1r0.jpg');
+            this.load.image('u0d1l0r0', 'jpg/u0d1l0r0.jpg');
+            this.load.image('u0d1l1r1', 'jpg/u0d1l1r1.jpg');
+            this.load.image('u1d0l0r0', 'jpg/u1d0l0r0.jpg');
+            this.load.image('u1d1l0r0', 'jpg/u1d1l0r0.jpg');
+            this.load.image('u1d1l0r1', 'jpg/u1d1l0r1.jpg');
+            this.load.image('u1d1l1r0', 'jpg/u1d1l1r0.jpg');
+            this.load.image('u1d1l1r1', 'jpg/u1d1l1r1.jpg');
 
+            //baseRoomBack = RoomBG_red.png 1000 px X 650px
+            // scale 0.8 we have: 800 x 520
+            this.load.image('baseRoomBack', 'png/RoomBG_red.png');
+            // rooms assets section completed!
 
+            //doors:
+            this.load.image('doorU', 'png/doorU.png');
+            this.load.image('doorD', 'png/doorD.png');
+            this.load.image('doorL', 'png/doorL.png');
+            this.load.image('doorR', 'png/doorR.png');
+            //==============================================
+            //blocks:
+            this.load.image('blockRed', 'png/block20x20red.png');
+            //==================
             this.load.image('wall400x230', 'jpg/glassWall400x230.png');
             this.load.image('wall400x300', 'jpg/glassWall400x300.png');
             _this = this;
@@ -75,60 +99,26 @@ App.prototype.start = function()
         {
             // init other states
             megaMAP = game.cache.json.get('megaMAP');
+
+            // console.log("megaMAP: "+megaMAP);
+            // console.log("roomsMAP: "+roomsMAP);
             showMazeGfx(megaMAP.doorsMAP, "mazeWDrsRmsMap");
-            //  A simple background for our game
             buildWorld(this);
 
             cursors = this.input.keyboard.createCursorKeys();
             scoreText = this.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
 
-            walls = this.physics.add.staticGroup();
-
-            walls.create(160, 450, 'wall400x230').setScale(0.8).refreshBody();
-            walls.create(640, 450, 'wall400x230').setScale(0.8).refreshBody();
-            walls.create(160, 120, 'wall400x300').setScale(0.8).refreshBody();
-            walls.create(640, 120, 'wall400x300').setScale(0.8).refreshBody();
-            // doors
-            doors = this.physics.add.group();
-
-            console.log(doorsArray);
-            // for(var i = 0; i < doorsArray.length; i++) {
-            //     var door = doorsArray[i]
-            //     var d = doors.create(400+door.offsetX, 300+door.offsetY, door.key).setScale(0.8);
-            //     d.settings = { key: door.key };
-            //     console.log(d);
+            // walls = this.physics.add.staticGroup();
+            // for (var i = 0; i < 9; i++) {
+            //   walls.create(480 + (i * 20), 120 + ((i* 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
+            //   walls.create(150 + (i * 20), 380 + ((i* 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
+            //   walls.create(320 - (i * 20), 120 + ((i* 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
+            //   walls.create(490 + (i * 20), 490 - ((i* 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
             // }
-            var arrAllDoorsRooms = [];
-            megaMAP.doorsMAP.forEach( (mapDoors,y) => mapDoors.forEach( function(mapDoor,x) {
-                 // TODO:
-                  console.log('generateArrayMap mapDoor: ', mapDoor);
-                  console.log('Coordinates: ', { x:x, y:y, mapDoor: mapDoor});
-                  var arrDoorsInRoom = [];
-                  if (mapDoor.U === 1) {
-                    arrDoorsInRoom.push ({up: {image: 'jpg/doorU.png', key: 'doorU', offsetX: -20, offsetY: -200 }});
-                  }
-                  if (mapDoor.D === 1) {
-                    arrDoorsInRoom.push ({ down: {image: 'jpg/doorD.png', key: 'doorD', offsetX: -20, offsetY: 220 }});
-                  }
-                  if (mapDoor.L === 1) {
-                    arrDoorsInRoom.push ({ left: {image: 'jpg/doorL.png', key: 'doorL', offsetX: -340, offsetY: 60 }});
-                  }
-                  if (mapDoor.R === 1) {
-                    arrDoorsInRoom.push ({ right: {image: 'jpg/doorR.png', key: 'doorR', offsetX: 340, offsetY: 60 }});
-                  }
-                  console.log('generateArrayMap arrDoorsInRoom: ', arrDoorsInRoom);
-               })
-               //arrAllDoorsRooms.push (arrDoorsInRoom);
-            );
-            doorsArray.forEach( (mapDoors,y) => mapDoors.forEach( function(door,x) {
-                    var indX = 800 * x;
-                    var indY = 540 * y;
-                    var d = doors.create(400 + door.offsetX + indX, 270 + door.offsetY + indY, door.key).setScale(0.8);
-                    d.settings = { key: door.key, x:x, y:y};
-                    console.log(door);
-                    console.log(d);
-              })
-            );
+            // walls.create(160, 450, 'wall400x230').setScale(0.8).refreshBody();
+            // walls.create(640, 450, 'wall400x230').setScale(0.8).refreshBody();
+            // walls.create(160, 120, 'wall400x300').setScale(0.8).refreshBody();
+            // walls.create(640, 120, 'wall400x300').setScale(0.8).refreshBody();
 
             // The player and its settings
             player = this.physics.add.sprite(400, 300, 'dude');
@@ -197,15 +187,110 @@ App.prototype.start = function()
         }
 
         function buildWorld(scene) {
-             scene.add.image(400, 270, 'u0d1l0r1').setScale(0.8);
-             scene.add.image(400+800, 270, 'u0d1l1r0').setScale(0.8);
-             scene.add.image(400, 270 + 540, 'u1d0l0r1').setScale(0.8);
-             scene.add.image(400+800, 270 + 540, 'u1d0l1r1').setScale(0.8);
+          //We get our source from the following rest:
+          // megaMAP = game.cache.json.get('megaMAP');
+          // showMazeGfx(megaMAP.doorsMAP, "mazeWDrsRmsMap");
+          // roomsMAP = game.cache.json.get('doorsMAP');
+          doors = scene.physics.add.group();
+          var arrAllDoorsRooms = [];
+          var arrOneLevelRooms = [];
+          var idx = 0;
+          megaMAP.doorsMAP.forEach( (mapDoors,y) => { mapDoors.forEach( function(mapDoor,x) {
+               // TODO:
+                   var indX = 800 * x;
+                   var indY = 540 * y;
+                    //console.log('generateArrayMap mapDoor: ', mapDoor);
+                    //var roomName = JSON.stringify(mapDoor);
+                    var roomName = 'u'+mapDoor.U+'d'+mapDoor.D+'l'+mapDoor.L+'r'+mapDoor.R;
+                    // scene.add.image(400 +indX, 270 + indY, roomName).setScale(0.8);
 
-             scene.add.image(400+1600, 270, 'u0d0l1r1').setScale(0.8);
-             scene.add.image(400+2400, 270, 'u0d1l1r0').setScale(0.8);
-             scene.add.image(400+1600, 270 + 540, 'u0d0l1r1').setScale(0.8);
-             scene.add.image(400+2400, 270 + 540, 'u1d0l1r0').setScale(0.8);
+                    // Since I'm using only one backgroun now: baseRoomBack = RoomBG_red.png
+                    scene.add.image(400 +indX, 270 + indY, 'baseRoomBack').setScale(0.8);
+
+                    //console.log('Coordinates: ', { x:x, y:y, mapDoor: mapDoor});
+                    // var arrDoorsInRoom = [];
+                    // if (mapDoor.U === 1) {
+                    //   arrDoorsInRoom.push ({up: {image: 'jpg/doorU.png', key: 'doorU', offsetX: -20, offsetY: -200 }});
+                    // }
+                    // if (mapDoor.D === 1) {
+                    //   arrDoorsInRoom.push ({ down: {image: 'jpg/doorD.png', key: 'doorD', offsetX: -20, offsetY: 220 }});
+                    // }
+                    // if (mapDoor.L === 1) {
+                    //   arrDoorsInRoom.push ({ left: {image: 'jpg/doorL.png', key: 'doorL', offsetX: -340, offsetY: 60 }});
+                    // }
+                    // if (mapDoor.R === 1) {
+                    //   arrDoorsInRoom.push ({ right: {image: 'jpg/doorR.png', key: 'doorR', offsetX: 340, offsetY: 60 }});
+                    // }
+                    //console.log('arrDoorsInRoom: ' + arrDoorsInRoom);
+                 })
+              //arrAllDoorsRooms.push(arrOneLevelRooms);
+              }
+             );
+             for (var i = 0; i < 9; i++) {
+               walls.create(480 + (i * 20), 120 + ((i* 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
+               walls.create(150 + (i * 20), 380 + ((i* 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
+               walls.create(320 - (i * 20), 120 + ((i* 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
+               walls.create(490 + (i * 20), 490 - ((i* 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
+             }
+
+             // doors
+             /* { right: {image: 'png/doorR.png', key: 'doorR', offsetX: 340, offsetY: 80 },
+                                 down: {image: 'png/doorD.png', key: 'doorD', offsetX: -20, offsetY: 160 },
+                                 up: {image: 'png/doorU.png', key: 'doorU', offsetX: -20, offsetY: -180 },
+                                 left: {image: 'png/doorL.png', key: 'doorL', offsetX: -340, offsetY: 80 }}
+              */
+
+
+             walls = scene.physics.add.staticGroup();
+             megaMAP.doorsMAP.forEach( (mapDoors,y) => { mapDoors.forEach( function(mapDoor,x) {
+                     var indX = 800 * (x + 0);
+                     var indY = 540 * (y + 0);
+
+                     if (mapDoor.U === 1) {
+                       console.log ('x: ' + x + '/ y: ' + y);
+                       doors.create(indX + 400 , indY + 80, 'doorU').setScale(.8);
+                     }
+                     if (mapDoor.D === 1) {
+                       doors.create(indX +400, indY + 500, 'doorD').setScale(0.8);
+                     }
+                     if (mapDoor.L === 1) {
+                       doors.create(indX + 50, indY + 310, 'doorL').setScale(0.8);
+                     }
+                     if (mapDoor.R === 1) {
+                       doors.create(indX + 750, indY + 310, 'doorR').setScale(0.8);
+                     }
+                     console.log('doors location:  U' + mapDoor.U + 'D'+ mapDoor.D + 'L' +  mapDoor.L + 'R' + mapDoor.R);
+                     // var d = doors.create(400 + door.offsetX + indX, 270 + door.offsetY + indY, door.key).setScale(0.8);
+                     // d.settings = { key: door.key, x:x, y:y};
+                     // console.log(door);
+                     // console.log(d);
+               })
+             }
+             );
+
+             // doorsArray.forEach( (mapDoors,y) => mapDoors.forEach( function(door,x) {
+             //         var indX = 800 * x;
+             //         var indY = 540 * y;
+             //         var d = doors.create(400 + door.offsetX + indX, 270 + door.offsetY + indY, door.key).setScale(0.8);
+             //         d.settings = { key: door.key, x:x, y:y};
+             //         // console.log(door);
+             //         // console.log(d);
+             //   })
+             // );
+
+
+          // for (var i = 0; i < roomsMAP.length; i++) {
+          //   console.log("roomsMAP[" + i + "]: " + roomsMAP[i]);
+          // }
+          //    scene.add.image(400, 270, 'u0d1l0r1').setScale(0.8);
+          //    scene.add.image(400+800, 270, 'u0d1l1r0').setScale(0.8);
+          //    scene.add.image(400, 270 + 540, 'u1d0l0r1').setScale(0.8);
+          //    scene.add.image(400+800, 270 + 540, 'u1d0l1r1').setScale(0.8);
+          //
+          //    scene.add.image(400+1600, 270, 'u0d0l1r1').setScale(0.8);
+          //    scene.add.image(400+2400, 270, 'u0d1l1r0').setScale(0.8);
+          //    scene.add.image(400+1600, 270 + 540, 'u0d0l1r1').setScale(0.8);
+          //    scene.add.image(400+2400, 270 + 540, 'u1d0l1r0').setScale(0.8);
 
         }
 
@@ -249,22 +334,22 @@ App.prototype.start = function()
        function playerNavigationHandler () {
         if (cursors.left.isDown)
             {
-                player.setVelocityX(-160);
+                player.setVelocityX(-260);
                 player.anims.play('left', true);
             }
             else if (cursors.up.isDown)
             {
-                player.setVelocityY(-100);
+                player.setVelocityY(-200);
                 player.anims.play('up', true);
             }
             else if (cursors.down.isDown)
             {
-                player.setVelocityY(100);
+                player.setVelocityY(200);
                 player.anims.play('down', true);
             }
             else if (cursors.right.isDown)
             {
-                player.setVelocityX(160);
+                player.setVelocityX(260);
                 player.anims.play('right', true);
             }
             else
@@ -274,10 +359,10 @@ App.prototype.start = function()
                 player.anims.play('turn');
             }
 
-            if (cursors.up.isDown && player.body.touching.down)
-            {
-                player.setVelocityY(-330);
-            }
+            // if (cursors.up.isDown && player.body.touching.down)
+            // {
+            //     player.setVelocityY(-330);
+            // }
        }
 
         function initPlayer(scene) {
