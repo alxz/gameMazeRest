@@ -47,8 +47,8 @@ App.prototype.start = function()
         function preload ()
         {
             this.load.json('megaMAP', 'rest/getMap.php');
-            this.load.image('sky', 'assets/sky.png');
-            this.load.image('gold-key', 'png/goldenKey.png');
+            //this.load.image('sky', 'assets/sky.png');
+
             // loading rooms assets: 16 rooms types in total!
             this.load.image('u0d1l0r1', 'jpg/u0d1l0r1.jpg');
             this.load.image('u0d1l1r0', 'jpg/u0d1l1r0.jpg');
@@ -81,9 +81,9 @@ App.prototype.start = function()
             //blocks:
             this.load.image('blockRed', 'png/block20x20red.png');
             //==================
-            this.load.image('wall400x230', 'jpg/glassWall400x230.png');
-            this.load.image('wall400x300', 'jpg/glassWall400x300.png');
             _this = this;
+            this.load.image('gold-key', 'png/goldenKey.png'); //gold-key
+            //this.load.spritesheet('gold-key', 'png/gold-key.png', { frameWidth: 40, frameHeight: 40 });
 
             Object.values(doorsHolder).forEach( function(door) {
                     _this.load.image(door.key, door.image);
@@ -93,7 +93,7 @@ App.prototype.start = function()
             this.load.image('star', 'assets/star.png');
             this.load.image('bomb', 'assets/bomb.png');
             //this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
-            this.load.spritesheet('dude', 'png/docMUHCR4U1L4.png', { frameWidth: 50, frameHeight: 100 });
+            this.load.spritesheet('dude', 'png/docMUHCR4U1L4.png', { frameWidth: 50, frameHeight: 75 });
 
         }
 
@@ -243,7 +243,7 @@ App.prototype.start = function()
                       // Upper right bar
                       walls.create(indX + 500 + (i * 20), indY +120 + ((i* 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
                       // lower left bar
-                      walls.create(indX + 130 + (i * 20), indY +360 + ((i* 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
+                      walls.create(indX + 140 + (i * 20), indY +370 + ((i* 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
                       // upper left bar
                       walls.create(indX + 320 - (i * 20), indY +120 + ((i* 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
                       // lower right bar
@@ -299,11 +299,18 @@ App.prototype.start = function()
                      } else  if (mapDoor.L === 0) {
                        for (var i = 0; i < 6; i++) {
                          walls.create(indX + 60, indY +280 + ((i* 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
+                         walls.create(indX - 100 + (i * 40), indY +240 , 'blockRed').setScale(0.8).refreshBody();
+                         walls.create(indX - 100 + (i * 40), indY +380 , 'blockRed').setScale(0.8).refreshBody();
                        }
                      }
                      if (mapDoor.R === 1) {
                        keysCount++;
                        doors.create(indX + 750, indY + 310, 'doorR').setScale(0.8);
+                       for (var i = 0; i < 6; i++) {
+                         walls.create(indX - 100 + (i * 40), indY +240 , 'blockRed').setScale(0.8).refreshBody();
+                         walls.create(indX - 100 + (i * 40), indY +380 , 'blockRed').setScale(0.8).refreshBody();
+                       }
+
                      } else  if (mapDoor.R === 0) {
                        for (var i = 0; i < 6; i++) {
                          walls.create(indX + 740, indY +280 + ((i* 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
@@ -338,7 +345,7 @@ App.prototype.start = function()
                      for (var i = 0; i < keysCount; i++) {
                        var coord = getKeyCordinateWithProximity(arrKeys,70);
                        //doorkeys.create(coord.x, coord.y, 'star').setScale(0.8); //doors keys
-                       doorkeys.create(coord.x, coord.y, 'gold-key').setScale(0.8); //doors keys
+                       doorkeys.create(coord.x, coord.y, 'gold-key').setScale(0.5); //doors keys
                        arrKeys[arrKeys.length] = coord;
                      }
 
