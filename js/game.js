@@ -43,6 +43,7 @@ App.prototype.start = function()
                             left: {image: 'png/doorL.png', key: 'doorL', offsetX: -340, offsetY: 80 }}
 
         var doorsArray = [];//[[doorsHolder.right, doorsHolder.down],[doorsHolder.up,doorsHolder.right],[doorsHolder.left,doorsHolder.right]];
+        const questionWindow = document.getElementById("questionWindow");
 
         function preload ()
         {
@@ -69,7 +70,7 @@ App.prototype.start = function()
 
             //baseRoomBack = RoomBG_red.png 1000 px X 650px
             // scale 0.8 we have: 800 x 520
-            this.load.image('baseRoomBack', 'png/RoomBG_red.png');
+            this.load.image('baseRoomBack', 'png/RoomBG_red_withBG.png');
             // rooms assets section completed!
 
             //doors:
@@ -327,8 +328,8 @@ App.prototype.start = function()
                      } else  if (mapDoor.R === 0) {
                        for (var i = 0; i < 3; i++) {
                          walls.create(indX + 740, indY + 270 + (i * 40), 'blockRed').setScale(0.8).refreshBody();
-                         walls.create(indX + 720 + (i * 40), indY +240 , 'blockRed').setScale(0.8).refreshBody();
-                         walls.create(indX + 720 + (i * 40), indY +380 , 'blockRed').setScale(0.8).refreshBody();
+                         walls.create(indX + 700 + (i * 40), indY +240 , 'blockRed').setScale(0.8).refreshBody();
+                         walls.create(indX + 700 + (i * 40), indY +380 , 'blockRed').setScale(0.8).refreshBody();
                        }
                      }
                      console.log('doors location:  U' + mapDoor.U + 'D'+ mapDoor.D + 'L' +  mapDoor.L + 'R' + mapDoor.R);
@@ -374,31 +375,6 @@ App.prototype.start = function()
                })
              }
              );
-
-
-             // doorsArray.forEach( (mapDoors,y) => mapDoors.forEach( function(door,x) {
-             //         var indX = 800 * x;
-             //         var indY = 540 * y;
-             //         var d = doors.create(400 + door.offsetX + indX, 270 + door.offsetY + indY, door.key).setScale(0.8);
-             //         d.settings = { key: door.key, x:x, y:y};
-             //         // console.log(door);
-             //         // console.log(d);
-             //   })
-             // );
-
-
-          // for (var i = 0; i < roomsMAP.length; i++) {
-          //   console.log("roomsMAP[" + i + "]: " + roomsMAP[i]);
-          // }
-          //    scene.add.image(400, 270, 'u0d1l0r1').setScale(0.8);
-          //    scene.add.image(400+800, 270, 'u0d1l1r0').setScale(0.8);
-          //    scene.add.image(400, 270 + 540, 'u1d0l0r1').setScale(0.8);
-          //    scene.add.image(400+800, 270 + 540, 'u1d0l1r1').setScale(0.8);
-          //
-          //    scene.add.image(400+1600, 270, 'u0d0l1r1').setScale(0.8);
-          //    scene.add.image(400+2400, 270, 'u0d1l1r0').setScale(0.8);
-          //    scene.add.image(400+1600, 270 + 540, 'u0d0l1r1').setScale(0.8);
-          //    scene.add.image(400+2400, 270 + 540, 'u1d0l1r0').setScale(0.8);
 
         }
 
@@ -505,20 +481,22 @@ App.prototype.start = function()
         }
 /////////questions functionality
         function showQuestion(question,ifSuccessCallback) {
+          // pased: showQuestion(megaMAP.questionMAP[0][0], function ()
             document.getElementById("question").style.display = "";
-            buildQuestion(question,ifSuccessCallback)
+            //alert(question.qId + ') ' + question.qTxt);
+            buildQuestion(question,ifSuccessCallback);
         }
 
         function hideQuestion() {
             document.getElementById("question").style.display = "none";
         }
 
-        const questionWindow = document.getElementById("questionWindow");
+        //const questionWindow = document.getElementById("questionWindow");
 
         function buildQuestion(question, ifSuccessCallback) {
             console.log(question);
             var myQuestions = [question];
-
+            alert(myQuestions[0].qId + ') ' + myQuestions[0].qTxt);
             function buildQuiz() {
                 // we'll need a place to store the HTML output
                 const output = [];
