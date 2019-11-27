@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en"> 
+<html lang="en">
 <head>
     <meta charset="UTF-8" />
     <title>Maze Pan with Phaser 3 Game</title>
@@ -28,6 +28,16 @@
  -->    <div>
       <div id="mazeQeustions" class="mazeQuestions"></div>
     </div>
+    <div id="question" style="display: none" class="question-popup">
+        <div id="questionWindow" class="question-container question-hide">
+            <div class="quiz-container">
+                <div id="quiz">
+                </div>
+            </div>
+            <button id="submit">Submit</button>
+        </div>
+    </div>
+
     <script src="./js/miniMap.js" type="text/javascript"></script> <!-- Load phase file -->
     <script src="./js/game.js" type="text/javascript"></script> <!-- Load phase file -->
 
