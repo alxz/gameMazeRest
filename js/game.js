@@ -239,9 +239,9 @@ App.prototype.start = function()
                     // Since I'm using only one backgroun now: baseRoomBack = RoomBG_red.png
                     scene.add.image(400 +indX, 270 + indY, 'baseRoomBack').setScale(0.8);
 
-                    for (var i = 0; i < 10; i++) {
+                    for (var i = 0; i < 9; i++) {
                       // Upper right bar
-                      walls.create(indX + 500 + (i * 20), indY +120 + ((i* 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
+                      walls.create(indX + 500 + (i * 20), indY +100 + ((i* 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
                       // lower left bar
                       walls.create(indX + 140 + (i * 20), indY +370 + ((i* 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
                       // upper left bar
@@ -280,14 +280,22 @@ App.prototype.start = function()
                        //console.log ('x: ' + x + '/ y: ' + y);
                        keysCount ++;
                        doors.create(indX + 400 , indY + 80, 'doorU').setScale(.8);
+                       for (var i = 0; i < 3; i++) {
+                         walls.create((indX + 320), indY + (20 + i *40) , 'blockRed').setScale(0.8).refreshBody();
+                         walls.create((indX + 480), indY + (20 + i * 40) , 'blockRed').setScale(0.8).refreshBody();
+                       }
                      } else  if (mapDoor.U === 0) {
                        for (var i = 0; i < 9; i++) {
-                         walls.create(indX + 320 + (i * 20), indY +120, 'blockRed').setScale(0.8).refreshBody();
+                         walls.create(indX + 320 + (i * 20), indY +100, 'blockRed').setScale(0.8).refreshBody();
                        }
                      }
                      if (mapDoor.D === 1) {
                        keysCount ++;
                        doors.create(indX +400, indY + 500, 'doorD').setScale(0.8);
+                       for (var i = 0; i < 2; i++) {
+                         walls.create((indX + 320), indY + (500 + i *20) , 'blockRed').setScale(0.8).refreshBody();
+                         walls.create((indX + 480), indY + (500 + i * 20) , 'blockRed').setScale(0.8).refreshBody();
+                       }
                      } else  if (mapDoor.D === 0) {
                        for (var i = 0; i < 9; i++) {
                          walls.create(indX + 320 + (i * 20), indY +500, 'blockRed').setScale(0.8).refreshBody();
@@ -295,25 +303,32 @@ App.prototype.start = function()
                      }
                      if (mapDoor.L === 1) {
                        keysCount++;
-                       doors.create(indX + 50, indY + 310, 'doorL').setScale(0.8);
+                       doors.create(indX + 80, indY + 260, 'doorL').setScale(0.8);
+                       for (var i = 0; i < 4; i++) {
+                         walls.create(indX - 0 + (i * 40), indY + (210 - i *20) , 'blockRed').setScale(0.8).refreshBody();
+                         walls.create(indX - 0 + (i * 40), indY + (340 + i * 20) , 'blockRed').setScale(0.8).refreshBody();
+                       }
+
                      } else  if (mapDoor.L === 0) {
-                       for (var i = 0; i < 6; i++) {
-                         walls.create(indX + 60, indY +280 + ((i* 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
-                         walls.create(indX - 100 + (i * 40), indY +240 , 'blockRed').setScale(0.8).refreshBody();
-                         walls.create(indX - 100 + (i * 40), indY +380 , 'blockRed').setScale(0.8).refreshBody();
+                       for (var i = 0; i < 3; i++) {
+                         walls.create(indX + 40, indY +270 + (i* 40), 'blockRed').setScale(0.8).refreshBody();
+                         walls.create(indX + 20 + (i * 40), indY +240 , 'blockRed').setScale(0.8).refreshBody();
+                         walls.create(indX + 20 + (i * 40), indY +380 , 'blockRed').setScale(0.8).refreshBody();
                        }
                      }
                      if (mapDoor.R === 1) {
                        keysCount++;
-                       doors.create(indX + 750, indY + 310, 'doorR').setScale(0.8);
-                       for (var i = 0; i < 6; i++) {
-                         walls.create(indX - 100 + (i * 40), indY +240 , 'blockRed').setScale(0.8).refreshBody();
-                         walls.create(indX - 100 + (i * 40), indY +380 , 'blockRed').setScale(0.8).refreshBody();
+                       doors.create(indX + 720, indY + 260, 'doorR').setScale(0.8);
+                       for (var i = 0; i < 3; i++) {
+                         walls.create(indX + 710 + (i * 40), indY + (170 + i *20) , 'blockRed').setScale(0.8).refreshBody();
+                         walls.create(indX + 700 + (i * 40), indY + (380 - i * 20) , 'blockRed').setScale(0.8).refreshBody();
                        }
 
                      } else  if (mapDoor.R === 0) {
-                       for (var i = 0; i < 6; i++) {
-                         walls.create(indX + 740, indY +280 + ((i* 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
+                       for (var i = 0; i < 3; i++) {
+                         walls.create(indX + 740, indY + 270 + (i * 40), 'blockRed').setScale(0.8).refreshBody();
+                         walls.create(indX + 720 + (i * 40), indY +240 , 'blockRed').setScale(0.8).refreshBody();
+                         walls.create(indX + 720 + (i * 40), indY +380 , 'blockRed').setScale(0.8).refreshBody();
                        }
                      }
                      console.log('doors location:  U' + mapDoor.U + 'D'+ mapDoor.D + 'L' +  mapDoor.L + 'R' + mapDoor.R);
@@ -390,7 +405,6 @@ App.prototype.start = function()
         function collectStar (player, star)
         {
             star.disableBody(true, true);
-
             //  Add and update the score
             score += 10;
             scoreText.setText('Score: ' + score);
@@ -401,26 +415,20 @@ App.prototype.start = function()
                 stars.children.iterate(function (child) {
                     child.enableBody(true, child.x, 0, true, true);
                 });
-
                 var x = (player.x < 400) ? Phaser.Math.Between(400, 800) : Phaser.Math.Between(0, 400);
-
                 var bomb = bombs.create(x, 16, 'bomb');
                 bomb.setBounce(1);
                 bomb.setCollideWorldBounds(true);
                 bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
                 bomb.allowGravity = false;
-
             }
         }
 
         function hitBomb (player, bomb)
         {
             this.physics.pause();
-
             player.setTint(0xff0000);
-
             player.anims.play('turn');
-
             gameOver = true;
         }
 
@@ -523,11 +531,11 @@ App.prototype.start = function()
                     for (ind in currentQuestion.answers) {
                         // ...add an HTML radio button
                         answers.push(
-                            `<label>
-                         <input type="radio" name="question${questionNumber}" value="${ind}">
+                        `<label>
+                          <input type="radio" name="question${questionNumber}" value="${ind}">
                           ${currentQuestion.answers[ind].key} :
                           ${currentQuestion.answers[ind].value}
-                       </label>`
+                          </label>`
                         );
                     }
 
