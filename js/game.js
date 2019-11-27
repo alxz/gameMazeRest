@@ -48,6 +48,7 @@ App.prototype.start = function()
         {
             this.load.json('megaMAP', 'rest/getMap.php');
             this.load.image('sky', 'assets/sky.png');
+            this.load.image('gold-key', 'png/goldenKey.png');
             // loading rooms assets: 16 rooms types in total!
             this.load.image('u0d1l0r1', 'jpg/u0d1l0r1.jpg');
             this.load.image('u0d1l1r0', 'jpg/u0d1l1r0.jpg');
@@ -238,28 +239,17 @@ App.prototype.start = function()
                     // Since I'm using only one backgroun now: baseRoomBack = RoomBG_red.png
                     scene.add.image(400 +indX, 270 + indY, 'baseRoomBack').setScale(0.8);
 
-                    for (var i = 0; i < 9; i++) {
-                      walls.create(indX + 480 + (i * 20), indY +120 + ((i* 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
-                      walls.create(indX + 150 + (i * 20), indY +380 + ((i* 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
+                    for (var i = 0; i < 10; i++) {
+                      // Upper right bar
+                      walls.create(indX + 500 + (i * 20), indY +120 + ((i* 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
+                      // lower left bar
+                      walls.create(indX + 130 + (i * 20), indY +360 + ((i* 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
+                      // upper left bar
                       walls.create(indX + 320 - (i * 20), indY +120 + ((i* 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
-                      walls.create(indX + 490 + (i * 20), indY +490 - ((i* 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
+                      // lower right bar
+                      walls.create(indX + 480 + (i * 20), indY +500 - ((i* 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
                     }
 
-                    //console.log('Coordinates: ', { x:x, y:y, mapDoor: mapDoor});
-                    // var arrDoorsInRoom = [];
-                    // if (mapDoor.U === 1) {
-                    //   arrDoorsInRoom.push ({up: {image: 'jpg/doorU.png', key: 'doorU', offsetX: -20, offsetY: -200 }});
-                    // }
-                    // if (mapDoor.D === 1) {
-                    //   arrDoorsInRoom.push ({ down: {image: 'jpg/doorD.png', key: 'doorD', offsetX: -20, offsetY: 220 }});
-                    // }
-                    // if (mapDoor.L === 1) {
-                    //   arrDoorsInRoom.push ({ left: {image: 'jpg/doorL.png', key: 'doorL', offsetX: -340, offsetY: 60 }});
-                    // }
-                    // if (mapDoor.R === 1) {
-                    //   arrDoorsInRoom.push ({ right: {image: 'jpg/doorR.png', key: 'doorR', offsetX: 340, offsetY: 60 }});
-                    // }
-                    //console.log('arrDoorsInRoom: ' + arrDoorsInRoom);
                  })
               //arrAllDoorsRooms.push(arrOneLevelRooms);
                 //console.log('Hello world!');
@@ -273,12 +263,12 @@ App.prototype.start = function()
                                  up: {image: 'png/doorU.png', key: 'doorU', offsetX: -20, offsetY: -180 },
                                  left: {image: 'png/doorL.png', key: 'doorL', offsetX: -340, offsetY: 80 }}
               */
-              function randomPlsOrMin(max) {
-                 return random(max) * (Math.random() < 0.5 ? -1 : 1);
+              function randomPlsOrMin(min, max) {
+                 return random(min, max) * (Math.random() < 0.5 ? -1 : 1);
                }
 
-             function random(max) {
-               return Math.floor(Math.random() * max) + 1;
+             function random(min, max) {
+               return Math.floor(Math.random() * max) + min;
              }
 
              megaMAP.doorsMAP.forEach( (mapDoors,y) => { mapDoors.forEach( function(mapDoor,x) {
@@ -290,18 +280,34 @@ App.prototype.start = function()
                        //console.log ('x: ' + x + '/ y: ' + y);
                        keysCount ++;
                        doors.create(indX + 400 , indY + 80, 'doorU').setScale(.8);
+                     } else  if (mapDoor.U === 0) {
+                       for (var i = 0; i < 9; i++) {
+                         walls.create(indX + 320 + (i * 20), indY +120, 'blockRed').setScale(0.8).refreshBody();
+                       }
                      }
                      if (mapDoor.D === 1) {
                        keysCount ++;
                        doors.create(indX +400, indY + 500, 'doorD').setScale(0.8);
+                     } else  if (mapDoor.D === 0) {
+                       for (var i = 0; i < 9; i++) {
+                         walls.create(indX + 320 + (i * 20), indY +500, 'blockRed').setScale(0.8).refreshBody();
+                       }
                      }
                      if (mapDoor.L === 1) {
                        keysCount++;
                        doors.create(indX + 50, indY + 310, 'doorL').setScale(0.8);
+                     } else  if (mapDoor.L === 0) {
+                       for (var i = 0; i < 6; i++) {
+                         walls.create(indX + 60, indY +280 + ((i* 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
+                       }
                      }
                      if (mapDoor.R === 1) {
                        keysCount++;
                        doors.create(indX + 750, indY + 310, 'doorR').setScale(0.8);
+                     } else  if (mapDoor.R === 0) {
+                       for (var i = 0; i < 6; i++) {
+                         walls.create(indX + 740, indY +280 + ((i* 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
+                       }
                      }
                      console.log('doors location:  U' + mapDoor.U + 'D'+ mapDoor.D + 'L' +  mapDoor.L + 'R' + mapDoor.R);
                      // var d = doors.create(400 + door.offsetX + indX, 270 + door.offsetY + indY, door.key).setScale(0.8);
@@ -313,7 +319,7 @@ App.prototype.start = function()
                      var arrKeys = [];
                      var getKeyCordinateWithProximity = function(keys,minProximity) {
                        console.log('keys',keys);
-                       var c1 = {x: 400 + indX + randomPlsOrMin(150), y: 260 + indY + randomPlsOrMin(100)};
+                       var c1 = {x: 400 + indX + randomPlsOrMin(50, 100), y: 260 + indY + randomPlsOrMin(50, 30)};
                        var check = 0;
                        for (var i = 0 ; i < keys.length; i++){
                          var c0 = keys[i];
@@ -331,7 +337,8 @@ App.prototype.start = function()
                      }
                      for (var i = 0; i < keysCount; i++) {
                        var coord = getKeyCordinateWithProximity(arrKeys,70);
-                       doorkeys.create(coord.x, coord.y, 'star').setScale(0.8); //doors keys
+                       //doorkeys.create(coord.x, coord.y, 'star').setScale(0.8); //doors keys
+                       doorkeys.create(coord.x, coord.y, 'gold-key').setScale(0.8); //doors keys
                        arrKeys[arrKeys.length] = coord;
                      }
 
