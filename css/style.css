@@ -151,32 +151,14 @@ button.navButtonUpDown:hover{
 	/* width:45%;
 	float:left; */
 }
-/* .naviTab {
-	border: 1px;
-	text-align:center;
-	margin-left:auto;
-	margin-right:auto;
-	width: 100%;
-}
-.naviTabTD {
-	border: 1px;
-	text-align:center;
-	margin-left:auto;
-	margin-right:auto;
-	width: 100%;
-} */
+
 table#table1 {
 	text-align:center;
 	margin-left:auto;
 	margin-right:auto;
 	width:100px;
 }
-/* table#navigation {
- text-align:center;
- margin-left:auto;
- margin-right:auto;
- width:100px;
-} */
+
 tr,td {
 	border: 1px;
 	text-align:left;
@@ -203,6 +185,14 @@ tr,td {
 		color: white;
 		margin-left: 40px;
 		margin-right: 20%;
+}
+.question-popup {
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	background-color: rgba(0, 0, 0, 0.57);
+	left: 0px;
+	top: 0px;
 }
 
 .question-hide {
@@ -336,24 +326,3 @@ tr,td {
 
 /* ====
 */
-
-.question-container {
-	background-color: rgba(35, 37, 36, 0.68);
-	width: 90%;
-	display: inline-block;
-    position: absolute;
-    z-index: 100;
-    left: 0;
-		color: white;
-		margin-left: 40px;
-		margin-right: 20%;
-}
-
-.question-popup {
-	position: absolute;
-	height: 100%;
-	width: 100%;
-	background-color: rgba(0, 0, 0, 0.57);
-	left: 0px;
-	top: 0px;
-}

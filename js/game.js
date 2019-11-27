@@ -31,16 +31,18 @@ App.prototype.start = function()
         var score = 0;
         var gameOver = false;
         var scoreText;
+        var scoreTextShade;
         var isPause = false;
 
         var game = new Phaser.Game(config);
         var _this;
         var position = {x: 0, y: 0};
 
-        var doorsHolder = { right: {image: 'png/doorR.png', key: 'doorR', offsetX: 340, offsetY: 80 },
+        var doorsHolder = [];
+                    /****** { right: {image: 'png/doorR.png', key: 'doorR', offsetX: 340, offsetY: 80 },
                             down: {image: 'png/doorD.png', key: 'doorD', offsetX: -20, offsetY: 160 },
                             up: {image: 'png/doorU.png', key: 'doorU', offsetX: -20, offsetY: -180 },
-                            left: {image: 'png/doorL.png', key: 'doorL', offsetX: -340, offsetY: 80 }}
+                            left: {image: 'png/doorL.png', key: 'doorL', offsetX: -340, offsetY: 80 }} */
 
         var doorsArray = [];//[[doorsHolder.right, doorsHolder.down],[doorsHolder.up,doorsHolder.right],[doorsHolder.left,doorsHolder.right]];
         const questionWindow = document.getElementById("questionWindow");
@@ -49,7 +51,9 @@ App.prototype.start = function()
         {
             this.load.json('megaMAP', 'rest/getMap.php');
             //this.load.image('sky', 'assets/sky.png');
-
+            this.load.audio('theme', [
+                'assets/ambient.mp3'
+            ]);
             // loading rooms assets: 16 rooms types in total!
             this.load.image('u0d1l0r1', 'jpg/u0d1l0r1.jpg');
             this.load.image('u0d1l1r0', 'jpg/u0d1l1r0.jpg');
@@ -85,11 +89,12 @@ App.prototype.start = function()
             _this = this;
             this.load.image('gold-key', 'png/goldenKey.png'); //gold-key
             //this.load.spritesheet('gold-key', 'png/gold-key.png', { frameWidth: 40, frameHeight: 40 });
+            this.load.image('messageBoard', 'png/messageBoard600x400.png');
 
-            Object.values(doorsHolder).forEach( function(door) {
-                    _this.load.image(door.key, door.image);
-                    console.log(door);
-            });
+            // Object.values(doorsHolder).forEach( function(door) {
+            //         _this.load.image(door.key, door.image);
+            //         console.log(door);
+            // });
 
             this.load.image('star', 'assets/star.png');
             this.load.image('bomb', 'assets/bomb.png');
@@ -102,6 +107,13 @@ App.prototype.start = function()
         {
             // init other states
             megaMAP = game.cache.json.get('megaMAP');
+            // var music = this.sound.add('theme');
+            //  music.play();
+            //  this.input.addDownCallback(function() {
+            //    if (game.sound.context.state === 'suspended') {
+            //      game.sound.context.resume();
+            //    }
+            //  });
 
             // console.log("megaMAP: "+megaMAP);
             // console.log("roomsMAP: "+roomsMAP);
@@ -109,6 +121,7 @@ App.prototype.start = function()
             buildWorld(this);
 
             cursors = this.input.keyboard.createCursorKeys();
+            scoreTextShade = this.add.text(17, 17, 'keys: 0', { fontSize: '32px', fill: '#ff00ff'});
             scoreText = this.add.text(16, 16, 'keys: 0', { fontSize: '32px', fill: '#000' });
 
             // walls = this.physics.add.staticGroup();
@@ -131,6 +144,7 @@ App.prototype.start = function()
             // walls.create(400, 270, 'hollowRoom').setScale(0.8).refreshBody();
             this.cameras.main.startFollow(player);
             this.physics.add.collider(player, walls);
+            this.physics.add.collider(player, doors);
 
             this.physics.add.overlap(player, doors, hitTheDoor, null, this);
             this.physics.add.overlap(player, doorkeys, collectKey, null, this);
@@ -181,39 +195,65 @@ App.prototype.start = function()
         {
             if (gameOver || isPause)
             {
-                stopPlayer();
+              player.setVelocityX(0);
+              player.setVelocityY(0);
                 return;
             }
 
             playerNavigationHandler();
+
             drawScores(_this);
         }
 
         function drawScores(scene) {
+          scoreTextShade.setText('Keys: ' + player.doorKeys);
+          scoreTextShade.x = 51+player.x - 400;
+          scoreTextShade.y = 51 + player.y-300;
           scoreText.setText('Keys: ' + player.doorKeys);
           scoreText.x = 50+player.x - 400;
           scoreText.y = 50 + player.y-300;
         }
 
         function hitTheDoor(player, door) {
-            console.log(door.settings);
+
+            if (player.doorKeys > 0) {
+              console.log("The door has been opened!");
+              player.doorKeys --;
+              console.log(door.settings);
+            } else {
+              player.setVelocityX(0);
+              player.setVelocityY(0);
+              console.log(door.settings);
+
+              stopPlayer();
+            }
         }
 
         function collectKey(player, key) {
-          if (isPause) return;
-          isPause = true;
+          //stopPlayer();
+
+          //if (isPause) return;
+          //isPause = true;
           console.log(megaMAP);
-          showQuestion(megaMAP.questionMAP[0][0], function () {
-            key.disableBody(true, true);
-            isPause = false;
-            player.doorKeys ++
-            console.log(player.doorKeys);
-          })
+          //alert('player.doorKeys' + player.doorKeys);
+          key.disableBody(true, true);
+          //isPause = false;
+          player.doorKeys ++;
+          console.log(player.doorKeys);
+
+          // showQuestion(megaMAP.questionMAP[0][0], function () {
+          //   key.disableBody(true, true);
+          //   isPause = false;
+          //   player.doorKeys ++;
+          //   console.log(player.doorKeys);
+          // })
         }
 
         function stopPlayer() {
              player.setVelocityX(0);
              player.setVelocityY(0);
+             player.body.velocity.x = 0;
+             player.body.velocity.y = 0;
              player.anims.play('turn');
            }
 
@@ -257,13 +297,6 @@ App.prototype.start = function()
               }
              );
 
-
-             // doors
-             /* { right: {image: 'png/doorR.png', key: 'doorR', offsetX: 340, offsetY: 80 },
-                                 down: {image: 'png/doorD.png', key: 'doorD', offsetX: -20, offsetY: 160 },
-                                 up: {image: 'png/doorU.png', key: 'doorU', offsetX: -20, offsetY: -180 },
-                                 left: {image: 'png/doorL.png', key: 'doorL', offsetX: -340, offsetY: 80 }}
-              */
               function randomPlsOrMin(min, max) {
                  return random(min, max) * (Math.random() < 0.5 ? -1 : 1);
                }
@@ -400,15 +433,16 @@ App.prototype.start = function()
             }
         }
 
-        function hitBomb (player, bomb)
-        {
-            this.physics.pause();
-            player.setTint(0xff0000);
-            player.anims.play('turn');
-            gameOver = true;
-        }
+        // function hitBomb (player, bomb)
+        // {
+        //     this.physics.pause();
+        //     player.setTint(0xff0000);
+        //     player.anims.play('turn');
+        //     gameOver = true;
+        // }
 
        function playerNavigationHandler () {
+
         if (cursors.left.isDown)
             {
                 player.setVelocityX(-260);
@@ -496,7 +530,12 @@ App.prototype.start = function()
         function buildQuestion(question, ifSuccessCallback) {
             console.log(question);
             var myQuestions = [question];
-            alert(myQuestions[0].qId + ') ' + myQuestions[0].qTxt);
+            alert(myQuestions[0].qId + ') ' + myQuestions[0].qTxt + ' \n - ' +
+              myQuestions[0].listAnswers[0].value + ' \n - ' +
+              myQuestions[0].listAnswers[1].value + ' \n - ' +
+              myQuestions[0].listAnswers[2].value + ' \n - ' +
+              myQuestions[0].listAnswers[3].value + ' \n video: ' +
+              myQuestions[0].questionURL);
             function buildQuiz() {
                 // we'll need a place to store the HTML output
                 const output = [];
