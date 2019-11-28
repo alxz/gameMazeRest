@@ -731,7 +731,7 @@ window.onload = function()
   var startTime = Date.now();
   var endTime;
   var secondsElapsed = 0;
-  //userTimer.start();  // -------- UNPAUSE when required!!! TIMER
+  userTimer.start();  // -------- UNPAUSE when required!!! TIMER
 
   userTimer.addEventListener('secondsUpdated', function (e) {
       $('#userTimer').html(userTimer.getTimeValues().toString());
