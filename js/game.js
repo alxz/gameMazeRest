@@ -45,7 +45,9 @@ App.prototype.start = function()
         var initMapPos = {initX: 0, initY: 0};
         var maxRoomCountX;
         var maxRoomCountY;
-
+        var patientObj;
+        var totalQestionsUnswered = 0;
+        var totalQestionsAsked = 0;
         var doorsHolder = [];
                     /****** { right: {image: 'png/doorR.png', key: 'doorR', offsetX: 340, offsetY: 80 },
                             down: {image: 'png/doorD.png', key: 'doorD', offsetX: -20, offsetY: 160 },
@@ -85,7 +87,7 @@ App.prototype.start = function()
             // scale 0.8 we have: 800 x 520
             this.load.image('baseRoomBack', 'png/RoomBG_red_withBG.png');
             // rooms assets section completed!
-
+            this.load.image('hospitalBed', 'png/hospitalBed.png');
             //doors:
             // this.load.image('doorU', 'png/doorU.png');
             // this.load.image('doorD', 'png/doorD.png');
@@ -200,12 +202,12 @@ App.prototype.start = function()
         }
 
         function drawScores(scene) {
-          scoreTextShade.setText('Keys: ' + player.doorKeys);
-          scoreTextShade.x = 51+player.x - 400;
+          scoreTextShade.setText('Keys: ' + player.doorKeys + '  * * *  Score: ' + totalQestionsUnswered);
+          scoreTextShade.x = 51 + player.x - 400;
           scoreTextShade.y = 51 + player.y-300;
-          scoreText.setText('Keys: ' + player.doorKeys);
-          scoreText.x = 50+player.x - 400;
-          scoreText.y = 50 + player.y-300;
+          scoreText.setText('Keys: ' + player.doorKeys + '  * * *  Score: ' + totalQestionsUnswered);
+          scoreText.x = 50 + player.x - 400;
+          scoreText.y = 50 + player.y - 300;
         }
 
         function hitTheDoor(player, door) {
@@ -273,18 +275,19 @@ App.prototype.start = function()
 
           //if (isPause) return;
           isPause = true;
-          console.log(megaMAP);
+          //console.log(megaMAP);
           //alert('player.doorKeys' + player.doorKeys);
           // key.disableBody(true, true);
           //isPause = false;
           // player.doorKeys ++;
-          console.log(player.doorKeys);
-
+          //console.log(player.doorKeys);
+          totalQestionsAsked ++;
           var ifSuccess = function () {
             key.disableBody(true, true);
             isPause = false;
             player.doorKeys ++;
-            console.log(player.doorKeys);
+            totalQestionsUnswered ++;
+            //console.log(player.doorKeys);
           };
           var ifFailure = function () {
             isPause = false;
@@ -455,6 +458,8 @@ App.prototype.start = function()
                        if (x==maxRoomCountX-1 && y==maxRoomCountY-1) {
                          //this is our final room - no keys required...
                          //TODO: place a final room sprite here!!!
+                         //draw the patient: hospitalBed
+                         patientObj = scene.add.image(400+ 800 * (x), 270+ 520*(y), 'hospitalBed').setScale(0.8);
                        } else {
                          var coord = getKeyCordinateWithProximity(arrKeys,70);
                          //doorkeys.create(coord.x, coord.y, 'star').setScale(0.8); //doors keys
@@ -639,6 +644,7 @@ App.prototype.start = function()
             function showResults() {
                 // gather answer containers from our quiz
                 const answerContainers = quizContainer.querySelectorAll(".answers");
+                const submitMsgContainer = document.getElementById("submitMsg");
                 // keep track of user's answers
 
                 // for each question...
@@ -650,12 +656,16 @@ App.prototype.start = function()
                     // if answer is correct
                     if (userAnswer === currentQuestion.correctAnswer) {
                         answerContainer.style.color = 'lightgreen';
+                        submitMsgContainer.innerHTML = "<h1><span style='color:yellow'>Congratulations! Correct answer!</span></h1>";
                         setTimeout(function () {
+                            submitMsgContainer.innerHTML = "";
+                            //console.log('Corerct Answer given');
                             hideQuestion();
                             ifSuccessCallback();
                         }, 1000);
                     } else {
                         answerContainer.style.color = 'red';
+                        submitMsgContainer.innerHTML = "<h1><span style='color:red'>Sorry, wrong answer!</span></h1>";
                         setTimeout(function () {
                             hideQuestion();
                             ifCancelCallback();
