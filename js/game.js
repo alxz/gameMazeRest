@@ -33,7 +33,9 @@ App.prototype.start = function()
         var scoreText;
         var scoreTextShade;
         var isPause = false;
-
+        var keyIndex = 0;
+        var startTime;
+        var endTime;
         var game = new Phaser.Game(config);
         var _this;
         var position = {x: 0, y: 0};
@@ -118,11 +120,10 @@ App.prototype.start = function()
             // console.log("megaMAP: "+megaMAP);
             // console.log("roomsMAP: "+roomsMAP);
             showMazeGfx(megaMAP.doorsMAP, "mazeWDrsRmsMap");
-            buildWorld(this);
+
 
             cursors = this.input.keyboard.createCursorKeys();
-            scoreTextShade = this.add.text(17, 17, 'keys: 0', { fontSize: '32px', fill: '#ff00ff'});
-            scoreText = this.add.text(16, 16, 'keys: 0', { fontSize: '32px', fill: '#000' });
+
 
             // walls = this.physics.add.staticGroup();
             // for (var i = 0; i < 9; i++) {
@@ -136,17 +137,14 @@ App.prototype.start = function()
             // walls.create(160, 120, 'wall400x300').setScale(0.8).refreshBody();
             // walls.create(640, 120, 'wall400x300').setScale(0.8).refreshBody();
 
-            // The player and its settings
-            player = this.physics.add.sprite(400, 300, 'dude');
-            console.log('player', player);
-            player.doorKeys = 0;
-            initPlayer(this);
+            buildWorld(this);
+            scoreTextShade = this.add.text(17, 17, 'keys: 0', { fontSize: '32px', fill: '#ff00ff'});
+            scoreText = this.add.text(16, 16, 'keys: 0', { fontSize: '32px', fill: '#000' });
             // walls.create(400, 270, 'hollowRoom').setScale(0.8).refreshBody();
             this.cameras.main.startFollow(player);
             this.physics.add.collider(player, walls);
-            this.physics.add.collider(player, doors);
+            this.physics.add.collider(player, doors, null, hitTheDoor, this);
 
-            this.physics.add.overlap(player, doors, hitTheDoor, null, this);
             this.physics.add.overlap(player, doorkeys, collectKey, null, this);
             //  The platforms group contains the ground and the 2 ledges we can jump on
             // platforms = this.physics.add.staticGroup();
@@ -195,14 +193,12 @@ App.prototype.start = function()
         {
             if (gameOver || isPause)
             {
-              player.setVelocityX(0);
-              player.setVelocityY(0);
                 return;
             }
+            drawScores(_this);
+            player.prevPos = {x: player.x, y: player.y};
 
             playerNavigationHandler();
-
-            drawScores(_this);
         }
 
         function drawScores(scene) {
@@ -215,45 +211,53 @@ App.prototype.start = function()
         }
 
         function hitTheDoor(player, door) {
-
-            if (player.doorKeys > 0) {
-              console.log("The door has been opened!");
-              player.doorKeys --;
-              console.log(door.settings);
-            } else {
-              player.setVelocityX(0);
-              player.setVelocityY(0);
-              console.log(door.settings);
-
+            if (player.doorKeys > 0 && !door.isOpen) {
               stopPlayer();
+              door.body.checkCollision.none = true;
+              door.isOpen = true;
+              player.doorKeys --;
+              console.log("The door has been opened!", door);
+              console.log(door.settings);
+              return true;
             }
+            return true;
+        }
+
+        function playerStepBack() {
+          player.x = player.prevPos.x;
+          player.y = player.prevPos.y;
         }
 
         function collectKey(player, key) {
-          //stopPlayer();
+          if (isPause) return;
+
+          stopPlayer();
 
           //if (isPause) return;
-          //isPause = true;
+          isPause = true;
           console.log(megaMAP);
           //alert('player.doorKeys' + player.doorKeys);
-          key.disableBody(true, true);
+          // key.disableBody(true, true);
           //isPause = false;
-          player.doorKeys ++;
+          // player.doorKeys ++;
           console.log(player.doorKeys);
 
-          // showQuestion(megaMAP.questionMAP[0][0], function () {
-          //   key.disableBody(true, true);
-          //   isPause = false;
-          //   player.doorKeys ++;
-          //   console.log(player.doorKeys);
-          // })
+          var ifSuccess = function () {
+            key.disableBody(true, true);
+            isPause = false;
+            player.doorKeys ++;
+            console.log(player.doorKeys);
+          };
+          var ifFailure = function () {
+            isPause = false;
+            playerStepBack();
+          }
+          showQuestion(key.question, ifSuccess, ifFailure);
         }
 
         function stopPlayer() {
              player.setVelocityX(0);
              player.setVelocityY(0);
-             player.body.velocity.x = 0;
-             player.body.velocity.y = 0;
              player.anims.play('turn');
            }
 
@@ -262,7 +266,9 @@ App.prototype.start = function()
           // megaMAP = game.cache.json.get('megaMAP');
           // showMazeGfx(megaMAP.doorsMAP, "mazeWDrsRmsMap");
           // roomsMAP = game.cache.json.get('doorsMAP');
-          doors = scene.physics.add.group();
+          doors = scene.physics.add.group({
+            immovable: true
+          });
           walls = scene.physics.add.staticGroup();
           doorkeys = scene.physics.add.group();
           var arrAllDoorsRooms = [];
@@ -296,7 +302,7 @@ App.prototype.start = function()
                 //console.log('Hello world!');
               }
              );
-
+          initPlayer(scene);
               function randomPlsOrMin(min, max) {
                  return random(min, max) * (Math.random() < 0.5 ? -1 : 1);
                }
@@ -394,7 +400,10 @@ App.prototype.start = function()
                      for (var i = 0; i < keysCount; i++) {
                        var coord = getKeyCordinateWithProximity(arrKeys,70);
                        //doorkeys.create(coord.x, coord.y, 'star').setScale(0.8); //doors keys
-                       doorkeys.create(coord.x, coord.y, 'gold-key').setScale(0.5); //doors keys
+                       var myKey = doorkeys.create(coord.x, coord.y, 'gold-key').setScale(0.5); //doors keys
+                       myKey.question = megaMAP.questionList[keyIndex];
+                       console.log("question from key", myKey.question);
+                       keyIndex++;
                        arrKeys[arrKeys.length] = coord;
                      }
 
@@ -475,7 +484,10 @@ App.prototype.start = function()
        }
 
         function initPlayer(scene) {
-                        //  Player physics properties. Give the little guy a slight bounce.
+            player = scene.physics.add.sprite(400, 300, 'dude');
+            console.log('player', player);
+            player.doorKeys = 0;
+                //  Player physics properties. Give the little guy a slight bounce.
             player.setBounce(0.2);
             //player.setCollideWorldBounds(true);
                         //  Our player animations, turning, walking left and walking right.
@@ -514,11 +526,11 @@ App.prototype.start = function()
             });
         }
 /////////questions functionality
-        function showQuestion(question,ifSuccessCallback) {
+        function showQuestion(question,ifSuccessCallback, ifCancelCallback) {
           // pased: showQuestion(megaMAP.questionMAP[0][0], function ()
             document.getElementById("question").style.display = "";
             //alert(question.qId + ') ' + question.qTxt);
-            buildQuestion(question,ifSuccessCallback);
+            buildQuestion(question,ifSuccessCallback, ifCancelCallback);
         }
 
         function hideQuestion() {
@@ -527,15 +539,15 @@ App.prototype.start = function()
 
         //const questionWindow = document.getElementById("questionWindow");
 
-        function buildQuestion(question, ifSuccessCallback) {
+        function buildQuestion(question, ifSuccessCallback, ifCancelCallback) {
             console.log(question);
             var myQuestions = [question];
-            alert(myQuestions[0].qId + ') ' + myQuestions[0].qTxt + ' \n - ' +
-              myQuestions[0].listAnswers[0].value + ' \n - ' +
-              myQuestions[0].listAnswers[1].value + ' \n - ' +
-              myQuestions[0].listAnswers[2].value + ' \n - ' +
-              myQuestions[0].listAnswers[3].value + ' \n video: ' +
-              myQuestions[0].questionURL);
+            // alert(myQuestions[0].qId + ') ' + myQuestions[0].qTxt + ' \n - ' +
+            //   myQuestions[0].listAnswers[0].value + ' \n - ' +
+            //   myQuestions[0].listAnswers[1].value + ' \n - ' +
+            //   myQuestions[0].listAnswers[2].value + ' \n - ' +
+            //   myQuestions[0].listAnswers[3].value + ' \n video: ' +
+            //   myQuestions[0].questionURL);
             function buildQuiz() {
                 // we'll need a place to store the HTML output
                 const output = [];
@@ -591,6 +603,7 @@ App.prototype.start = function()
                         answerContainer.style.color = 'red';
                         setTimeout(function () {
                             hideQuestion();
+                            ifCancelCallback();
                             pauseGame = false;
                         }, 1000);
                     }
@@ -610,7 +623,33 @@ App.prototype.start = function()
             let currentSlide = 0;
             showSlide(0);
             // on submit, show results
-            submitButton.addEventListener("click", showResults);
+            $("#submit").unbind( "click" );
+            $("#submit").bind("click", showResults);
+        }
+
+
+
+
+        function saveState() {
+          // to save the current state in the Database
+
+          userTimer.stop();
+          isCompleted = 1;
+          timeElapsedVar = endTimer();
+          isFinishedMaze = 1;
+          scoreData = [// outer level array literal
+           { // second level object literals
+             correctCount: numCorrect,
+             user: userName,
+             isFinished: isFinishedMaze,
+             elapsedTime: timeElapsedVar,
+             timestart: startTime,
+             timefinish: endTime,
+             listofquestions: questionsListStr,
+             comments: commentsStr,
+             sessionId : sessionID
+           }
+         ];
         }
 
 
@@ -622,3 +661,15 @@ window.onload = function()
     var app = new App();
     app.start();
 }
+
+  var userTimer = new easytimer.Timer();
+  var startTime = Date.now();
+  var endTime;
+  var secondsElapsed = 0;
+  userTimer.start();
+
+  userTimer.addEventListener('secondsUpdated', function (e) {
+      $('#userTimer').html(userTimer.getTimeValues().toString());
+      endTime = Date.now();
+      secondsElapsed++;
+  });

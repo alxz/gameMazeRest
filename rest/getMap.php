@@ -35,13 +35,13 @@
     $mazeMapArr = mazeStruc();
     $maxYSize = count($mazeMapArr) - 1; //array indexes starts from 0
     $maxXSize = count(reset($mazeMapArr)) - 1;
-
+    $jsonListAllQuestions = $jsonListAllQ;
     $jsonListAllQ = json_encode($jsonListAllQ);
 
     $mazeQuestionsArr = mazeQuestionsArr($mazeMapArr,$jsonListAllQ); // create questionMAP
     $mazeWithRoomsDoors = mazeRoomsDoors($mazeMapArr); // create DoorsMap
 
-    $megaMAP = array ( 'initMAP' => $mazeMapArr, 'questionMAP' => $mazeQuestionsArr, 'doorsMAP' => $mazeWithRoomsDoors );
+    $megaMAP = array ( 'initMAP' => $mazeMapArr, 'questionMAP' => $mazeQuestionsArr, 'doorsMAP' => $mazeWithRoomsDoors, 'questionList' =>  $jsonListAllQuestions);
 
     // $arrMazeInit = json_encode($mazeMapArr);
     // $mazeQuestionsArr = json_encode($mazeQuestionsArr);

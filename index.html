@@ -4,7 +4,9 @@
     <meta charset="UTF-8" />
     <title>Maze Pan with Phaser 3 Game</title>
     <script src="//cdn.jsdelivr.net/npm/phaser@3.11.0/dist/phaser.js"></script>
-    <style src="css/style.css" type="text/css"></style>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/jquery-3.4.1.min.js"></script>
+    <script src="lib/easytimer.min.js" type="text/javascript"></script>
     <style type="text/css">
         body {
             margin: 0;
@@ -13,7 +15,8 @@
 </head>
 <body>
     <div>
-        <h1>Maze Game To demonstrate a phaser engine!</h1>
+        <h1>Maze Game To demonstrate a phaser engine! <span id="userTimer"></span></h1>
+
     </div>
     <div id="phaserDiv" class="classPhaserDiv">
         <canvas></canvas>
