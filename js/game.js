@@ -87,10 +87,15 @@ App.prototype.start = function()
             // rooms assets section completed!
 
             //doors:
-            this.load.image('doorU', 'png/doorU.png');
-            this.load.image('doorD', 'png/doorD.png');
-            this.load.image('doorL', 'png/doorL.png');
-            this.load.image('doorR', 'png/doorR.png');
+            // this.load.image('doorU', 'png/doorU.png');
+            // this.load.image('doorD', 'png/doorD.png');
+            // this.load.image('doorL', 'png/doorL.png');
+            // this.load.image('doorR', 'png/doorR.png');
+
+            this.load.spritesheet('doorU', 'png/doorUsprite.png',{frameWidth: 180, frameHeight: 180});
+            this.load.spritesheet('doorD', 'png/doorDsprite.png',{frameWidth: 180, frameHeight: 180});
+            this.load.spritesheet('doorL', 'png/doorLsprite.png',{frameWidth: 180, frameHeight: 180});
+            this.load.spritesheet('doorR', 'png/doorRsprite.png',{frameWidth: 180, frameHeight: 180});
             //==============================================
             //blocks:
             this.load.image('blockRed', 'png/block20x20red.png');
@@ -216,27 +221,35 @@ App.prototype.start = function()
               var thisRoomY = door.roomCoord.roomY;
               switch (door.roomCoord.doorType) {
                 case 'U':
-                  nextDoor = roomsMAP[thisRoomX][thisRoomY-1].downDoor;
-                  nextDoor.body.checkCollision.none = true;
-                  nextDoor.isOpen = true;
-                  //console.log('Door location is: Up, door: ' + nextDoor.isOpen);
-                  break;
+                    nextDoor = roomsMAP[thisRoomX][thisRoomY-1].downDoor;
+                    nextDoor.body.checkCollision.none = true;
+                    nextDoor.isOpen = true;
+                    nextDoor.setTexture('doorD',1);
+                    door.setTexture('doorU',1);
+                    //console.log('Door location is: Up, door: ' + nextDoor.isOpen);
+                    break;
                 case 'D':
                     nextDoor = roomsMAP[thisRoomX][thisRoomY+1].upperDoor;
                     nextDoor.body.checkCollision.none = true;
                     nextDoor.isOpen = true;
+                    nextDoor.setTexture('doorU',1);
+                    door.setTexture('doorD',1);
                     //console.log('Door location is: Down, door: ' + nextDoor.isOpen);
                     break;
                 case 'L':
                     nextDoor = roomsMAP[thisRoomX-1][thisRoomY].rightDoor;
                     nextDoor.body.checkCollision.none = true;
                     nextDoor.isOpen = true;
+                    nextDoor.setTexture('doorR',1);
+                    door.setTexture('doorL',1);
                     //console.log('Door location is: Left, door: ' + nextDoor.isOpen);
                     break;
                 case 'R':
                     nextDoor = roomsMAP[thisRoomX+1][thisRoomY].leftDoor;
                     nextDoor.body.checkCollision.none = true;
                     nextDoor.isOpen = true;
+                    nextDoor.setTexture('doorL',1);
+                    door.setTexture('doorR',1);
                     //console.log('Door location is: Right, door: ' + nextDoor.isOpen);
                     break;
                 default:
@@ -327,7 +340,7 @@ App.prototype.start = function()
                 //console.log('Hello world!');
               }
              );
-          initPlayer(scene);
+
               function randomPlsOrMin(min, max) {
                  return random(min, max) * (Math.random() < 0.5 ? -1 : 1);
                }
@@ -451,16 +464,7 @@ App.prototype.start = function()
                          keyIndex++;
                          arrKeys[arrKeys.length] = coord;
                        }
-
                      }
-
-
-                     // ({
-                     //     key: 'star',
-                     //     repeat: 11,
-                     //     setXY: { x: 12, y: 0, stepX: 70 }
-                     // });
-
                })
              }
              );
@@ -468,7 +472,7 @@ App.prototype.start = function()
              //    console.log('doorsArray: ' + doorsArray[i].roomCoord.doorType +
              //      ' x: ' + doorsArray[i].roomCoord.roomX + ' y: ' + doorsArray[i].roomCoord.roomY);
              // }
-
+             initPlayer(scene);
         }
 
         function collectStar (player, star)
