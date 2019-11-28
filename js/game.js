@@ -21,7 +21,10 @@ App.prototype.start = function()
     };
 
         var megaMAP;
-        var roomsMAP;
+        var initMap;
+        var roomsMAP = [];
+        var userInfo;
+        var userIUN;
         var player;
         var room;
         var stars;
@@ -39,6 +42,9 @@ App.prototype.start = function()
         var game = new Phaser.Game(config);
         var _this;
         var position = {x: 0, y: 0};
+        var initMapPos = {initX: 0, initY: 0};
+        var maxRoomCountX;
+        var maxRoomCountY;
 
         var doorsHolder = [];
                     /****** { right: {image: 'png/doorR.png', key: 'doorR', offsetX: 340, offsetY: 80 },
@@ -52,6 +58,7 @@ App.prototype.start = function()
         function preload ()
         {
             this.load.json('megaMAP', 'rest/getMap.php');
+
             //this.load.image('sky', 'assets/sky.png');
             this.load.audio('theme', [
                 'assets/ambient.mp3'
@@ -109,6 +116,12 @@ App.prototype.start = function()
         {
             // init other states
             megaMAP = game.cache.json.get('megaMAP');
+            initMap = megaMAP.initMAP;
+            maxRoomCountX = initMap[0].length;
+            console.log('maxRoomCountX ' + maxRoomCountX);
+            maxRoomCountY = initMap.length;
+            console.log('maxRoomCountY ' + maxRoomCountY);
+            //console.log('initMAP: ' + initMap);
             // var music = this.sound.add('theme');
             //  music.play();
             //  this.input.addDownCallback(function() {
@@ -121,17 +134,9 @@ App.prototype.start = function()
             // console.log("roomsMAP: "+roomsMAP);
             showMazeGfx(megaMAP.doorsMAP, "mazeWDrsRmsMap");
 
-
             cursors = this.input.keyboard.createCursorKeys();
 
-
             // walls = this.physics.add.staticGroup();
-            // for (var i = 0; i < 9; i++) {
-            //   walls.create(480 + (i * 20), 120 + ((i* 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
-            //   walls.create(150 + (i * 20), 380 + ((i* 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
-            //   walls.create(320 - (i * 20), 120 + ((i* 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
-            //   walls.create(490 + (i * 20), 490 - ((i* 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
-            // }
             // walls.create(160, 450, 'wall400x230').setScale(0.8).refreshBody();
             // walls.create(640, 450, 'wall400x230').setScale(0.8).refreshBody();
             // walls.create(160, 120, 'wall400x300').setScale(0.8).refreshBody();
@@ -146,18 +151,6 @@ App.prototype.start = function()
             this.physics.add.collider(player, doors, null, hitTheDoor, this);
 
             this.physics.add.overlap(player, doorkeys, collectKey, null, this);
-            //  The platforms group contains the ground and the 2 ledges we can jump on
-            // platforms = this.physics.add.staticGroup();
-
-            //  Here we create the ground.
-            //  Scale it to fit the width of the game (the original sprite is 400x32 in size)
-            // platforms.create(400, 568, 'ground').setScale(2).refreshBody();
-
-            // //  Now let's create some ledges
-            // platforms.create(600, 400, 'ground');
-            // platforms.create(50, 250, 'ground');
-            // platforms.create(750, 220, 'ground');
-            //  Input Events
 
             //  Some stars to collect, 12 in total, evenly spaced 70 pixels apart along the x axis
             // stars = this.physics.add.group({
@@ -217,7 +210,39 @@ App.prototype.start = function()
               door.isOpen = true;
               player.doorKeys --;
               console.log("The door has been opened!", door);
-              console.log(door.settings);
+              //console.log(door.settings);
+              var nextDoor;
+              var thisRoomX = door.roomCoord.roomX;
+              var thisRoomY = door.roomCoord.roomY;
+              switch (door.roomCoord.doorType) {
+                case 'U':
+                  nextDoor = roomsMAP[thisRoomX][thisRoomY-1].downDoor;
+                  nextDoor.body.checkCollision.none = true;
+                  nextDoor.isOpen = true;
+                  //console.log('Door location is: Up, door: ' + nextDoor.isOpen);
+                  break;
+                case 'D':
+                    nextDoor = roomsMAP[thisRoomX][thisRoomY+1].upperDoor;
+                    nextDoor.body.checkCollision.none = true;
+                    nextDoor.isOpen = true;
+                    //console.log('Door location is: Down, door: ' + nextDoor.isOpen);
+                    break;
+                case 'L':
+                    nextDoor = roomsMAP[thisRoomX-1][thisRoomY].rightDoor;
+                    nextDoor.body.checkCollision.none = true;
+                    nextDoor.isOpen = true;
+                    //console.log('Door location is: Left, door: ' + nextDoor.isOpen);
+                    break;
+                case 'R':
+                    nextDoor = roomsMAP[thisRoomX+1][thisRoomY].leftDoor;
+                    nextDoor.body.checkCollision.none = true;
+                    nextDoor.isOpen = true;
+                    //console.log('Door location is: Right, door: ' + nextDoor.isOpen);
+                    break;
+                default:
+
+              }
+
               return true;
             }
             return true;
@@ -292,7 +317,7 @@ App.prototype.start = function()
                       // lower left bar
                       walls.create(indX + 140 + (i * 20), indY +370 + ((i* 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
                       // upper left bar
-                      walls.create(indX + 320 - (i * 20), indY +120 + ((i* 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
+                      walls.create(indX + 300 - (i * 20), indY +120 + ((i* 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
                       // lower right bar
                       walls.create(indX + 480 + (i * 20), indY +500 - ((i* 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
                     }
@@ -310,6 +335,9 @@ App.prototype.start = function()
              function random(min, max) {
                return Math.floor(Math.random() * max) + min;
              }
+             var doorsIndex=0; //we already have doorsMAP[][]
+             //roomsMAP = {'U': null, 'U': null,'U': null,'U': null, };
+             roomsMAP = megaMAP.doorsMAP;
 
              megaMAP.doorsMAP.forEach( (mapDoors,y) => { mapDoors.forEach( function(mapDoor,x) {
                      var indX = 800 * (x);
@@ -317,39 +345,53 @@ App.prototype.start = function()
                      var keysCount = -1;
 
                      if (mapDoor.U === 1) {
-                       //console.log ('x: ' + x + '/ y: ' + y);
                        keysCount ++;
-                       doors.create(indX + 400 , indY + 80, 'doorU').setScale(.8);
+                       doorsArray[doorsIndex] = doors.create(indX + 400 , indY + 80, 'doorU').setScale(.8);
+                       doorsArray[doorsIndex].roomCoord = {roomX: x, roomY: y, doorType: 'U'};
+                       roomsMAP[x][y].upperDoor = doorsArray[doorsIndex];
+                       doorsIndex++;
                        for (var i = 0; i < 3; i++) {
                          walls.create((indX + 320), indY + (20 + i *40) , 'blockRed').setScale(0.8).refreshBody();
                          walls.create((indX + 480), indY + (20 + i * 40) , 'blockRed').setScale(0.8).refreshBody();
                        }
                      } else  if (mapDoor.U === 0) {
+                       roomsMAP[x][y].upperDoor = doors.create(-100 , -100, 'star');
+                       roomsMAP[x][y].upperDoor.visible = false; // not really a door, just replacement
                        for (var i = 0; i < 9; i++) {
                          walls.create(indX + 320 + (i * 20), indY +100, 'blockRed').setScale(0.8).refreshBody();
                        }
                      }
                      if (mapDoor.D === 1) {
                        keysCount ++;
-                       doors.create(indX +400, indY + 500, 'doorD').setScale(0.8);
+                       doorsArray[doorsIndex] = doors.create(indX +400, indY + 500, 'doorD').setScale(0.8);
+                       doorsArray[doorsIndex].roomCoord = {roomX: x, roomY: y, doorType: 'D'};
+                       roomsMAP[x][y].downDoor = doorsArray[doorsIndex];
+                       doorsIndex++;
                        for (var i = 0; i < 2; i++) {
                          walls.create((indX + 320), indY + (500 + i *20) , 'blockRed').setScale(0.8).refreshBody();
                          walls.create((indX + 480), indY + (500 + i * 20) , 'blockRed').setScale(0.8).refreshBody();
                        }
                      } else  if (mapDoor.D === 0) {
+                       roomsMAP[x][y].downDoor = doors.create(-100 , -100, 'star');
+                       roomsMAP[x][y].downDoor.visible = false; // not really a door, just replacement
                        for (var i = 0; i < 9; i++) {
                          walls.create(indX + 320 + (i * 20), indY +500, 'blockRed').setScale(0.8).refreshBody();
                        }
                      }
                      if (mapDoor.L === 1) {
                        keysCount++;
-                       doors.create(indX + 80, indY + 260, 'doorL').setScale(0.8);
+                       doorsArray[doorsIndex] = doors.create(indX + 80, indY + 260, 'doorL').setScale(0.8);
+                       doorsArray[doorsIndex].roomCoord = {roomX: x, roomY: y, doorType: 'L'};
+                       roomsMAP[x][y].leftDoor = doorsArray[doorsIndex];
+                       doorsIndex++;
                        for (var i = 0; i < 4; i++) {
                          walls.create(indX - 0 + (i * 40), indY + (210 - i *20) , 'blockRed').setScale(0.8).refreshBody();
                          walls.create(indX - 0 + (i * 40), indY + (340 + i * 20) , 'blockRed').setScale(0.8).refreshBody();
                        }
 
                      } else  if (mapDoor.L === 0) {
+                       roomsMAP[x][y].leftDoor = doors.create(-100 , -100, 'star');
+                       roomsMAP[x][y].leftDoor.visible = false; // not really a door, just replacement
                        for (var i = 0; i < 3; i++) {
                          walls.create(indX + 40, indY +270 + (i* 40), 'blockRed').setScale(0.8).refreshBody();
                          walls.create(indX + 20 + (i * 40), indY +240 , 'blockRed').setScale(0.8).refreshBody();
@@ -358,29 +400,28 @@ App.prototype.start = function()
                      }
                      if (mapDoor.R === 1) {
                        keysCount++;
-                       doors.create(indX + 720, indY + 260, 'doorR').setScale(0.8);
+                       doorsArray[doorsIndex] = doors.create(indX + 720, indY + 260, 'doorR').setScale(0.8);
+                       doorsArray[doorsIndex].roomCoord = {roomX: x, roomY: y, doorType: 'R'};
+                       roomsMAP[x][y].rightDoor = doorsArray[doorsIndex];
+                       doorsIndex++;
                        for (var i = 0; i < 3; i++) {
                          walls.create(indX + 710 + (i * 40), indY + (170 + i *20) , 'blockRed').setScale(0.8).refreshBody();
                          walls.create(indX + 700 + (i * 40), indY + (380 - i * 20) , 'blockRed').setScale(0.8).refreshBody();
                        }
 
                      } else  if (mapDoor.R === 0) {
+                       roomsMAP[x][y].rightDoor = doors.create(-100 , -100, 'star');
+                       roomsMAP[x][y].rightDoor.visible = false; // not really a door, just replacement
                        for (var i = 0; i < 3; i++) {
                          walls.create(indX + 740, indY + 270 + (i * 40), 'blockRed').setScale(0.8).refreshBody();
                          walls.create(indX + 700 + (i * 40), indY +240 , 'blockRed').setScale(0.8).refreshBody();
                          walls.create(indX + 700 + (i * 40), indY +380 , 'blockRed').setScale(0.8).refreshBody();
                        }
                      }
-                     console.log('doors location:  U' + mapDoor.U + 'D'+ mapDoor.D + 'L' +  mapDoor.L + 'R' + mapDoor.R);
-                     // var d = doors.create(400 + door.offsetX + indX, 270 + door.offsetY + indY, door.key).setScale(0.8);
-                     // d.settings = { key: door.key, x:x, y:y};
-                     // console.log(door);
-                     // console.log(d);
-                     //  Some stars to collect, 12 in total, evenly spaced 70 pixels apart along the x axis
                      //doorkeys
                      var arrKeys = [];
                      var getKeyCordinateWithProximity = function(keys,minProximity) {
-                       console.log('keys',keys);
+                       //console.log('keys',keys);
                        var c1 = {x: 400 + indX + randomPlsOrMin(50, 100), y: 260 + indY + randomPlsOrMin(50, 30)};
                        var check = 0;
                        for (var i = 0 ; i < keys.length; i++){
@@ -398,13 +439,19 @@ App.prototype.start = function()
                        keysCount = keysCount + 1;
                      }
                      for (var i = 0; i < keysCount; i++) {
-                       var coord = getKeyCordinateWithProximity(arrKeys,70);
-                       //doorkeys.create(coord.x, coord.y, 'star').setScale(0.8); //doors keys
-                       var myKey = doorkeys.create(coord.x, coord.y, 'gold-key').setScale(0.5); //doors keys
-                       myKey.question = megaMAP.questionList[keyIndex];
-                       console.log("question from key", myKey.question);
-                       keyIndex++;
-                       arrKeys[arrKeys.length] = coord;
+                       if (x==maxRoomCountX-1 && y==maxRoomCountY-1) {
+                         //this is our final room - no keys required...
+                         //TODO: place a final room sprite here!!!
+                       } else {
+                         var coord = getKeyCordinateWithProximity(arrKeys,70);
+                         //doorkeys.create(coord.x, coord.y, 'star').setScale(0.8); //doors keys
+                         var myKey = doorkeys.create(coord.x, coord.y, 'gold-key').setScale(0.5); //doors keys
+                         myKey.question = megaMAP.questionList[keyIndex];
+                         //console.log("question from key", myKey.question);
+                         keyIndex++;
+                         arrKeys[arrKeys.length] = coord;
+                       }
+
                      }
 
 
@@ -417,6 +464,10 @@ App.prototype.start = function()
                })
              }
              );
+             // for (var i = 0; i < doorsArray.length; i++) {
+             //    console.log('doorsArray: ' + doorsArray[i].roomCoord.doorType +
+             //      ' x: ' + doorsArray[i].roomCoord.roomX + ' y: ' + doorsArray[i].roomCoord.roomY);
+             // }
 
         }
 
@@ -661,12 +712,12 @@ window.onload = function()
     var app = new App();
     app.start();
 }
-
-  var userTimer = new easytimer.Timer();
+  var userTimer;
+  userTimer = new easytimer.Timer();
   var startTime = Date.now();
   var endTime;
   var secondsElapsed = 0;
-  userTimer.start();
+  //userTimer.start();  // -------- UNPAUSE when required!!! TIMER
 
   userTimer.addEventListener('secondsUpdated', function (e) {
       $('#userTimer').html(userTimer.getTimeValues().toString());

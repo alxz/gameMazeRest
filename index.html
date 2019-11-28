@@ -15,7 +15,7 @@
 </head>
 <body>
     <div>
-        <h1>Maze Game To demonstrate a phaser engine! <span id="userTimer"></span></h1>
+        <h1>Find your way out the maze to help your patient. Time elapsed: <span id="userTimer"></span></h1>
 
     </div>
     <div id="phaserDiv" class="classPhaserDiv">
@@ -41,6 +41,26 @@
         </div>
     </div>
 
+    <!-- <script>
+        const Http = new XMLHttpRequest();
+        const url='https://www.mymuhc.muhc.mcgill.ca/a/a.php';
+        Http.open("GET", url);
+        Http.send();
+
+        Http.onreadystatechange = (e) => {
+          console.log(Http.responseText)
+        }
+
+                //   this.load.json('userInfo', 'https://www.mymuhc.muhc.mcgill.ca/a/a.php');
+                //   userInfo = game.cache.json.get('userInfo');
+                //   userIUN = (userInfo.REMOTE_USER);
+                //   console.log('User name: ' + userIUN);
+                // } catch (e) {
+                //   console.log('Error retrieving user name! Will use the defaul supplied. ' + e);
+                // } finally {
+                //   console.log('User name: ' + userIUN);
+                // }
+     </script> -->
     <script src="./js/miniMap.js" type="text/javascript"></script> <!-- Load phase file -->
     <script src="./js/game.js" type="text/javascript"></script> <!-- Load phase file -->
 
