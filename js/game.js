@@ -70,8 +70,8 @@ App.prototype.start = function () {
     const video = document.getElementById("video");
     const vplayer = document.getElementById("vplayer");
     const finScr = document.getElementById("finScr");
-    const finQ2 = document.getElementById("finQ2");
-    const finQ3 = document.getElementById("finQ3");
+    const divfinQ2 = document.getElementById("finQ2");
+    const divfinQ3 = document.getElementById("finQ3");
     const submitMsgContainer = document.getElementById("submitMsg");
 
     function preload() {
@@ -203,8 +203,15 @@ App.prototype.start = function () {
         // walls.create(160, 450, 'wall400x230').setScale(0.8).refreshBody();
 
         buildWorld(this);
-        scoreTextShade = this.add.text(17, 17, 'keys: 0', {fontSize: '32px', fill: '#ff00ff'});
-        scoreText = this.add.text(16, 16, 'keys: 0', {fontSize: '32px', fill: '#000'});
+        scoreTextShade = this.add.text(17, 17, 'keys: 0', {fontSize: '32px', fill: '#ff00ff',backgroundColor: '#479B85'});
+        scoreText = this.add.text(16, 16, 'keys: 0',
+          {
+            fontSize: '32px',
+            fill: '#FDFC00',
+            backgroundColor: '#479B85',
+            shadow: "offsetX = 2, offsetY = 2, fill= true"
+
+          });
 
         this.cameras.main.startFollow(player);
         this.physics.add.collider(player, walls);
@@ -259,12 +266,19 @@ App.prototype.start = function () {
     }
 
     function drawScores(scene) {
-        scoreTextShade.setText('Keys: ' + player.doorKeys + '  * * *  Score: ' + totalQestionsAnswered);
+        scoreTextShade.setText('Keys: ' + player.doorKeys + '   *   Score: ' + totalQestionsAnswered);
         scoreTextShade.x = 51 + player.x - 400;
         scoreTextShade.y = 51 + player.y - 300;
-        scoreText.setText('Keys: ' + player.doorKeys + '  * * *  Score: ' + totalQestionsAnswered);
+        scoreText.setText('Keys: ' + player.doorKeys + '   *   Score: ' + totalQestionsAnswered);
         scoreText.x = 50 + player.x - 400;
         scoreText.y = 50 + player.y - 300;
+        // scoreTextShade = this.add.text(17, 17, 'keys: 0', {fontSize: '32px', fill: '#ff00ff'});
+        // for (var i = 0; i < 3; i++) {
+        //   scoreText.
+        //   scoreText.setText('Keys: ' + player.doorKeys + '  <->  Score: ' + totalQestionsAnswered);
+        //   scoreText.x = 50-i + player.x - 400;
+        //   scoreText.y = 50-i + player.y - 300;
+        // }
     }
 
     function hitTheDoor(player, door) {
@@ -828,23 +842,30 @@ App.prototype.start = function () {
     function submitFinalAnswer() {
         //starsCount is global
         var respQ2 = document.getElementById("finQ2").value;
-        console.log('finQ2: ',finQ2);
+        console.log('respQ2: ',respQ2);
         var respQ3 = document.getElementById("finQ3").value;
-        console.log('finQ3: ',finQ3);
+        console.log('respQ3: ',respQ3);
         gameState.comments = "1)Stars: " + starsCount + " 2)Likes: " + respQ2 + " 3)Suggest: " + respQ3;
         console.log('comments: ',gameState.comments);
         gameState.listofquestions = listofquestions;
-        gameState.timefinish = endTime;
-        gameState.elapsedTime = secondsElapsed;
 
-        if (isSurveySent === 0) {
+        var d = new Date(); // for now
+            d.getHours(); // => 9
+            d.getMinutes(); // =>  30
+            d.getSeconds(); // => 51
+
+        gameState.timefinish = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();// endTime;
+        gameState.elapsedTime = secondsElapsed; //userTimer.getTimeValues().toString();//secondsElapsed; //gameState.timefinish;
+        gameState.isFinished = 1;
+
+        if (!isSurveySent) {
             saveState('UPDATE', gameState);
             isSurveySent = true;
             alert ('The survey has been submitted! Thanks for your opinion!');
         } else {
             alert ('This survey has already been submitted! Going backwards!');
         }
-        goBack() ; //go back to the previous page
+        //goBack() ; //go back to the previous page
     }
 
 
@@ -885,7 +906,7 @@ userTimer.start();  // -------- UNPAUSE when required!!! TIMER
 
 userTimer.addEventListener('secondsUpdated', function (e) {
     $('#userTimer').html(userTimer.getTimeValues().toString());
-    endTime = new Date();
-    endTime = endTime.getHours() + ":" + endTime.getMinutes() + ":" + endTime.getSeconds()
-    secondsElapsed++;
+    //endTime = userTimer.getTimeValues().toString();
+    //endTime = endTime.getHours() + ":" + endTime.getMinutes() + ":" + endTime.getSeconds()
+    secondsElapsed = userTimer.getTimeValues().seconds.toString();
 });

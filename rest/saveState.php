@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 require_once('../lib/functions.php');
 require_once('../lib/classes.php');
@@ -22,7 +22,7 @@ if ( $opCode == 'INSERT') {
 	$userLName = $data['user']; //uLName,
 
 	$timeElapsed = $data['elapsedTime']; // uTimer,
-	$scoreTotal = $data['correctCount']; //uTotalScore,	
+	$scoreTotal = $data['correctCount']; //uTotalScore,
 	$reultsCount = getUserRetriesCountFromDB($userIUN);
 	//echo '<br>Previous results count: '.$reultsCount;
 
@@ -31,7 +31,7 @@ if ( $opCode == 'INSERT') {
 	$timeStarted = $data['timestart']; // date+time when started. text,
 	$timeFinish = $data['timefinish']; // date+time when finished. text,
 	$listOfQuestions = $data['listofquestions']; //listofquestions
-	$comments = $data['comments']; //Comments goes here
+	$comments = "Inserted: ".$data['comments']; //Comments goes here
 	$sessionId = $data['sessionId']; // Current Session ID
 
 		// Create connection
@@ -59,12 +59,12 @@ if ( $opCode == 'INSERT') {
 	// update data in the table
 	//echo "INSERT!";
 	$timeElapsed = $data['elapsedTime']; // uTimer,
-	$scoreTotal = $data['correctCount']; //uTotalScore,	
+	$scoreTotal = $data['correctCount']; //uTotalScore,
 	$timeFinish = $data['timefinish']; // date+time when finished. text,
 	$listOfQuestions = $data['listofquestions']; //listofquestions
 	$comments = $data['comments']; //Comments goes here
 	$sessionId = $data['sessionId']; // Current Session ID
-	
+
 	// Create connection
 	//$conn = mysqli_connect($servername, $username, $password, $dbname);
 	$conn = createConnection (DBHOST, DBUSER, DBPASS, DBNAME);
@@ -73,7 +73,7 @@ if ( $opCode == 'INSERT') {
 	    die("Connection failed: " . mysqli_connect_error());
 	}
 
-	$sql = "Update tabusers SET uTimer=$timeElapsed,".
+	$sql = "Update tabusers SET uTimer='$timeElapsed',".
 	                           " uTotalScore=$scoreTotal,".
 	                           " timefinish='$timeFinish',".
 	                           " listofquestions='$listOfQuestions',".
