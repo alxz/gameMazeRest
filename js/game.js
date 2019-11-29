@@ -46,9 +46,13 @@ App.prototype.start = function()
         var maxRoomCountX;
         var maxRoomCountY;
         var patientObj;
-        var totalQestionsUnswered = 0;
+        var totalQestionsAnswered = 0;
         var totalQestionsAsked = 0;
         var doorsHolder = [];
+        var explosion;
+        var music;
+        var soundStep;
+        var gameState;
                     /****** { right: {image: 'png/doorR.png', key: 'doorR', offsetX: 340, offsetY: 80 },
                             down: {image: 'png/doorD.png', key: 'doorD', offsetX: -20, offsetY: 160 },
                             up: {image: 'png/doorU.png', key: 'doorU', offsetX: -20, offsetY: -180 },
@@ -56,6 +60,9 @@ App.prototype.start = function()
 
         var doorsArray = [];//[[doorsHolder.right, doorsHolder.down],[doorsHolder.up,doorsHolder.right],[doorsHolder.left,doorsHolder.right]];
         const questionWindow = document.getElementById("questionWindow");
+        const video = document.getElementById("video");
+        const vplayer = document.getElementById("vplayer");
+        const finScr = document.getElementById("finScr");
 
         function preload ()
         {
@@ -65,6 +72,8 @@ App.prototype.start = function()
             this.load.audio('theme', [
                 'assets/ambient.mp3'
             ]);
+            this.load.audio('explosion', 'assets/explosion.mp3');
+            this.load.audio('soundStep', 'assets/SnowWalk.ogg');
             // loading rooms assets: 16 rooms types in total!
             this.load.image('u0d1l0r1', 'jpg/u0d1l0r1.jpg');
             this.load.image('u0d1l1r0', 'jpg/u0d1l1r0.jpg');
@@ -119,17 +128,32 @@ App.prototype.start = function()
 
         }
 
+        function buildGameState(userName, sessionId) {
+            return {
+                         correctCount: 0,
+                         user: userName,
+                         isFinished: 0,
+                         elapsedTime: 0,
+                         timestart: "",
+                         timefinish: "",
+                         listofquestions: "",
+                         comments: "",
+                         sessionId: sessionId
+                       }
+
+        }
+
         function create ()
         {
             // init other states
             megaMAP = game.cache.json.get('megaMAP');
+            gameState = buildGameState("JohnDoe",megaMAP.sessionId);
             initMap = megaMAP.initMAP;
             maxRoomCountX = initMap[0].length;
-            console.log('maxRoomCountX ' + maxRoomCountX);
             maxRoomCountY = initMap.length;
-            console.log('maxRoomCountY ' + maxRoomCountY);
-            //console.log('initMAP: ' + initMap);
-            // var music = this.sound.add('theme');
+            music = this.sound.add('theme');
+            explosion = this.sound.add('explosion');
+            soundStep = this.sound.add('soundStep');
             //  music.play();
             //  this.input.addDownCallback(function() {
             //    if (game.sound.context.state === 'suspended') {
@@ -197,15 +221,16 @@ App.prototype.start = function()
             }
             drawScores(_this);
             player.prevPos = {x: player.x, y: player.y};
-
             playerNavigationHandler();
+
+            //playSound(music);  // play background music
         }
 
         function drawScores(scene) {
-          scoreTextShade.setText('Keys: ' + player.doorKeys + '  * * *  Score: ' + totalQestionsUnswered);
+          scoreTextShade.setText('Keys: ' + player.doorKeys + '  * * *  Score: ' + totalQestionsAnswered);
           scoreTextShade.x = 51 + player.x - 400;
           scoreTextShade.y = 51 + player.y-300;
-          scoreText.setText('Keys: ' + player.doorKeys + '  * * *  Score: ' + totalQestionsUnswered);
+          scoreText.setText('Keys: ' + player.doorKeys + '  * * *  Score: ' + totalQestionsAnswered);
           scoreText.x = 50 + player.x - 400;
           scoreText.y = 50 + player.y - 300;
         }
@@ -213,6 +238,7 @@ App.prototype.start = function()
         function hitTheDoor(player, door) {
             if (player.doorKeys > 0 && !door.isOpen) {
               stopPlayer();
+              playSound(explosion);
               door.body.checkCollision.none = true;
               door.isOpen = true;
               player.doorKeys --;
@@ -282,18 +308,28 @@ App.prototype.start = function()
           // player.doorKeys ++;
           //console.log(player.doorKeys);
           totalQestionsAsked ++;
-          var ifSuccess = function () {
+          var ifSuccessCallback = function () {
             key.disableBody(true, true);
             isPause = false;
             player.doorKeys ++;
-            totalQestionsUnswered ++;
+            totalQestionsAnswered ++;
             //console.log(player.doorKeys);
+            //save the state to the table:
+            gameState.correctCount = totalQestionsAnswered;
+            saveState('INSERT',gameState);
           };
-          var ifFailure = function () {
+          
+          var onVideoCloseCallback = function () {
+            hideVideo();
             isPause = false;
             playerStepBack();
           }
-          showQuestion(key.question, ifSuccess, ifFailure);
+
+          var ifCancelCallback = function (question) {
+            showVideo(question.questionURL,onVideoCloseCallback);
+          }
+
+          showQuestion(key.question, ifSuccessCallback, ifCancelCallback);
         }
 
         function stopPlayer() {
@@ -510,27 +546,37 @@ App.prototype.start = function()
         //     gameOver = true;
         // }
 
+        function playSound(sound) {
+                    if(!sound.isPlaying) {
+                             sound.play();
+                      }
+        }
        function playerNavigationHandler () {
 
         if (cursors.left.isDown)
             {
                 player.setVelocityX(-260);
                 player.anims.play('left', true);
+                playSound(soundStep);
             }
             else if (cursors.up.isDown)
             {
                 player.setVelocityY(-200);
                 player.anims.play('up', true);
+                                playSound(soundStep);
             }
             else if (cursors.down.isDown)
             {
                 player.setVelocityY(200);
                 player.anims.play('down', true);
+                playSound(soundStep);
             }
             else if (cursors.right.isDown)
             {
                 player.setVelocityX(260);
                 player.anims.play('right', true);
+                playSound(soundStep);
+
             }
             else
             {
@@ -592,6 +638,7 @@ App.prototype.start = function()
             //alert(question.qId + ') ' + question.qTxt);
             buildQuestion(question,ifSuccessCallback, ifCancelCallback);
         }
+
 
         function hideQuestion() {
             document.getElementById("question").style.display = "none";
@@ -661,15 +708,14 @@ App.prototype.start = function()
                             submitMsgContainer.innerHTML = "";
                             //console.log('Corerct Answer given');
                             hideQuestion();
-                            ifSuccessCallback();
+                            ifSuccessCallback(question);
                         }, 1000);
                     } else {
                         answerContainer.style.color = 'red';
                         submitMsgContainer.innerHTML = "<h1><span style='color:red'>Sorry, wrong answer!</span></h1>";
                         setTimeout(function () {
                             hideQuestion();
-                            ifCancelCallback();
-                            pauseGame = false;
+                            ifCancelCallback(question);
                         }, 1000);
                     }
                 });
@@ -695,28 +741,44 @@ App.prototype.start = function()
 
 
 
-        function saveState() {
+        function saveState(opCode, gameState) {
           // to save the current state in the Database
+            $.ajax( "rest/saveState.php", {
+                      data: JSON.stringify({ opCode:opCode, data: gameState}),
+                      contentType: 'application/json',
+                      type : 'POST'
+                      } )
+               .done(function(data) {
+                console.log( "second success", data );
+              })
+              .fail(function(data) {
+                console.log( "error", data );
+              });
 
-          userTimer.stop();
-          isCompleted = 1;
-          timeElapsedVar = endTimer();
-          isFinishedMaze = 1;
-          scoreData = [// outer level array literal
-           { // second level object literals
-             correctCount: numCorrect,
-             user: userName,
-             isFinished: isFinishedMaze,
-             elapsedTime: timeElapsedVar,
-             timestart: startTime,
-             timefinish: endTime,
-             listofquestions: questionsListStr,
-             comments: commentsStr,
-             sessionId : sessionID
-           }
-         ];
+
         }
 
+        function hideVideo() {
+          const vidPlayer = document.getElementById("divVidPlayer");
+          vidPlayer.innerHTML = "";
+          video.style.display = "none";
+          //vplayer.pause();
+        }
+
+        function showVideo(qVideoURL, onVideoCloseCallback) {
+          video.style.display = "";
+          // vplayer.play();
+          const vidPlayer = document.getElementById("divVidPlayer");
+          vidPlayer.innerHTML = '<iframe src="' + qVideoURL
+                  + '" width="420" height="300" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>';
+
+          $("#closeVideo").unbind( "click" );
+          $("#closeVideo").bind("click", onVideoCloseCallback);
+        }
+
+        function showFinalScreen() {
+          finScr.style.display = "";
+        }
 
 };
 

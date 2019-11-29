@@ -3,6 +3,13 @@
         require_once('../lib/functions.php');
         require_once('../lib/classes.php');
 
+      session_start();
+      if (!isset($_SESSION['time'])) {
+          $_SESSION['time'] = date("H:i:s");
+      }
+      $_SESSION['id'] = uuid();
+      $sessionID = $_SESSION['id'];
+
     $connVar = createConnection (DBHOST, DBUSER, DBPASS, DBNAME);
     $listOfAllQ = getAllQuestions("tabquestions",$connVar);
     $jsonListAllQ = [];
@@ -41,7 +48,7 @@
     $mazeQuestionsArr = mazeQuestionsArr($mazeMapArr,$jsonListAllQ); // create questionMAP
     $mazeWithRoomsDoors = mazeRoomsDoors($mazeMapArr); // create DoorsMap
 
-    $megaMAP = array ( 'initMAP' => $mazeMapArr, 'questionMAP' => $mazeQuestionsArr, 'doorsMAP' => $mazeWithRoomsDoors, 'questionList' =>  $jsonListAllQuestions);
+    $megaMAP = array ( 'initMAP' => $mazeMapArr, 'questionMAP' => $mazeQuestionsArr, 'doorsMAP' => $mazeWithRoomsDoors, 'questionList' =>  $jsonListAllQuestions, 'sessionId' => $sessionID);
 
     // $arrMazeInit = json_encode($mazeMapArr);
     // $mazeQuestionsArr = json_encode($mazeQuestionsArr);
