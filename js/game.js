@@ -1,7 +1,7 @@
-var App = function() {};
+var App = function () {
+};
 
-App.prototype.start = function()
-{
+App.prototype.start = function () {
     var config = {
         type: Phaser.AUTO,
         width: 800,
@@ -20,783 +20,818 @@ App.prototype.start = function()
         canvas: document.querySelector('canvas')
     };
 
-        var megaMAP;
-        var initMap;
-        var roomsMAP = [];
-        var userInfo;
-        var userIUN;
-        var player;
-        var room;
-        var stars;
-        var bombs;
-        var platforms;
-        var cursors;
-        var score = 0;
-        var gameOver = false;
-        var scoreText;
-        var scoreTextShade;
-        var isPause = false;
-        var keyIndex = 0;
-        var startTime;
-        var endTime;
-        var game = new Phaser.Game(config);
-        var _this;
-        var position = {x: 0, y: 0};
-        var initMapPos = {initX: 0, initY: 0};
-        var maxRoomCountX;
-        var maxRoomCountY;
-        var patientObj;
-        var totalQestionsAnswered = 0;
-        var totalQestionsAsked = 0;
-        var doorsHolder = [];
-        var explosion;
-        var music;
-        var soundStep;
-        var gameState;
-                    /****** { right: {image: 'png/doorR.png', key: 'doorR', offsetX: 340, offsetY: 80 },
+    var megaMAP;
+    var initMap;
+    var roomsMAP = [];
+    var userInfo;
+    var userIUN;
+    var player;
+    var room;
+    var stars;
+    var bombs;
+    var platforms;
+    var cursors;
+    var score = 0;
+    var gameOver = false;
+    var scoreText;
+    var scoreTextShade;
+    var isPause = false;
+    var keyIndex = 0;
+    var startTime;
+    var endTime;
+    var game = new Phaser.Game(config);
+    var _this;
+    var position = {x: 0, y: 0};
+    var initMapPos = {initX: 0, initY: 0};
+    var maxRoomCountX;
+    var maxRoomCountY;
+    var hospitalBed;
+    var totalQestionsAnswered = 0;
+    var totalQestionsAsked = 0;
+    var doorsHolder = [];
+    var explosion;
+    var music;
+    var soundStep;
+    var gameState;
+    var isSurveySent = false;
+    /****** { right: {image: 'png/doorR.png', key: 'doorR', offsetX: 340, offsetY: 80 },
                             down: {image: 'png/doorD.png', key: 'doorD', offsetX: -20, offsetY: 160 },
                             up: {image: 'png/doorU.png', key: 'doorU', offsetX: -20, offsetY: -180 },
                             left: {image: 'png/doorL.png', key: 'doorL', offsetX: -340, offsetY: 80 }} */
 
-        var doorsArray = [];//[[doorsHolder.right, doorsHolder.down],[doorsHolder.up,doorsHolder.right],[doorsHolder.left,doorsHolder.right]];
-        const questionWindow = document.getElementById("questionWindow");
-        const video = document.getElementById("video");
-        const vplayer = document.getElementById("vplayer");
-        const finScr = document.getElementById("finScr");
+    var doorsArray = [];//[[doorsHolder.right, doorsHolder.down],[doorsHolder.up,doorsHolder.right],[doorsHolder.left,doorsHolder.right]];
+    const questionWindow = document.getElementById("questionWindow");
+    const video = document.getElementById("video");
+    const vplayer = document.getElementById("vplayer");
+    const finScr = document.getElementById("finScr");
+    const finQ2 = document.getElementById("finQ2");
+    const finQ3 = document.getElementById("finQ3");
 
-        function preload ()
-        {
-            this.load.json('megaMAP', 'rest/getMap.php');
 
-            //this.load.image('sky', 'assets/sky.png');
-            this.load.audio('theme', [
-                'assets/ambient.mp3'
-            ]);
-            this.load.audio('explosion', 'assets/explosion.mp3');
-            this.load.audio('soundStep', 'assets/SnowWalk.ogg');
-            // loading rooms assets: 16 rooms types in total!
-            this.load.image('u0d1l0r1', 'jpg/u0d1l0r1.jpg');
-            this.load.image('u0d1l1r0', 'jpg/u0d1l1r0.jpg');
-            this.load.image('u1d0l0r1', 'jpg/u1d0l0r1.jpg');
-            this.load.image('u1d0l1r1', 'jpg/u1d0l1r1.jpg');
-            this.load.image('u0d0l1r1', 'jpg/u0d0l1r1.jpg');
-            this.load.image('u1d0l1r0', 'jpg/u1d0l1r0.jpg');
-            this.load.image('u0d0l0r0', 'jpg/u0d0l0r0.jpg');
-            this.load.image('u0d0l0r1', 'jpg/u0d0l0r1.jpg');
-            this.load.image('u0d0l1r0', 'jpg/u0d0l1r0.jpg');
-            this.load.image('u0d1l0r0', 'jpg/u0d1l0r0.jpg');
-            this.load.image('u0d1l1r1', 'jpg/u0d1l1r1.jpg');
-            this.load.image('u1d0l0r0', 'jpg/u1d0l0r0.jpg');
-            this.load.image('u1d1l0r0', 'jpg/u1d1l0r0.jpg');
-            this.load.image('u1d1l0r1', 'jpg/u1d1l0r1.jpg');
-            this.load.image('u1d1l1r0', 'jpg/u1d1l1r0.jpg');
-            this.load.image('u1d1l1r1', 'jpg/u1d1l1r1.jpg');
+    function preload() {
+        this.load.json('megaMAP', 'rest/getMap.php');
 
-            //baseRoomBack = RoomBG_red.png 1000 px X 650px
-            // scale 0.8 we have: 800 x 520
-            this.load.image('baseRoomBack', 'png/RoomBG_red_withBG.png');
-            // rooms assets section completed!
-            this.load.image('hospitalBed', 'png/hospitalBed.png');
-            //doors:
-            // this.load.image('doorU', 'png/doorU.png');
-            // this.load.image('doorD', 'png/doorD.png');
-            // this.load.image('doorL', 'png/doorL.png');
-            // this.load.image('doorR', 'png/doorR.png');
+        //this.load.image('sky', 'assets/sky.png');
+        this.load.audio('theme', [
+            'assets/ambient.mp3'
+        ]);
+        this.load.audio('explosion', 'assets/explosion.mp3');
+        this.load.audio('soundStep', 'assets/SnowWalk.ogg');
+        // loading rooms assets: 16 rooms types in total!
+        this.load.image('u0d1l0r1', 'jpg/u0d1l0r1.jpg');
+        this.load.image('u0d1l1r0', 'jpg/u0d1l1r0.jpg');
+        this.load.image('u1d0l0r1', 'jpg/u1d0l0r1.jpg');
+        this.load.image('u1d0l1r1', 'jpg/u1d0l1r1.jpg');
+        this.load.image('u0d0l1r1', 'jpg/u0d0l1r1.jpg');
+        this.load.image('u1d0l1r0', 'jpg/u1d0l1r0.jpg');
+        this.load.image('u0d0l0r0', 'jpg/u0d0l0r0.jpg');
+        this.load.image('u0d0l0r1', 'jpg/u0d0l0r1.jpg');
+        this.load.image('u0d0l1r0', 'jpg/u0d0l1r0.jpg');
+        this.load.image('u0d1l0r0', 'jpg/u0d1l0r0.jpg');
+        this.load.image('u0d1l1r1', 'jpg/u0d1l1r1.jpg');
+        this.load.image('u1d0l0r0', 'jpg/u1d0l0r0.jpg');
+        this.load.image('u1d1l0r0', 'jpg/u1d1l0r0.jpg');
+        this.load.image('u1d1l0r1', 'jpg/u1d1l0r1.jpg');
+        this.load.image('u1d1l1r0', 'jpg/u1d1l1r0.jpg');
+        this.load.image('u1d1l1r1', 'jpg/u1d1l1r1.jpg');
 
-            this.load.spritesheet('doorU', 'png/doorUsprite.png',{frameWidth: 180, frameHeight: 180});
-            this.load.spritesheet('doorD', 'png/doorDsprite.png',{frameWidth: 180, frameHeight: 180});
-            this.load.spritesheet('doorL', 'png/doorLsprite.png',{frameWidth: 180, frameHeight: 180});
-            this.load.spritesheet('doorR', 'png/doorRsprite.png',{frameWidth: 180, frameHeight: 180});
-            //==============================================
-            //blocks:
-            this.load.image('blockRed', 'png/block20x20red.png');
-            //==================
-            _this = this;
-            this.load.image('gold-key', 'png/goldenKey.png'); //gold-key
-            //this.load.spritesheet('gold-key', 'png/gold-key.png', { frameWidth: 40, frameHeight: 40 });
-            this.load.image('messageBoard', 'png/messageBoard600x400.png');
+        //baseRoomBack = RoomBG_red.png 1000 px X 650px
+        // scale 0.8 we have: 800 x 520
+        this.load.image('baseRoomBack', 'png/RoomBG_red_withBG.png');
+        // rooms assets section completed!
+        this.load.image('hospitalBed', 'png/hospitalBed.png');
+        //doors:
+        // this.load.image('doorU', 'png/doorU.png');
+        // this.load.image('doorD', 'png/doorD.png');
+        // this.load.image('doorL', 'png/doorL.png');
+        // this.load.image('doorR', 'png/doorR.png');
 
-            // Object.values(doorsHolder).forEach( function(door) {
-            //         _this.load.image(door.key, door.image);
-            //         console.log(door);
-            // });
+        this.load.spritesheet('doorU', 'png/doorUsprite.png', {frameWidth: 180, frameHeight: 180});
+        this.load.spritesheet('doorD', 'png/doorDsprite.png', {frameWidth: 180, frameHeight: 180});
+        this.load.spritesheet('doorL', 'png/doorLsprite.png', {frameWidth: 180, frameHeight: 180});
+        this.load.spritesheet('doorR', 'png/doorRsprite.png', {frameWidth: 180, frameHeight: 180});
+        //==============================================
+        //blocks:
+        this.load.image('blockRed', 'png/block20x20red.png');
+        //==================
+        _this = this;
+        this.load.image('gold-key', 'png/goldenKey.png'); //gold-key
+        //this.load.spritesheet('gold-key', 'png/gold-key.png', { frameWidth: 40, frameHeight: 40 });
+        this.load.image('messageBoard', 'png/messageBoard600x400.png');
 
-            this.load.image('star', 'assets/star.png');
-            this.load.image('bomb', 'assets/bomb.png');
-            //this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
-            this.load.spritesheet('dude', 'png/docMUHCR4U1L4.png', { frameWidth: 50, frameHeight: 75 });
+        // Object.values(doorsHolder).forEach( function(door) {
+        //         _this.load.image(door.key, door.image);
+        //         console.log(door);
+        // });
 
+        this.load.image('star', 'assets/star.png');
+        this.load.image('bomb', 'assets/bomb.png');
+        //this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
+        this.load.spritesheet('dude', 'png/docMUHCR4U1L4.png', {frameWidth: 50, frameHeight: 75});
+
+    }
+
+    function buildGameState(userName, sessionId) {
+        return {
+            correctCount: 0,
+            user: userName,
+            isFinished: 0,
+            elapsedTime: 0,
+            timestart: "",
+            timefinish: "",
+            listofquestions: "",
+            comments: "",
+            sessionId: sessionId
         }
 
-        function buildGameState(userName, sessionId) {
-            return {
-                         correctCount: 0,
-                         user: userName,
-                         isFinished: 0,
-                         elapsedTime: 0,
-                         timestart: "",
-                         timefinish: "",
-                         listofquestions: "",
-                         comments: "",
-                         sessionId: sessionId
-                       }
+    }
 
+    function breackingBad() {
+        isPause = true;
+        gameState.isFinished = 1;
+        saveState('UPDATE', gameState);
+        //show finScr
+        showFinalScreen();
+
+    }
+
+    function create() {
+        // init other states
+        megaMAP = game.cache.json.get('megaMAP');
+        gameState = buildGameState("JohnDoe", megaMAP.sessionId);
+        initMap = megaMAP.initMAP;
+        maxRoomCountX = initMap[0].length;
+        maxRoomCountY = initMap.length;
+        music = this.sound.add('theme');
+        explosion = this.sound.add('explosion');
+        soundStep = this.sound.add('soundStep');
+        //  music.play();
+        //  this.input.addDownCallback(function() {
+        //    if (game.sound.context.state === 'suspended') {
+        //      game.sound.context.resume();
+        //    }
+        //  });
+
+        // console.log("megaMAP: "+megaMAP);
+        // console.log("roomsMAP: "+roomsMAP);
+        showMazeGfx(megaMAP.doorsMAP, "mazeWDrsRmsMap");
+
+        cursors = this.input.keyboard.createCursorKeys();
+
+        // walls = this.physics.add.staticGroup();
+        // walls.create(160, 450, 'wall400x230').setScale(0.8).refreshBody();
+        // walls.create(640, 450, 'wall400x230').setScale(0.8).refreshBody();
+        // walls.create(160, 120, 'wall400x300').setScale(0.8).refreshBody();
+        // walls.create(640, 120, 'wall400x300').setScale(0.8).refreshBody();
+
+        buildWorld(this);
+        scoreTextShade = this.add.text(17, 17, 'keys: 0', {fontSize: '32px', fill: '#ff00ff'});
+        scoreText = this.add.text(16, 16, 'keys: 0', {fontSize: '32px', fill: '#000'});
+        // walls.create(400, 270, 'hollowRoom').setScale(0.8).refreshBody();
+        this.cameras.main.startFollow(player);
+        this.physics.add.collider(player, walls);
+        this.physics.add.collider(player, doors, null, hitTheDoor, this);
+        this.physics.add.collider(player, hospitalBed, null, breackingBad, this);
+        this.physics.add.overlap(player, doorkeys, collectKey, null, this);
+
+        //  Some stars to collect, 12 in total, evenly spaced 70 pixels apart along the x axis
+        // stars = this.physics.add.group({
+        //     key: 'star',
+        //     repeat: 11,
+        //     setXY: { x: 12, y: 0, stepX: 70 }
+        // });
+
+        // stars.children.iterate(function (child) {
+
+        //     //  Give each star a slightly different bounce
+        //     child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
+
+        // });
+
+        // bombs = this.physics.add.group();
+
+        //  The score
+
+        //  Collide the player and the stars with the platforms
+        // this.physics.add.collider(player, platforms);
+        // this.physics.add.collider(stars, platforms);
+        // this.physics.add.collider(bombs, platforms);
+
+        //  Checks to see if the player overlaps with any of the stars, if he does call the collectStar function
+        // this.physics.add.overlap(player, stars, collectStar, null, this);
+
+        // this.physics.add.collider(player, bombs, hitBomb, null, this);
+
+    }
+
+    function update() {
+        if (gameOver || isPause) {
+            return;
         }
+        drawScores(_this);
+        player.prevPos = {x: player.x, y: player.y};
+        playerNavigationHandler();
 
-        function create ()
-        {
-            // init other states
-            megaMAP = game.cache.json.get('megaMAP');
-            gameState = buildGameState("JohnDoe",megaMAP.sessionId);
-            initMap = megaMAP.initMAP;
-            maxRoomCountX = initMap[0].length;
-            maxRoomCountY = initMap.length;
-            music = this.sound.add('theme');
-            explosion = this.sound.add('explosion');
-            soundStep = this.sound.add('soundStep');
-            //  music.play();
-            //  this.input.addDownCallback(function() {
-            //    if (game.sound.context.state === 'suspended') {
-            //      game.sound.context.resume();
-            //    }
-            //  });
+        //playSound(music);  // play background music
+    }
 
-            // console.log("megaMAP: "+megaMAP);
-            // console.log("roomsMAP: "+roomsMAP);
-            showMazeGfx(megaMAP.doorsMAP, "mazeWDrsRmsMap");
+    function drawScores(scene) {
+        scoreTextShade.setText('Keys: ' + player.doorKeys + '  * * *  Score: ' + totalQestionsAnswered);
+        scoreTextShade.x = 51 + player.x - 400;
+        scoreTextShade.y = 51 + player.y - 300;
+        scoreText.setText('Keys: ' + player.doorKeys + '  * * *  Score: ' + totalQestionsAnswered);
+        scoreText.x = 50 + player.x - 400;
+        scoreText.y = 50 + player.y - 300;
+    }
 
-            cursors = this.input.keyboard.createCursorKeys();
-
-            // walls = this.physics.add.staticGroup();
-            // walls.create(160, 450, 'wall400x230').setScale(0.8).refreshBody();
-            // walls.create(640, 450, 'wall400x230').setScale(0.8).refreshBody();
-            // walls.create(160, 120, 'wall400x300').setScale(0.8).refreshBody();
-            // walls.create(640, 120, 'wall400x300').setScale(0.8).refreshBody();
-
-            buildWorld(this);
-            scoreTextShade = this.add.text(17, 17, 'keys: 0', { fontSize: '32px', fill: '#ff00ff'});
-            scoreText = this.add.text(16, 16, 'keys: 0', { fontSize: '32px', fill: '#000' });
-            // walls.create(400, 270, 'hollowRoom').setScale(0.8).refreshBody();
-            this.cameras.main.startFollow(player);
-            this.physics.add.collider(player, walls);
-            this.physics.add.collider(player, doors, null, hitTheDoor, this);
-
-            this.physics.add.overlap(player, doorkeys, collectKey, null, this);
-
-            //  Some stars to collect, 12 in total, evenly spaced 70 pixels apart along the x axis
-            // stars = this.physics.add.group({
-            //     key: 'star',
-            //     repeat: 11,
-            //     setXY: { x: 12, y: 0, stepX: 70 }
-            // });
-
-            // stars.children.iterate(function (child) {
-
-            //     //  Give each star a slightly different bounce
-            //     child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
-
-            // });
-
-            // bombs = this.physics.add.group();
-
-            //  The score
-
-            //  Collide the player and the stars with the platforms
-            // this.physics.add.collider(player, platforms);
-            // this.physics.add.collider(stars, platforms);
-            // this.physics.add.collider(bombs, platforms);
-
-            //  Checks to see if the player overlaps with any of the stars, if he does call the collectStar function
-            // this.physics.add.overlap(player, stars, collectStar, null, this);
-
-            // this.physics.add.collider(player, bombs, hitBomb, null, this);
-
-        }
-
-        function update ()
-        {
-            if (gameOver || isPause)
-            {
-                return;
-            }
-            drawScores(_this);
-            player.prevPos = {x: player.x, y: player.y};
-            playerNavigationHandler();
-
-            //playSound(music);  // play background music
-        }
-
-        function drawScores(scene) {
-          scoreTextShade.setText('Keys: ' + player.doorKeys + '  * * *  Score: ' + totalQestionsAnswered);
-          scoreTextShade.x = 51 + player.x - 400;
-          scoreTextShade.y = 51 + player.y-300;
-          scoreText.setText('Keys: ' + player.doorKeys + '  * * *  Score: ' + totalQestionsAnswered);
-          scoreText.x = 50 + player.x - 400;
-          scoreText.y = 50 + player.y - 300;
-        }
-
-        function hitTheDoor(player, door) {
-            if (player.doorKeys > 0 && !door.isOpen) {
-              stopPlayer();
-              playSound(explosion);
-              door.body.checkCollision.none = true;
-              door.isOpen = true;
-              player.doorKeys --;
-              console.log("The door has been opened!", door);
-              //console.log(door.settings);
-              var nextDoor;
-              var thisRoomX = door.roomCoord.roomX;
-              var thisRoomY = door.roomCoord.roomY;
-              switch (door.roomCoord.doorType) {
+    function hitTheDoor(player, door) {
+        if (player.doorKeys > 0 && !door.isOpen) {
+            stopPlayer();
+            playSound(explosion);
+            door.body.checkCollision.none = true;
+            door.isOpen = true;
+            player.doorKeys--;
+            console.log("The door has been opened!", door);
+            //console.log(door.settings);
+            var nextDoor;
+            var thisRoomX = door.roomCoord.roomX;
+            var thisRoomY = door.roomCoord.roomY;
+            switch (door.roomCoord.doorType) {
                 case 'U':
-                    nextDoor = roomsMAP[thisRoomX][thisRoomY-1].downDoor;
+                    nextDoor = roomsMAP[thisRoomX][thisRoomY - 1].downDoor;
                     nextDoor.body.checkCollision.none = true;
                     nextDoor.isOpen = true;
-                    nextDoor.setTexture('doorD',1);
-                    door.setTexture('doorU',1);
+                    nextDoor.setTexture('doorD', 1);
+                    door.setTexture('doorU', 1);
                     //console.log('Door location is: Up, door: ' + nextDoor.isOpen);
                     break;
                 case 'D':
-                    nextDoor = roomsMAP[thisRoomX][thisRoomY+1].upperDoor;
+                    nextDoor = roomsMAP[thisRoomX][thisRoomY + 1].upperDoor;
                     nextDoor.body.checkCollision.none = true;
                     nextDoor.isOpen = true;
-                    nextDoor.setTexture('doorU',1);
-                    door.setTexture('doorD',1);
+                    nextDoor.setTexture('doorU', 1);
+                    door.setTexture('doorD', 1);
                     //console.log('Door location is: Down, door: ' + nextDoor.isOpen);
                     break;
                 case 'L':
-                    nextDoor = roomsMAP[thisRoomX-1][thisRoomY].rightDoor;
+                    nextDoor = roomsMAP[thisRoomX - 1][thisRoomY].rightDoor;
                     nextDoor.body.checkCollision.none = true;
                     nextDoor.isOpen = true;
-                    nextDoor.setTexture('doorR',1);
-                    door.setTexture('doorL',1);
+                    nextDoor.setTexture('doorR', 1);
+                    door.setTexture('doorL', 1);
                     //console.log('Door location is: Left, door: ' + nextDoor.isOpen);
                     break;
                 case 'R':
-                    nextDoor = roomsMAP[thisRoomX+1][thisRoomY].leftDoor;
+                    nextDoor = roomsMAP[thisRoomX + 1][thisRoomY].leftDoor;
                     nextDoor.body.checkCollision.none = true;
                     nextDoor.isOpen = true;
-                    nextDoor.setTexture('doorL',1);
-                    door.setTexture('doorR',1);
+                    nextDoor.setTexture('doorL', 1);
+                    door.setTexture('doorR', 1);
                     //console.log('Door location is: Right, door: ' + nextDoor.isOpen);
                     break;
                 default:
 
-              }
-
-              return true;
             }
+
             return true;
         }
+        return true;
+    }
 
-        function playerStepBack() {
-          player.x = player.prevPos.x;
-          player.y = player.prevPos.y;
-        }
+    function playerStepBack() {
+        player.x = player.prevPos.x;
+        player.y = player.prevPos.y;
+    }
 
-        function collectKey(player, key) {
-          if (isPause) return;
+    function collectKey(player, key) {
+        if (isPause) return;
 
-          stopPlayer();
+        stopPlayer();
 
-          //if (isPause) return;
-          isPause = true;
-          //console.log(megaMAP);
-          //alert('player.doorKeys' + player.doorKeys);
-          // key.disableBody(true, true);
-          //isPause = false;
-          // player.doorKeys ++;
-          //console.log(player.doorKeys);
-          totalQestionsAsked ++;
-          var ifSuccessCallback = function () {
+        //if (isPause) return;
+        isPause = true;
+        //console.log(megaMAP);
+        //alert('player.doorKeys' + player.doorKeys);
+        // key.disableBody(true, true);
+        //isPause = false;
+        // player.doorKeys ++;
+        //console.log(player.doorKeys);
+        totalQestionsAsked++;
+        var ifSuccessCallback = function () {
             key.disableBody(true, true);
             isPause = false;
-            player.doorKeys ++;
-            totalQestionsAnswered ++;
+            player.doorKeys++;
+            totalQestionsAnswered++;
             //console.log(player.doorKeys);
             //save the state to the table:
             gameState.correctCount = totalQestionsAnswered;
-            saveState('INSERT',gameState);
-          };
-          
-          var onVideoCloseCallback = function () {
+            saveState('INSERT', gameState);
+        };
+
+        var onVideoCloseCallback = function () {
             hideVideo();
             isPause = false;
             playerStepBack();
-          }
-
-          var ifCancelCallback = function (question) {
-            showVideo(question.questionURL,onVideoCloseCallback);
-          }
-
-          showQuestion(key.question, ifSuccessCallback, ifCancelCallback);
         }
 
-        function stopPlayer() {
-             player.setVelocityX(0);
-             player.setVelocityY(0);
-             player.anims.play('turn');
-           }
+        var ifCancelCallback = function (question) {
+            showVideo(question.questionURL, onVideoCloseCallback);
+        }
 
-        function buildWorld(scene) {
-          //We get our source from the following rest:
-          // megaMAP = game.cache.json.get('megaMAP');
-          // showMazeGfx(megaMAP.doorsMAP, "mazeWDrsRmsMap");
-          // roomsMAP = game.cache.json.get('doorsMAP');
-          doors = scene.physics.add.group({
+        showQuestion(key.question, ifSuccessCallback, ifCancelCallback);
+    }
+
+    function stopPlayer() {
+        player.setVelocityX(0);
+        player.setVelocityY(0);
+        player.anims.play('turn');
+    }
+
+    function buildWorld(scene) {
+        //We get our source from the following rest:
+        // megaMAP = game.cache.json.get('megaMAP');
+        // showMazeGfx(megaMAP.doorsMAP, "mazeWDrsRmsMap");
+        // roomsMAP = game.cache.json.get('doorsMAP');
+        doors = scene.physics.add.group({
             immovable: true
-          });
-          walls = scene.physics.add.staticGroup();
-          doorkeys = scene.physics.add.group();
-          var arrAllDoorsRooms = [];
-          var arrOneLevelRooms = [];
-          var idx = 0;
-          megaMAP.doorsMAP.forEach( (mapDoors,y) => { mapDoors.forEach( function(mapDoor,x) {
-               // TODO:
-                   var indX = 800 * x;
-                   var indY = 520 * y;
+        });
+        walls = scene.physics.add.staticGroup();
+        doorkeys = scene.physics.add.group();
+        hospitalBed = scene.physics.add.group({
+            immovable: true
+        });
+        // var arrAllDoorsRooms = [];
+        // var arrOneLevelRooms = [];
+        // var idx = 0;
+        megaMAP.doorsMAP.forEach((mapDoors, y) => {
+                mapDoors.forEach(function (mapDoor, x) {
+                    // TODO:
+                    var indX = 800 * x;
+                    var indY = 520 * y;
                     //console.log('generateArrayMap mapDoor: ', mapDoor);
                     //var roomName = JSON.stringify(mapDoor);
-                    var roomName = 'u'+mapDoor.U+'d'+mapDoor.D+'l'+mapDoor.L+'r'+mapDoor.R;
+                    var roomName = 'u' + mapDoor.U + 'd' + mapDoor.D + 'l' + mapDoor.L + 'r' + mapDoor.R;
                     // scene.add.image(400 +indX, 270 + indY, roomName).setScale(0.8);
 
                     // Since I'm using only one backgroun now: baseRoomBack = RoomBG_red.png
-                    scene.add.image(400 +indX, 270 + indY, 'baseRoomBack').setScale(0.8);
+                    scene.add.image(400 + indX, 270 + indY, 'baseRoomBack').setScale(0.8);
 
                     for (var i = 0; i < 9; i++) {
-                      // Upper right bar
-                      walls.create(indX + 500 + (i * 20), indY +100 + ((i* 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
-                      // lower left bar
-                      walls.create(indX + 140 + (i * 20), indY +370 + ((i* 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
-                      // upper left bar
-                      walls.create(indX + 300 - (i * 20), indY +120 + ((i* 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
-                      // lower right bar
-                      walls.create(indX + 480 + (i * 20), indY +500 - ((i* 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
+                        // Upper right bar
+                        walls.create(indX + 500 + (i * 20), indY + 100 + ((i * 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
+                        // lower left bar
+                        walls.create(indX + 140 + (i * 20), indY + 370 + ((i * 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
+                        // upper left bar
+                        walls.create(indX + 300 - (i * 20), indY + 120 + ((i * 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
+                        // lower right bar
+                        walls.create(indX + 480 + (i * 20), indY + 500 - ((i * 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
                     }
 
-                 })
-              //arrAllDoorsRooms.push(arrOneLevelRooms);
+                })
+                //arrAllDoorsRooms.push(arrOneLevelRooms);
                 //console.log('Hello world!');
-              }
-             );
-
-              function randomPlsOrMin(min, max) {
-                 return random(min, max) * (Math.random() < 0.5 ? -1 : 1);
-               }
-
-             function random(min, max) {
-               return Math.floor(Math.random() * max) + min;
-             }
-             var doorsIndex=0; //we already have doorsMAP[][]
-             //roomsMAP = {'U': null, 'U': null,'U': null,'U': null, };
-             roomsMAP = megaMAP.doorsMAP;
-
-             megaMAP.doorsMAP.forEach( (mapDoors,y) => { mapDoors.forEach( function(mapDoor,x) {
-                     var indX = 800 * (x);
-                     var indY = 520 * (y);
-                     var keysCount = -1;
-
-                     if (mapDoor.U === 1) {
-                       keysCount ++;
-                       doorsArray[doorsIndex] = doors.create(indX + 400 , indY + 80, 'doorU').setScale(.8);
-                       doorsArray[doorsIndex].roomCoord = {roomX: x, roomY: y, doorType: 'U'};
-                       roomsMAP[x][y].upperDoor = doorsArray[doorsIndex];
-                       doorsIndex++;
-                       for (var i = 0; i < 3; i++) {
-                         walls.create((indX + 320), indY + (20 + i *40) , 'blockRed').setScale(0.8).refreshBody();
-                         walls.create((indX + 480), indY + (20 + i * 40) , 'blockRed').setScale(0.8).refreshBody();
-                       }
-                     } else  if (mapDoor.U === 0) {
-                       roomsMAP[x][y].upperDoor = doors.create(-100 , -100, 'star');
-                       roomsMAP[x][y].upperDoor.visible = false; // not really a door, just replacement
-                       for (var i = 0; i < 9; i++) {
-                         walls.create(indX + 320 + (i * 20), indY +100, 'blockRed').setScale(0.8).refreshBody();
-                       }
-                     }
-                     if (mapDoor.D === 1) {
-                       keysCount ++;
-                       doorsArray[doorsIndex] = doors.create(indX +400, indY + 500, 'doorD').setScale(0.8);
-                       doorsArray[doorsIndex].roomCoord = {roomX: x, roomY: y, doorType: 'D'};
-                       roomsMAP[x][y].downDoor = doorsArray[doorsIndex];
-                       doorsIndex++;
-                       for (var i = 0; i < 2; i++) {
-                         walls.create((indX + 320), indY + (500 + i *20) , 'blockRed').setScale(0.8).refreshBody();
-                         walls.create((indX + 480), indY + (500 + i * 20) , 'blockRed').setScale(0.8).refreshBody();
-                       }
-                     } else  if (mapDoor.D === 0) {
-                       roomsMAP[x][y].downDoor = doors.create(-100 , -100, 'star');
-                       roomsMAP[x][y].downDoor.visible = false; // not really a door, just replacement
-                       for (var i = 0; i < 9; i++) {
-                         walls.create(indX + 320 + (i * 20), indY +500, 'blockRed').setScale(0.8).refreshBody();
-                       }
-                     }
-                     if (mapDoor.L === 1) {
-                       keysCount++;
-                       doorsArray[doorsIndex] = doors.create(indX + 80, indY + 260, 'doorL').setScale(0.8);
-                       doorsArray[doorsIndex].roomCoord = {roomX: x, roomY: y, doorType: 'L'};
-                       roomsMAP[x][y].leftDoor = doorsArray[doorsIndex];
-                       doorsIndex++;
-                       for (var i = 0; i < 4; i++) {
-                         walls.create(indX - 0 + (i * 40), indY + (210 - i *20) , 'blockRed').setScale(0.8).refreshBody();
-                         walls.create(indX - 0 + (i * 40), indY + (340 + i * 20) , 'blockRed').setScale(0.8).refreshBody();
-                       }
-
-                     } else  if (mapDoor.L === 0) {
-                       roomsMAP[x][y].leftDoor = doors.create(-100 , -100, 'star');
-                       roomsMAP[x][y].leftDoor.visible = false; // not really a door, just replacement
-                       for (var i = 0; i < 3; i++) {
-                         walls.create(indX + 40, indY +270 + (i* 40), 'blockRed').setScale(0.8).refreshBody();
-                         walls.create(indX + 20 + (i * 40), indY +240 , 'blockRed').setScale(0.8).refreshBody();
-                         walls.create(indX + 20 + (i * 40), indY +380 , 'blockRed').setScale(0.8).refreshBody();
-                       }
-                     }
-                     if (mapDoor.R === 1) {
-                       keysCount++;
-                       doorsArray[doorsIndex] = doors.create(indX + 720, indY + 260, 'doorR').setScale(0.8);
-                       doorsArray[doorsIndex].roomCoord = {roomX: x, roomY: y, doorType: 'R'};
-                       roomsMAP[x][y].rightDoor = doorsArray[doorsIndex];
-                       doorsIndex++;
-                       for (var i = 0; i < 3; i++) {
-                         walls.create(indX + 710 + (i * 40), indY + (170 + i *20) , 'blockRed').setScale(0.8).refreshBody();
-                         walls.create(indX + 700 + (i * 40), indY + (380 - i * 20) , 'blockRed').setScale(0.8).refreshBody();
-                       }
-
-                     } else  if (mapDoor.R === 0) {
-                       roomsMAP[x][y].rightDoor = doors.create(-100 , -100, 'star');
-                       roomsMAP[x][y].rightDoor.visible = false; // not really a door, just replacement
-                       for (var i = 0; i < 3; i++) {
-                         walls.create(indX + 740, indY + 270 + (i * 40), 'blockRed').setScale(0.8).refreshBody();
-                         walls.create(indX + 700 + (i * 40), indY +240 , 'blockRed').setScale(0.8).refreshBody();
-                         walls.create(indX + 700 + (i * 40), indY +380 , 'blockRed').setScale(0.8).refreshBody();
-                       }
-                     }
-                     //doorkeys
-                     var arrKeys = [];
-                     var getKeyCordinateWithProximity = function(keys,minProximity) {
-                       //console.log('keys',keys);
-                       var c1 = {x: 400 + indX + randomPlsOrMin(50, 100), y: 260 + indY + randomPlsOrMin(50, 30)};
-                       var check = 0;
-                       for (var i = 0 ; i < keys.length; i++){
-                         var c0 = keys[i];
-                         var isProximityXGood = Math.abs(c0.x - c1.x) > minProximity;
-                         var isProximityYGood = Math.abs(c0.y - c1.y) > minProximity;
-
-                         if ( !isProximityXGood && !isProximityYGood  ) {
-                            return getKeyCordinateWithProximity(keys,minProximity);
-                         }
-                       };
-                       return c1;
-                     }
-                     if (x == 0 && y == 0) {
-                       keysCount = keysCount + 1;
-                     }
-                     for (var i = 0; i < keysCount; i++) {
-                       if (x==maxRoomCountX-1 && y==maxRoomCountY-1) {
-                         //this is our final room - no keys required...
-                         //TODO: place a final room sprite here!!!
-                         //draw the patient: hospitalBed
-                         patientObj = scene.add.image(400+ 800 * (x), 270+ 520*(y), 'hospitalBed').setScale(0.8);
-                       } else {
-                         var coord = getKeyCordinateWithProximity(arrKeys,70);
-                         //doorkeys.create(coord.x, coord.y, 'star').setScale(0.8); //doors keys
-                         var myKey = doorkeys.create(coord.x, coord.y, 'gold-key').setScale(0.5); //doors keys
-                         myKey.question = megaMAP.questionList[keyIndex];
-                         //console.log("question from key", myKey.question);
-                         keyIndex++;
-                         arrKeys[arrKeys.length] = coord;
-                       }
-                     }
-               })
-             }
-             );
-             // for (var i = 0; i < doorsArray.length; i++) {
-             //    console.log('doorsArray: ' + doorsArray[i].roomCoord.doorType +
-             //      ' x: ' + doorsArray[i].roomCoord.roomX + ' y: ' + doorsArray[i].roomCoord.roomY);
-             // }
-             initPlayer(scene);
-        }
-
-        function collectStar (player, star)
-        {
-            star.disableBody(true, true);
-            //  Add and update the score
-            score += 10;
-            scoreText.setText('Score: ' + score);
-
-            if (stars.countActive(true) === 0)
-            {
-                //  A new batch of stars to collect
-                stars.children.iterate(function (child) {
-                    child.enableBody(true, child.x, 0, true, true);
-                });
-                var x = (player.x < 400) ? Phaser.Math.Between(400, 800) : Phaser.Math.Between(0, 400);
-                var bomb = bombs.create(x, 16, 'bomb');
-                bomb.setBounce(1);
-                bomb.setCollideWorldBounds(true);
-                bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
-                bomb.allowGravity = false;
             }
+        );
+
+        function randomPlsOrMin(min, max) {
+            return random(min, max) * (Math.random() < 0.5 ? -1 : 1);
         }
 
-        // function hitBomb (player, bomb)
-        // {
-        //     this.physics.pause();
-        //     player.setTint(0xff0000);
-        //     player.anims.play('turn');
-        //     gameOver = true;
+        function random(min, max) {
+            return Math.floor(Math.random() * max) + min;
+        }
+
+        var doorsIndex = 0; //we already have doorsMAP[][]
+        //roomsMAP = {'U': null, 'U': null,'U': null,'U': null, };
+        roomsMAP = megaMAP.doorsMAP;
+
+        megaMAP.doorsMAP.forEach((mapDoors, y) => {
+                mapDoors.forEach(function (mapDoor, x) {
+                    var indX = 800 * (x);
+                    var indY = 520 * (y);
+                    var keysCount = -1;
+
+                    if (mapDoor.U === 1) {
+                        keysCount++;
+                        doorsArray[doorsIndex] = doors.create(indX + 400, indY + 80, 'doorU').setScale(.8);
+                        doorsArray[doorsIndex].roomCoord = {roomX: x, roomY: y, doorType: 'U'};
+                        roomsMAP[x][y].upperDoor = doorsArray[doorsIndex];
+                        doorsIndex++;
+                        for (var i = 0; i < 3; i++) {
+                            walls.create((indX + 320), indY + (20 + i * 40), 'blockRed').setScale(0.8).refreshBody();
+                            walls.create((indX + 480), indY + (20 + i * 40), 'blockRed').setScale(0.8).refreshBody();
+                        }
+                    } else if (mapDoor.U === 0) {
+                        roomsMAP[x][y].upperDoor = doors.create(-100, -100, 'star');
+                        roomsMAP[x][y].upperDoor.visible = false; // not really a door, just replacement
+                        for (var i = 0; i < 9; i++) {
+                            walls.create(indX + 320 + (i * 20), indY + 100, 'blockRed').setScale(0.8).refreshBody();
+                        }
+                    }
+                    if (mapDoor.D === 1) {
+                        keysCount++;
+                        doorsArray[doorsIndex] = doors.create(indX + 400, indY + 500, 'doorD').setScale(0.8);
+                        doorsArray[doorsIndex].roomCoord = {roomX: x, roomY: y, doorType: 'D'};
+                        roomsMAP[x][y].downDoor = doorsArray[doorsIndex];
+                        doorsIndex++;
+                        for (var i = 0; i < 2; i++) {
+                            walls.create((indX + 320), indY + (500 + i * 20), 'blockRed').setScale(0.8).refreshBody();
+                            walls.create((indX + 480), indY + (500 + i * 20), 'blockRed').setScale(0.8).refreshBody();
+                        }
+                    } else if (mapDoor.D === 0) {
+                        roomsMAP[x][y].downDoor = doors.create(-100, -100, 'star');
+                        roomsMAP[x][y].downDoor.visible = false; // not really a door, just replacement
+                        for (var i = 0; i < 9; i++) {
+                            walls.create(indX + 320 + (i * 20), indY + 500, 'blockRed').setScale(0.8).refreshBody();
+                        }
+                    }
+                    if (mapDoor.L === 1) {
+                        keysCount++;
+                        doorsArray[doorsIndex] = doors.create(indX + 80, indY + 260, 'doorL').setScale(0.8);
+                        doorsArray[doorsIndex].roomCoord = {roomX: x, roomY: y, doorType: 'L'};
+                        roomsMAP[x][y].leftDoor = doorsArray[doorsIndex];
+                        doorsIndex++;
+                        for (var i = 0; i < 4; i++) {
+                            walls.create(indX - 0 + (i * 40), indY + (210 - i * 20), 'blockRed').setScale(0.8).refreshBody();
+                            walls.create(indX - 0 + (i * 40), indY + (340 + i * 20), 'blockRed').setScale(0.8).refreshBody();
+                        }
+
+                    } else if (mapDoor.L === 0) {
+                        roomsMAP[x][y].leftDoor = doors.create(-100, -100, 'star');
+                        roomsMAP[x][y].leftDoor.visible = false; // not really a door, just replacement
+                        for (var i = 0; i < 3; i++) {
+                            walls.create(indX + 40, indY + 270 + (i * 40), 'blockRed').setScale(0.8).refreshBody();
+                            walls.create(indX + 20 + (i * 40), indY + 240, 'blockRed').setScale(0.8).refreshBody();
+                            walls.create(indX + 20 + (i * 40), indY + 380, 'blockRed').setScale(0.8).refreshBody();
+                        }
+                    }
+                    if (mapDoor.R === 1) {
+                        keysCount++;
+                        doorsArray[doorsIndex] = doors.create(indX + 720, indY + 260, 'doorR').setScale(0.8);
+                        doorsArray[doorsIndex].roomCoord = {roomX: x, roomY: y, doorType: 'R'};
+                        roomsMAP[x][y].rightDoor = doorsArray[doorsIndex];
+                        doorsIndex++;
+                        for (var i = 0; i < 3; i++) {
+                            walls.create(indX + 710 + (i * 40), indY + (170 + i * 20), 'blockRed').setScale(0.8).refreshBody();
+                            walls.create(indX + 700 + (i * 40), indY + (380 - i * 20), 'blockRed').setScale(0.8).refreshBody();
+                        }
+
+                    } else if (mapDoor.R === 0) {
+                        roomsMAP[x][y].rightDoor = doors.create(-100, -100, 'star');
+                        roomsMAP[x][y].rightDoor.visible = false; // not really a door, just replacement
+                        for (var i = 0; i < 3; i++) {
+                            walls.create(indX + 740, indY + 270 + (i * 40), 'blockRed').setScale(0.8).refreshBody();
+                            walls.create(indX + 700 + (i * 40), indY + 240, 'blockRed').setScale(0.8).refreshBody();
+                            walls.create(indX + 700 + (i * 40), indY + 380, 'blockRed').setScale(0.8).refreshBody();
+                        }
+                    }
+                    //doorkeys
+                    var arrKeys = [];
+                    var getKeyCordinateWithProximity = function (keys, minProximity) {
+                        //console.log('keys',keys);
+                        var c1 = {x: 400 + indX + randomPlsOrMin(50, 100), y: 260 + indY + randomPlsOrMin(50, 30)};
+                        var check = 0;
+                        for (var i = 0; i < keys.length; i++) {
+                            var c0 = keys[i];
+                            var isProximityXGood = Math.abs(c0.x - c1.x) > minProximity;
+                            var isProximityYGood = Math.abs(c0.y - c1.y) > minProximity;
+
+                            if (!isProximityXGood && !isProximityYGood) {
+                                return getKeyCordinateWithProximity(keys, minProximity);
+                            }
+                        }
+                        ;
+                        return c1;
+                    }
+                    if (x == 0 && y == 0) {
+                        keysCount = keysCount + 1;
+                    }
+                    for (var i = 0; i < keysCount; i++) {
+                        if (x == maxRoomCountX - 1 && y == maxRoomCountY - 1) {
+                            //this is our final room - no keys required...
+                            //TODO: place a final room sprite here!!!
+                            //draw the patient: hospitalBed
+                            hospitalBed.create(400 + 800 * (x), 270 + 520 * (y), 'hospitalBed').setScale(0.8);
+                        } else {
+                            var coord = getKeyCordinateWithProximity(arrKeys, 70);
+                            //doorkeys.create(coord.x, coord.y, 'star').setScale(0.8); //doors keys
+                            var myKey = doorkeys.create(coord.x, coord.y, 'gold-key').setScale(0.5); //doors keys
+                            myKey.question = megaMAP.questionList[keyIndex];
+                            //console.log("question from key", myKey.question);
+                            keyIndex++;
+                            arrKeys[arrKeys.length] = coord;
+                        }
+                    }
+                })
+            }
+        );
+        // for (var i = 0; i < doorsArray.length; i++) {
+        //    console.log('doorsArray: ' + doorsArray[i].roomCoord.doorType +
+        //      ' x: ' + doorsArray[i].roomCoord.roomX + ' y: ' + doorsArray[i].roomCoord.roomY);
         // }
+        initPlayer(scene);
+    }
 
-        function playSound(sound) {
-                    if(!sound.isPlaying) {
-                             sound.play();
-                      }
+    function collectStar(player, star) {
+        star.disableBody(true, true);
+        //  Add and update the score
+        score += 10;
+        scoreText.setText('Score: ' + score);
+
+        if (stars.countActive(true) === 0) {
+            //  A new batch of stars to collect
+            stars.children.iterate(function (child) {
+                child.enableBody(true, child.x, 0, true, true);
+            });
+            var x = (player.x < 400) ? Phaser.Math.Between(400, 800) : Phaser.Math.Between(0, 400);
+            var bomb = bombs.create(x, 16, 'bomb');
+            bomb.setBounce(1);
+            bomb.setCollideWorldBounds(true);
+            bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
+            bomb.allowGravity = false;
         }
-       function playerNavigationHandler () {
+    }
 
-        if (cursors.left.isDown)
-            {
-                player.setVelocityX(-260);
-                player.anims.play('left', true);
-                playSound(soundStep);
-            }
-            else if (cursors.up.isDown)
-            {
-                player.setVelocityY(-200);
-                player.anims.play('up', true);
-                                playSound(soundStep);
-            }
-            else if (cursors.down.isDown)
-            {
-                player.setVelocityY(200);
-                player.anims.play('down', true);
-                playSound(soundStep);
-            }
-            else if (cursors.right.isDown)
-            {
-                player.setVelocityX(260);
-                player.anims.play('right', true);
-                playSound(soundStep);
+    // function hitBomb (player, bomb)
+    // {
+    //     this.physics.pause();
+    //     player.setTint(0xff0000);
+    //     player.anims.play('turn');
+    //     gameOver = true;
+    // }
 
-            }
-            else
-            {
-              stopPlayer();
-            }
-
-            // if (cursors.up.isDown && player.body.touching.down)
-            // {
-            //     player.setVelocityY(-330);
-            // }
-       }
-
-        function initPlayer(scene) {
-            player = scene.physics.add.sprite(400, 300, 'dude');
-            console.log('player', player);
-            player.doorKeys = 0;
-                //  Player physics properties. Give the little guy a slight bounce.
-            player.setBounce(0.2);
-            //player.setCollideWorldBounds(true);
-                        //  Our player animations, turning, walking left and walking right.
-            scene.anims.create({
-                key: 'left',
-                frames: scene.anims.generateFrameNumbers('dude', { start: 0, end: 3 }),
-                frameRate: 10,
-                repeat: -1
-            });
-
-            scene.anims.create({
-                key: 'up',
-                frames: scene.anims.generateFrameNumbers('dude', { start: 0, end: 3 }),
-                frameRate: 10,
-                repeat: -1
-            });
-
-            scene.anims.create({
-                key: 'turn',
-                frames: [ { key: 'dude', frame: 4 } ],
-                frameRate: 20
-            });
-
-            scene.anims.create({
-                key: 'right',
-                frames: scene.anims.generateFrameNumbers('dude', { start: 5, end: 8 }),
-                frameRate: 10,
-                repeat: -1
-            });
-
-            scene.anims.create({
-                key: 'down',
-                frames: scene.anims.generateFrameNumbers('dude', { start: 5, end: 8 }),
-                frameRate: 10,
-                repeat: -1
-            });
+    function playSound(sound) {
+        if (!sound.isPlaying) {
+            sound.play();
         }
+    }
+
+    function playerNavigationHandler() {
+
+        if (cursors.left.isDown) {
+            player.setVelocityX(-260);
+            player.anims.play('left', true);
+            playSound(soundStep);
+        } else if (cursors.up.isDown) {
+            player.setVelocityY(-200);
+            player.anims.play('up', true);
+            playSound(soundStep);
+        } else if (cursors.down.isDown) {
+            player.setVelocityY(200);
+            player.anims.play('down', true);
+            playSound(soundStep);
+        } else if (cursors.right.isDown) {
+            player.setVelocityX(260);
+            player.anims.play('right', true);
+            playSound(soundStep);
+
+        } else {
+            stopPlayer();
+        }
+
+        // if (cursors.up.isDown && player.body.touching.down)
+        // {
+        //     player.setVelocityY(-330);
+        // }
+    }
+
+    function initPlayer(scene) {
+        player = scene.physics.add.sprite(400, 300, 'dude');
+        console.log('player', player);
+        player.doorKeys = 0;
+        //  Player physics properties. Give the little guy a slight bounce.
+        player.setBounce(0.2);
+        //player.setCollideWorldBounds(true);
+        //  Our player animations, turning, walking left and walking right.
+        scene.anims.create({
+            key: 'left',
+            frames: scene.anims.generateFrameNumbers('dude', {start: 0, end: 3}),
+            frameRate: 10,
+            repeat: -1
+        });
+
+        scene.anims.create({
+            key: 'up',
+            frames: scene.anims.generateFrameNumbers('dude', {start: 0, end: 3}),
+            frameRate: 10,
+            repeat: -1
+        });
+
+        scene.anims.create({
+            key: 'turn',
+            frames: [{key: 'dude', frame: 4}],
+            frameRate: 20
+        });
+
+        scene.anims.create({
+            key: 'right',
+            frames: scene.anims.generateFrameNumbers('dude', {start: 5, end: 8}),
+            frameRate: 10,
+            repeat: -1
+        });
+
+        scene.anims.create({
+            key: 'down',
+            frames: scene.anims.generateFrameNumbers('dude', {start: 5, end: 8}),
+            frameRate: 10,
+            repeat: -1
+        });
+    }
+
 /////////questions functionality
-        function showQuestion(question,ifSuccessCallback, ifCancelCallback) {
-          // pased: showQuestion(megaMAP.questionMAP[0][0], function ()
-            document.getElementById("question").style.display = "";
-            //alert(question.qId + ') ' + question.qTxt);
-            buildQuestion(question,ifSuccessCallback, ifCancelCallback);
-        }
+    function showQuestion(question, ifSuccessCallback, ifCancelCallback) {
+        // pased: showQuestion(megaMAP.questionMAP[0][0], function ()
+        document.getElementById("question").style.display = "";
+        //alert(question.qId + ') ' + question.qTxt);
+        buildQuestion(question, ifSuccessCallback, ifCancelCallback);
+    }
 
 
-        function hideQuestion() {
-            document.getElementById("question").style.display = "none";
-        }
+    function hideQuestion() {
+        document.getElementById("question").style.display = "none";
+    }
 
-        //const questionWindow = document.getElementById("questionWindow");
+    //const questionWindow = document.getElementById("questionWindow");
 
-        function buildQuestion(question, ifSuccessCallback, ifCancelCallback) {
-            console.log(question);
-            var myQuestions = [question];
-            // alert(myQuestions[0].qId + ') ' + myQuestions[0].qTxt + ' \n - ' +
-            //   myQuestions[0].listAnswers[0].value + ' \n - ' +
-            //   myQuestions[0].listAnswers[1].value + ' \n - ' +
-            //   myQuestions[0].listAnswers[2].value + ' \n - ' +
-            //   myQuestions[0].listAnswers[3].value + ' \n video: ' +
-            //   myQuestions[0].questionURL);
-            function buildQuiz() {
-                // we'll need a place to store the HTML output
-                const output = [];
-                // for each question...
-                myQuestions.forEach((currentQuestion, questionNumber) => {
-                    // we'll want to store the list of answer choices
-                    const answers = [];
+    function buildQuestion(question, ifSuccessCallback, ifCancelCallback) {
+        console.log(question);
+        var myQuestions = [question];
+        // alert(myQuestions[0].qId + ') ' + myQuestions[0].qTxt + ' \n - ' +
+        //   myQuestions[0].listAnswers[0].value + ' \n - ' +
+        //   myQuestions[0].listAnswers[1].value + ' \n - ' +
+        //   myQuestions[0].listAnswers[2].value + ' \n - ' +
+        //   myQuestions[0].listAnswers[3].value + ' \n video: ' +
+        //   myQuestions[0].questionURL);
+        function buildQuiz() {
+            // we'll need a place to store the HTML output
+            const output = [];
+            // for each question...
+            myQuestions.forEach((currentQuestion, questionNumber) => {
+                // we'll want to store the list of answer choices
+                const answers = [];
 
-                    // and for each available answer...
-                    for (ind in currentQuestion.answers) {
-                        // ...add an HTML radio button
-                        answers.push(
+                // and for each available answer...
+                for (ind in currentQuestion.answers) {
+                    // ...add an HTML radio button
+                    answers.push(
                         `<label>
                           <input type="radio" name="question${questionNumber}" value="${ind}">
                           ${currentQuestion.answers[ind].key} :
                           ${currentQuestion.answers[ind].value}
                           </label>`
-                        );
-                    }
+                    );
+                }
 
-                    // add this question and its answers to the output
-                    output.push(
-                        `<div class="slide">
+                // add this question and its answers to the output
+                output.push(
+                    `<div class="slide">
                        <div class="question"> ${currentQuestion.question} </div>
                        <div class="answers"> ${answers.join("")} </div>
                      </div>`
-                    );
-                });
+                );
+            });
 
-                // finally combine our output list into one string of HTML and put it on the page
-                quizContainer.innerHTML = output.join("");
-            }
-
-            function showResults() {
-                // gather answer containers from our quiz
-                const answerContainers = quizContainer.querySelectorAll(".answers");
-                const submitMsgContainer = document.getElementById("submitMsg");
-                // keep track of user's answers
-
-                // for each question...
-                myQuestions.forEach((currentQuestion, questionNumber) => {
-                    const answerContainer = answerContainers[questionNumber];
-                    const selector = `input[name=question${questionNumber}]:checked`;
-                    const userAnswer = parseInt((answerContainer.querySelector(selector) || {}).value);
-
-                    // if answer is correct
-                    if (userAnswer === currentQuestion.correctAnswer) {
-                        answerContainer.style.color = 'lightgreen';
-                        submitMsgContainer.innerHTML = "<h1><span style='color:yellow'>Congratulations! Correct answer!</span></h1>";
-                        setTimeout(function () {
-                            submitMsgContainer.innerHTML = "";
-                            //console.log('Corerct Answer given');
-                            hideQuestion();
-                            ifSuccessCallback(question);
-                        }, 1000);
-                    } else {
-                        answerContainer.style.color = 'red';
-                        submitMsgContainer.innerHTML = "<h1><span style='color:red'>Sorry, wrong answer!</span></h1>";
-                        setTimeout(function () {
-                            hideQuestion();
-                            ifCancelCallback(question);
-                        }, 1000);
-                    }
-                });
-            }
-
-            function showSlide(n) {
-                slides[currentSlide].classList.remove("active-slide");
-                slides[n].classList.add("active-slide");
-                currentSlide = n;
-            }
-
-            const quizContainer = document.getElementById("quiz");
-            const submitButton = document.getElementById("submit");
-            buildQuiz();
-            const slides = document.querySelectorAll(".slide");
-            let currentSlide = 0;
-            showSlide(0);
-            // on submit, show results
-            $("#submit").unbind( "click" );
-            $("#submit").bind("click", showResults);
+            // finally combine our output list into one string of HTML and put it on the page
+            quizContainer.innerHTML = output.join("");
         }
 
+        function showResults() {
+            // gather answer containers from our quiz
+            const answerContainers = quizContainer.querySelectorAll(".answers");
+            const submitMsgContainer = document.getElementById("submitMsg");
+            // keep track of user's answers
 
+            // for each question...
+            myQuestions.forEach((currentQuestion, questionNumber) => {
+                const answerContainer = answerContainers[questionNumber];
+                const selector = `input[name=question${questionNumber}]:checked`;
+                const userAnswer = parseInt((answerContainer.querySelector(selector) || {}).value);
 
-
-        function saveState(opCode, gameState) {
-          // to save the current state in the Database
-            $.ajax( "rest/saveState.php", {
-                      data: JSON.stringify({ opCode:opCode, data: gameState}),
-                      contentType: 'application/json',
-                      type : 'POST'
-                      } )
-               .done(function(data) {
-                console.log( "second success", data );
-              })
-              .fail(function(data) {
-                console.log( "error", data );
-              });
-
-
+                // if answer is correct
+                if (userAnswer === currentQuestion.correctAnswer) {
+                    answerContainer.style.color = 'lightgreen';
+                    submitMsgContainer.innerHTML = "<h1><span style='color:yellow'>Congratulations! Correct answer!</span></h1>";
+                    setTimeout(function () {
+                        submitMsgContainer.innerHTML = "";
+                        //console.log('Corerct Answer given');
+                        hideQuestion();
+                        ifSuccessCallback(question);
+                    }, 1000);
+                } else {
+                    answerContainer.style.color = 'red';
+                    submitMsgContainer.innerHTML = "<h1><span style='color:red'>Sorry, wrong answer!</span></h1>";
+                    setTimeout(function () {
+                        hideQuestion();
+                        ifCancelCallback(question);
+                    }, 1000);
+                }
+            });
         }
 
-        function hideVideo() {
-          const vidPlayer = document.getElementById("divVidPlayer");
-          vidPlayer.innerHTML = "";
-          video.style.display = "none";
-          //vplayer.pause();
+        function showSlide(n) {
+            slides[currentSlide].classList.remove("active-slide");
+            slides[n].classList.add("active-slide");
+            currentSlide = n;
         }
 
-        function showVideo(qVideoURL, onVideoCloseCallback) {
-          video.style.display = "";
-          // vplayer.play();
-          const vidPlayer = document.getElementById("divVidPlayer");
-          vidPlayer.innerHTML = '<iframe src="' + qVideoURL
-                  + '" width="420" height="300" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>';
+        const quizContainer = document.getElementById("quiz");
+        const submitButton = document.getElementById("submit");
+        buildQuiz();
+        const slides = document.querySelectorAll(".slide");
+        let currentSlide = 0;
+        showSlide(0);
+        // on submit, show results
+        $("#submit").unbind("click");
+        $("#submit").bind("click", showResults);
+    }
 
-          $("#closeVideo").unbind( "click" );
-          $("#closeVideo").bind("click", onVideoCloseCallback);
+
+    function saveState(opCode, gameState) {
+        // to save the current state in the Database
+        $.ajax("rest/saveState.php", {
+            data: JSON.stringify({opCode: opCode, data: gameState}),
+            contentType: 'application/json',
+            type: 'POST'
+        })
+            .done(function (data) {
+                console.log("second success", data);
+            })
+            .fail(function (data) {
+                console.log("error", data);
+            });
+
+
+    }
+
+    function hideVideo() {
+        const vidPlayer = document.getElementById("divVidPlayer");
+        vidPlayer.innerHTML = "";
+        video.style.display = "none";
+        //vplayer.pause();
+    }
+
+    function showVideo(qVideoURL, onVideoCloseCallback) {
+        video.style.display = "";
+        // vplayer.play();
+        const vidPlayer = document.getElementById("divVidPlayer");
+        vidPlayer.innerHTML = '<iframe src="' + qVideoURL
+            + '" width="420" height="300" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>';
+
+        $("#closeVideo").unbind("click");
+        $("#closeVideo").bind("click", onVideoCloseCallback);
+
+    }
+
+    function showFinalScreen() {
+        finScr.style.display = "";
+    }
+
+    // function submitFinalAnswer() {
+    //     gameState.comments = finQ2.innerText + " ; " + finQ3.innerText;
+    //     saveState('UPDATE', gameState);
+    // }
+
+    function submitFinalAnswer() {
+        //starsCount is global
+        var respQ2 = document.getElementById("finQ2").value;
+        var respQ3 = document.getElementById("finQ3").value;
+        gameState.comments = "2)Likes: " + respQ2 + " 3)Suggest: " + respQ3;
+
+        if (isSurveySent === 0) {
+            saveState('UPDATE', gameState);
+            isSurveySent = true;
+            alert ('The survey has been submitted! Thanks for your opinion!');
+        } else {
+            alert ('This survey has already been submitted! Going backwards!');
         }
+        goBack() ; //go back to the previous page
+    }
 
-        function showFinalScreen() {
-          finScr.style.display = "";
-        }
 
+    $("#finSubmit").unbind("click");
+    $("#finSubmit").bind("click", submitFinalAnswer);
 };
 
-window.onload = function()
-{
+function goBack() {
+    //go back in history - previous page!
+    window.history.back();
+}
+
+window.onload = function () {
     'use strict';
     var app = new App();
     app.start();
 }
-  var userTimer;
-  userTimer = new easytimer.Timer();
-  var startTime = Date.now();
-  var endTime;
-  var secondsElapsed = 0;
-  userTimer.start();  // -------- UNPAUSE when required!!! TIMER
+var userTimer;
+userTimer = new easytimer.Timer();
+var startTime = Date.now();
+var endTime;
+var secondsElapsed = 0;
+userTimer.start();  // -------- UNPAUSE when required!!! TIMER
 
-  userTimer.addEventListener('secondsUpdated', function (e) {
-      $('#userTimer').html(userTimer.getTimeValues().toString());
-      endTime = Date.now();
-      secondsElapsed++;
-  });
+userTimer.addEventListener('secondsUpdated', function (e) {
+    $('#userTimer').html(userTimer.getTimeValues().toString());
+    endTime = Date.now();
+    secondsElapsed++;
+});
+
