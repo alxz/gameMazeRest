@@ -203,12 +203,12 @@ App.prototype.start = function () {
         // walls.create(160, 450, 'wall400x230').setScale(0.8).refreshBody();
 
         buildWorld(this);
-        scoreTextShade = this.add.text(17, 17, 'keys: 0', {fontSize: '32px', fill: '#ff00ff',backgroundColor: '#479B85'});
+        scoreTextShade = this.add.text(17, 17, 'keys: 0', {fontSize: '32px', fill: '#ff00ff'});
         scoreText = this.add.text(16, 16, 'keys: 0',
           {
             fontSize: '32px',
             fill: '#FDFC00',
-            backgroundColor: '#479B85',
+            /* backgroundColor: '#479B85',*/
             shadow: "offsetX = 2, offsetY = 2, fill= true"
 
           });
@@ -432,9 +432,14 @@ App.prototype.start = function () {
                         // lower left bar
                         walls.create(indX + 140 + (i * 20), indY + 370 + ((i * 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
                         // upper left bar
-                        walls.create(indX + 300 - (i * 20), indY + 120 + ((i * 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
+                        walls.create(indX + 320 - (i * 20), indY + 120 + ((i * 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
                         // lower right bar
                         walls.create(indX + 480 + (i * 20), indY + 500 - ((i * 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
+                    }
+                    for (var i = 0; i < 6; i++) {
+                      walls.create(indX + 220 + (i * 20), indY + 370 + ((i * 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
+                      // lower right bar
+                      walls.create(indX + 480 + (i * 20), indY + 450 - ((i * 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
                     }
                 })
                 //arrAllDoorsRooms.push(arrOneLevelRooms);
@@ -537,7 +542,7 @@ App.prototype.start = function () {
                     var arrKeys = [];
                     var getKeyCordinateWithProximity = function (keys, minProximity) {
                         //console.log('keys',keys);
-                        var c1 = {x: 400 + indX + randomPlsOrMin(50, 100), y: 260 + indY + randomPlsOrMin(50, 30)};
+                        var c1 = {x: 400 + indX + randomPlsOrMin(50, 80), y: 260 + indY + randomPlsOrMin(50, 30)};
                         var check = 0;
                         for (var i = 0; i < keys.length; i++) {
                             var c0 = keys[i];
