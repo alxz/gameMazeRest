@@ -37,8 +37,8 @@ App.prototype.start = function () {
     var scoreTextShade;
     var isPause = false;
     var keyIndex = 0;
-    var startTime;
-    var endTime;
+    //var startTime;
+    //var endTime;
     var game = new Phaser.Game(config);
     var _this;
     var position = {x: 0, y: 0};
@@ -48,10 +48,16 @@ App.prototype.start = function () {
     var hospitalBed;
     var totalQestionsAnswered = 0;
     var totalQestionsAsked = 0;
+    var listofquestions;
     var doorsHolder = [];
     var explosion;
     var music;
+    var doorOpen;
     var soundStep;
+    var pickupKey;
+    var soundOk;
+    var soundFail;
+    var soundFinal;
     var gameState;
     var isSurveySent = false;
     /****** { right: {image: 'png/doorR.png', key: 'doorR', offsetX: 340, offsetY: 80 },
@@ -66,17 +72,25 @@ App.prototype.start = function () {
     const finScr = document.getElementById("finScr");
     const finQ2 = document.getElementById("finQ2");
     const finQ3 = document.getElementById("finQ3");
-
+    const submitMsgContainer = document.getElementById("submitMsg");
 
     function preload() {
         this.load.json('megaMAP', 'rest/getMap.php');
 
         //this.load.image('sky', 'assets/sky.png');
         this.load.audio('theme', [
-            'assets/ambient.mp3'
+            'assets/ambientEasy.mp3'
         ]);
         this.load.audio('explosion', 'assets/explosion.mp3');
-        this.load.audio('soundStep', 'assets/SnowWalk.ogg');
+        this.load.audio('soundStep', 'assets/walking.mp3');
+
+        this.load.audio('doorOpen', 'assets/doorOpen.wav');
+        this.load.audio('soundFail', 'assets/wrongAnswer.mp3');
+        this.load.audio('pickupKey', 'assets/pickupKey.mp3');
+        this.load.audio('soundOk', 'assets/okay.mp3');
+        this.load.audio('soundFinal', 'assets/fanfareFinale.mp3');
+
+
         // loading rooms assets: 16 rooms types in total!
         this.load.image('u0d1l0r1', 'jpg/u0d1l0r1.jpg');
         this.load.image('u0d1l1r0', 'jpg/u0d1l1r0.jpg');
@@ -97,9 +111,19 @@ App.prototype.start = function () {
 
         //baseRoomBack = RoomBG_red.png 1000 px X 650px
         // scale 0.8 we have: 800 x 520
+        this.load.image('RoomBG_01', 'png/RoomBG_01_blue.png');
+        this.load.image('RoomBG_02', 'png/RoomBG_02_yellow.png');
+        this.load.image('RoomBG_03', 'png/RoomBG_03_red.png');
+        this.load.image('RoomBG_04', 'png/RoomBG_04_green.png');
+        this.load.image('RoomBG_05', 'png/RoomBG_05_orange.png');
+
+
         this.load.image('baseRoomBack', 'png/RoomBG_red_withBG.png');
+        this.load.image('finalRoom', 'png/RoomBG_01_final.png');
         // rooms assets section completed!
         this.load.image('hospitalBed', 'png/hospitalBed.png');
+        //patientEmptyPlaceHolder.png
+        this.load.image('patientEmptyPlaceHolder', 'png/patientEmptyPlaceHolder.png');
         //doors:
         // this.load.image('doorU', 'png/doorU.png');
         // this.load.image('doorD', 'png/doorD.png');
@@ -113,6 +137,7 @@ App.prototype.start = function () {
         //==============================================
         //blocks:
         this.load.image('blockRed', 'png/block20x20red.png');
+        //this.load.image('blockRed', 'png/block20x20.png');
         //==================
         _this = this;
         this.load.image('gold-key', 'png/goldenKey.png'); //gold-key
@@ -137,21 +162,12 @@ App.prototype.start = function () {
             user: userName,
             isFinished: 0,
             elapsedTime: 0,
-            timestart: "",
+            timestart: startTime,
             timefinish: "",
             listofquestions: "",
             comments: "",
             sessionId: sessionId
         }
-
-    }
-
-    function breackingBad() {
-        isPause = true;
-        gameState.isFinished = 1;
-        saveState('UPDATE', gameState);
-        //show finScr
-        showFinalScreen();
 
     }
 
@@ -165,6 +181,12 @@ App.prototype.start = function () {
         music = this.sound.add('theme');
         explosion = this.sound.add('explosion');
         soundStep = this.sound.add('soundStep');
+
+        doorOpen = this.sound.add('doorOpen');
+        pickupKey = this.sound.add('pickupKey');
+        soundOk = this.sound.add('soundOk');
+        soundFail = this.sound.add('soundFail');
+        soundFinal = this.sound.add('soundFinal');
         //  music.play();
         //  this.input.addDownCallback(function() {
         //    if (game.sound.context.state === 'suspended') {
@@ -177,17 +199,13 @@ App.prototype.start = function () {
         showMazeGfx(megaMAP.doorsMAP, "mazeWDrsRmsMap");
 
         cursors = this.input.keyboard.createCursorKeys();
-
         // walls = this.physics.add.staticGroup();
         // walls.create(160, 450, 'wall400x230').setScale(0.8).refreshBody();
-        // walls.create(640, 450, 'wall400x230').setScale(0.8).refreshBody();
-        // walls.create(160, 120, 'wall400x300').setScale(0.8).refreshBody();
-        // walls.create(640, 120, 'wall400x300').setScale(0.8).refreshBody();
 
         buildWorld(this);
         scoreTextShade = this.add.text(17, 17, 'keys: 0', {fontSize: '32px', fill: '#ff00ff'});
         scoreText = this.add.text(16, 16, 'keys: 0', {fontSize: '32px', fill: '#000'});
-        // walls.create(400, 270, 'hollowRoom').setScale(0.8).refreshBody();
+
         this.cameras.main.startFollow(player);
         this.physics.add.collider(player, walls);
         this.physics.add.collider(player, doors, null, hitTheDoor, this);
@@ -205,13 +223,10 @@ App.prototype.start = function () {
 
         //     //  Give each star a slightly different bounce
         //     child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
-
         // });
 
         // bombs = this.physics.add.group();
-
         //  The score
-
         //  Collide the player and the stars with the platforms
         // this.physics.add.collider(player, platforms);
         // this.physics.add.collider(stars, platforms);
@@ -219,10 +234,18 @@ App.prototype.start = function () {
 
         //  Checks to see if the player overlaps with any of the stars, if he does call the collectStar function
         // this.physics.add.overlap(player, stars, collectStar, null, this);
-
         // this.physics.add.collider(player, bombs, hitBomb, null, this);
-
     }
+
+    function breackingBad() {
+        stopPlayer();
+        isPause = true;
+        gameState.isFinished = 1;
+        saveState('UPDATE', gameState);
+        //show finScr
+        showFinalScreen();
+    }
+
 
     function update() {
         if (gameOver || isPause) {
@@ -232,7 +255,7 @@ App.prototype.start = function () {
         player.prevPos = {x: player.x, y: player.y};
         playerNavigationHandler();
 
-        //playSound(music);  // play background music
+        playSound(music);  // play background music
     }
 
     function drawScores(scene) {
@@ -246,13 +269,13 @@ App.prototype.start = function () {
 
     function hitTheDoor(player, door) {
         if (player.doorKeys > 0 && !door.isOpen) {
+            playSound(doorOpen);
             stopPlayer();
-            playSound(explosion);
+
             door.body.checkCollision.none = true;
             door.isOpen = true;
             player.doorKeys--;
-            console.log("The door has been opened!", door);
-            //console.log(door.settings);
+            //console.log("The door has been opened!", door);
             var nextDoor;
             var thisRoomX = door.roomCoord.roomX;
             var thisRoomY = door.roomCoord.roomY;
@@ -290,9 +313,7 @@ App.prototype.start = function () {
                     //console.log('Door location is: Right, door: ' + nextDoor.isOpen);
                     break;
                 default:
-
             }
-
             return true;
         }
         return true;
@@ -304,11 +325,14 @@ App.prototype.start = function () {
     }
 
     function collectKey(player, key) {
+      // var doorOpen;
+      // var soundStep;
+      // var pickupKey;
+      // var soundOk;
+      // var soundFail;
         if (isPause) return;
-
+        playSound(pickupKey);
         stopPlayer();
-
-        //if (isPause) return;
         isPause = true;
         //console.log(megaMAP);
         //alert('player.doorKeys' + player.doorKeys);
@@ -318,6 +342,7 @@ App.prototype.start = function () {
         //console.log(player.doorKeys);
         totalQestionsAsked++;
         var ifSuccessCallback = function () {
+            playSound(soundOk);
             key.disableBody(true, true);
             isPause = false;
             player.doorKeys++;
@@ -325,7 +350,13 @@ App.prototype.start = function () {
             //console.log(player.doorKeys);
             //save the state to the table:
             gameState.correctCount = totalQestionsAnswered;
-            saveState('INSERT', gameState);
+            listofquestions = listofquestions + " " + totalQestionsAsked;
+            if (totalQestionsAnswered === 1) {
+                saveState('INSERT', gameState);
+            } else {
+                saveState('UPDATE', gameState);
+            }
+
         };
 
         var onVideoCloseCallback = function () {
@@ -335,6 +366,7 @@ App.prototype.start = function () {
         }
 
         var ifCancelCallback = function (question) {
+            playSound(soundFail);
             showVideo(question.questionURL, onVideoCloseCallback);
         }
 
@@ -360,9 +392,6 @@ App.prototype.start = function () {
         hospitalBed = scene.physics.add.group({
             immovable: true
         });
-        // var arrAllDoorsRooms = [];
-        // var arrOneLevelRooms = [];
-        // var idx = 0;
         megaMAP.doorsMAP.forEach((mapDoors, y) => {
                 mapDoors.forEach(function (mapDoor, x) {
                     // TODO:
@@ -373,9 +402,16 @@ App.prototype.start = function () {
                     var roomName = 'u' + mapDoor.U + 'd' + mapDoor.D + 'l' + mapDoor.L + 'r' + mapDoor.R;
                     // scene.add.image(400 +indX, 270 + indY, roomName).setScale(0.8);
 
+                    if (x == maxRoomCountX - 1 && y == maxRoomCountY - 1) {
+                      //finalRoom
+                      scene.add.image(400 + indX, 270 + indY, 'finalRoom').setScale(0.8);
+                    } else {
+                      var randomRoom = (Math.round(Math.random() * 4))+1; //RoomBG_0
+                      scene.add.image(400 + indX, 270 + indY, 'RoomBG_0' + randomRoom).setScale(0.8);
+                      //scene.add.image(400 + indX, 270 + indY, 'baseRoomBack').setScale(0.8);
+                    }
                     // Since I'm using only one backgroun now: baseRoomBack = RoomBG_red.png
-                    scene.add.image(400 + indX, 270 + indY, 'baseRoomBack').setScale(0.8);
-
+                    //scene.add.image(400 + indX, 270 + indY, 'baseRoomBack').setScale(0.8);
                     for (var i = 0; i < 9; i++) {
                         // Upper right bar
                         walls.create(indX + 500 + (i * 20), indY + 100 + ((i * 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
@@ -386,7 +422,6 @@ App.prototype.start = function () {
                         // lower right bar
                         walls.create(indX + 480 + (i * 20), indY + 500 - ((i * 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
                     }
-
                 })
                 //arrAllDoorsRooms.push(arrOneLevelRooms);
                 //console.log('Hello world!');
@@ -404,7 +439,6 @@ App.prototype.start = function () {
         var doorsIndex = 0; //we already have doorsMAP[][]
         //roomsMAP = {'U': null, 'U': null,'U': null,'U': null, };
         roomsMAP = megaMAP.doorsMAP;
-
         megaMAP.doorsMAP.forEach((mapDoors, y) => {
                 mapDoors.forEach(function (mapDoor, x) {
                     var indX = 800 * (x);
@@ -511,7 +545,7 @@ App.prototype.start = function () {
                             //this is our final room - no keys required...
                             //TODO: place a final room sprite here!!!
                             //draw the patient: hospitalBed
-                            hospitalBed.create(400 + 800 * (x), 270 + 520 * (y), 'hospitalBed').setScale(0.8);
+                            hospitalBed.create(400 + 800 * (x), 270 + 520 * (y), 'patientEmptyPlaceHolder').setScale(0.8);
                         } else {
                             var coord = getKeyCordinateWithProximity(arrKeys, 70);
                             //doorkeys.create(coord.x, coord.y, 'star').setScale(0.8); //doors keys
@@ -698,9 +732,7 @@ App.prototype.start = function () {
         function showResults() {
             // gather answer containers from our quiz
             const answerContainers = quizContainer.querySelectorAll(".answers");
-            const submitMsgContainer = document.getElementById("submitMsg");
             // keep track of user's answers
-
             // for each question...
             myQuestions.forEach((currentQuestion, questionNumber) => {
                 const answerContainer = answerContainers[questionNumber];
@@ -721,6 +753,7 @@ App.prototype.start = function () {
                     answerContainer.style.color = 'red';
                     submitMsgContainer.innerHTML = "<h1><span style='color:red'>Sorry, wrong answer!</span></h1>";
                     setTimeout(function () {
+                        submitMsgContainer.innerHTML = "";
                         hideQuestion();
                         ifCancelCallback(question);
                     }, 1000);
@@ -783,6 +816,7 @@ App.prototype.start = function () {
     }
 
     function showFinalScreen() {
+        playSound(soundFinal);
         finScr.style.display = "";
     }
 
@@ -794,8 +828,14 @@ App.prototype.start = function () {
     function submitFinalAnswer() {
         //starsCount is global
         var respQ2 = document.getElementById("finQ2").value;
+        console.log('finQ2: ',finQ2);
         var respQ3 = document.getElementById("finQ3").value;
-        gameState.comments = "2)Likes: " + respQ2 + " 3)Suggest: " + respQ3;
+        console.log('finQ3: ',finQ3);
+        gameState.comments = "1)Stars: " + starsCount + " 2)Likes: " + respQ2 + " 3)Suggest: " + respQ3;
+        console.log('comments: ',gameState.comments);
+        gameState.listofquestions = listofquestions;
+        gameState.timefinish = endTime;
+        gameState.elapsedTime = secondsElapsed;
 
         if (isSurveySent === 0) {
             saveState('UPDATE', gameState);
@@ -812,6 +852,18 @@ App.prototype.start = function () {
     $("#finSubmit").bind("click", submitFinalAnswer);
 };
 
+var starsCount =0;
+
+function star(starX) {
+  for (var i = 1; i < 6; i++) {
+    $('#star'+i).css('color', '');
+  }
+  for (var i = 1; i < starX + 1; i++) {
+    $('#star'+i).css('color', 'yellow');
+  }
+  starsCount = starX;
+}
+
 function goBack() {
     //go back in history - previous page!
     window.history.back();
@@ -822,16 +874,18 @@ window.onload = function () {
     var app = new App();
     app.start();
 }
+
+var today = new Date();
 var userTimer;
 userTimer = new easytimer.Timer();
-var startTime = Date.now();
+var startTime = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds(); //Date.now();
 var endTime;
-var secondsElapsed = 0;
+var secondsElapsed;
 userTimer.start();  // -------- UNPAUSE when required!!! TIMER
 
 userTimer.addEventListener('secondsUpdated', function (e) {
     $('#userTimer').html(userTimer.getTimeValues().toString());
-    endTime = Date.now();
+    endTime = new Date();
+    endTime = endTime.getHours() + ":" + endTime.getMinutes() + ":" + endTime.getSeconds()
     secondsElapsed++;
 });
-
