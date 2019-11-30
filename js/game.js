@@ -136,8 +136,8 @@ App.prototype.start = function () {
         this.load.spritesheet('doorR', 'png/doorRsprite.png', {frameWidth: 180, frameHeight: 180});
         //==============================================
         //blocks:
-        this.load.image('blockRed', 'png/block20x20red.png');
-        //this.load.image('blockRed', 'png/block20x20.png');
+        //this.load.image('blockRed', 'png/block20x20red.png');
+        this.load.image('blockRed', 'png/block20x20.png');
         //==================
         _this = this;
         this.load.image('gold-key', 'png/goldenKey.png'); //gold-key
@@ -432,7 +432,7 @@ App.prototype.start = function () {
                         // lower left bar
                         walls.create(indX + 140 + (i * 20), indY + 370 + ((i * 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
                         // upper left bar
-                        walls.create(indX + 300 - (i * 20), indY + 120 + ((i * 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
+                        walls.create(indX + 310 - (i * 20), indY + 110 + ((i * 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
                         // lower right bar
                         walls.create(indX + 480 + (i * 20), indY + 500 - ((i * 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
                     }
@@ -548,7 +548,7 @@ App.prototype.start = function () {
                                 return getKeyCordinateWithProximity(keys, minProximity);
                             }
                         }
-                        ;
+
                         return c1;
                     }
                     if (x == 0 && y == 0) {
@@ -765,12 +765,14 @@ App.prototype.start = function () {
                     }, 1000);
                 } else {
                     answerContainer.style.color = 'red';
-                    submitMsgContainer.innerHTML = "<h1><span style='color:red'>Sorry, wrong answer!</span></h1>";
+                    questionWindow.style.border = 'thin solid red';
+                    submitMsgContainer.innerHTML = "<h1><span style='color:red'>Sorry, wrong answer!</span></h1><br>";
                     setTimeout(function () {
                         submitMsgContainer.innerHTML = "";
+                        questionWindow.style.border = 'initial';
                         hideQuestion();
                         ifCancelCallback(question);
-                    }, 1000);
+                    }, 1200);
                 }
             });
         }
@@ -806,7 +808,6 @@ App.prototype.start = function () {
             .fail(function (data) {
                 console.log("error", data);
             });
-
 
     }
 
@@ -855,7 +856,9 @@ App.prototype.start = function () {
             d.getSeconds(); // => 51
 
         gameState.timefinish = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();// endTime;
-        gameState.elapsedTime = secondsElapsed; //userTimer.getTimeValues().toString();//secondsElapsed; //gameState.timefinish;
+         //userTimer.getTimeValues().toString();//secondsElapsed; //gameState.timefinish;
+        secondsElapsed = userTimer.getTimeValues().seconds.toString();
+        gameState.elapsedTime = secondsElapsed;
         gameState.isFinished = 1;
 
         if (!isSurveySent) {
@@ -908,5 +911,5 @@ userTimer.addEventListener('secondsUpdated', function (e) {
     $('#userTimer').html(userTimer.getTimeValues().toString());
     //endTime = userTimer.getTimeValues().toString();
     //endTime = endTime.getHours() + ":" + endTime.getMinutes() + ":" + endTime.getSeconds()
-    secondsElapsed = userTimer.getTimeValues().seconds.toString();
+    //secondsElapsed = userTimer.getTimeValues().seconds.toString();
 });
