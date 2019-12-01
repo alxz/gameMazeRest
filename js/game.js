@@ -68,10 +68,10 @@ App.prototype.start = function () {
     var doorsArray = [];//[[doorsHolder.right, doorsHolder.down],[doorsHolder.up,doorsHolder.right],[doorsHolder.left,doorsHolder.right]];
     const questionWindow = document.getElementById("questionWindow");
     const video = document.getElementById("video");
-    const vplayer = document.getElementById("vplayer");
+    // const vplayer = document.getElementById("vplayer");
     const finScr = document.getElementById("finScr");
-    const divfinQ2 = document.getElementById("finQ2");
-    const divfinQ3 = document.getElementById("finQ3");
+    // const divfinQ2 = document.getElementById("finQ2");
+    // const divfinQ3 = document.getElementById("finQ3");
     const submitMsgContainer = document.getElementById("submitMsg");
 
     function preload() {
@@ -141,7 +141,7 @@ App.prototype.start = function () {
         //==================
         _this = this;
         this.load.image('gold-key', 'png/goldenKey.png'); //gold-key
-        //this.load.spritesheet('gold-key', 'png/gold-key.png', { frameWidth: 40, frameHeight: 40 });
+        this.load.spritesheet('gold-key-sprite', 'png/gold-key.png', { frameWidth: 40, frameHeight: 40 });
         this.load.image('messageBoard', 'png/messageBoard600x400.png');
 
         // Object.values(doorsHolder).forEach( function(door) {
@@ -208,7 +208,7 @@ App.prototype.start = function () {
           {
             fontSize: '32px',
             fill: '#FDFC00',
-            backgroundColor: '#479B85',
+            /* backgroundColor: '#479B85',*/
             shadow: "offsetX = 2, offsetY = 2, fill= true"
 
           });
@@ -245,8 +245,9 @@ App.prototype.start = function () {
     }
 
     function breackingBad() {
-        stopPlayer();
         isPause = true;
+        stopPlayer();
+        music.pause();
         gameState.isFinished = 1;
         saveState('UPDATE', gameState);
         //show finScr
@@ -262,6 +263,7 @@ App.prototype.start = function () {
         player.prevPos = {x: player.x, y: player.y};
         playerNavigationHandler();
 
+        // doorkeys.anims.play('rotatingKey', true);
         playSound(music);  // play background music
     }
 
@@ -381,6 +383,13 @@ App.prototype.start = function () {
 
         var ifCancelCallback = function (question) {
             playSound(soundFail);
+            //save state:
+            if (totalQestionsAnswered === 0) {
+                saveState('INSERT', gameState);
+            } else {
+                saveState('UPDATE', gameState);
+            }
+
             showVideo(question.questionURL, onVideoCloseCallback);
         }
 
@@ -391,6 +400,7 @@ App.prototype.start = function () {
         player.setVelocityX(0);
         player.setVelocityY(0);
         player.anims.play('turn');
+        soundStep.pause();
     }
 
     function buildWorld(scene) {
@@ -563,8 +573,17 @@ App.prototype.start = function () {
                         } else {
                             var coord = getKeyCordinateWithProximity(arrKeys, 70);
                             //doorkeys.create(coord.x, coord.y, 'star').setScale(0.8); //doors keys
-                            var myKey = doorkeys.create(coord.x, coord.y, 'gold-key').setScale(0.5); //doors keys
+                            //var myKey = doorkeys.create(coord.x, coord.y, 'gold-key').setScale(0.5); //doors keys
+                            scene.anims.create({
+                                key: 'rotatingKey',
+                                frames: scene.anims.generateFrameNumbers('gold-key-sprite', {start: 0, end: 6}),
+                                frameRate: 10,
+                                repeat: -1
+                            });
+
+                            var myKey = doorkeys.create(coord.x, coord.y, 'gold-key-sprite').setScale(0.8); //doors keys
                             myKey.question = megaMAP.questionList[keyIndex];
+                            myKey.anims.play('rotatingKey', true);
                             //console.log("question from key", myKey.question);
                             keyIndex++;
                             arrKeys[arrKeys.length] = coord;
@@ -657,7 +676,6 @@ App.prototype.start = function () {
             frameRate: 10,
             repeat: -1
         });
-
         scene.anims.create({
             key: 'up',
             frames: scene.anims.generateFrameNumbers('dude', {start: 0, end: 3}),
@@ -831,6 +849,7 @@ App.prototype.start = function () {
     }
 
     function showFinalScreen() {
+        gameState.elapsedTime = secondsElapsed;
         playSound(soundFinal);
         finScr.style.display = "";
     }
@@ -857,8 +876,8 @@ App.prototype.start = function () {
 
         gameState.timefinish = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();// endTime;
          //userTimer.getTimeValues().toString();//secondsElapsed; //gameState.timefinish;
-        secondsElapsed = userTimer.getTimeValues().seconds.toString();
-        gameState.elapsedTime = secondsElapsed;
+        //secondsElapsed = userTimer.getTimeValues().seconds.toString();
+
         gameState.isFinished = 1;
 
         if (!isSurveySent) {
@@ -904,7 +923,7 @@ var userTimer;
 userTimer = new easytimer.Timer();
 var startTime = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds(); //Date.now();
 var endTime;
-var secondsElapsed;
+var secondsElapsed = 0;
 userTimer.start();  // -------- UNPAUSE when required!!! TIMER
 
 userTimer.addEventListener('secondsUpdated', function (e) {
@@ -912,4 +931,5 @@ userTimer.addEventListener('secondsUpdated', function (e) {
     //endTime = userTimer.getTimeValues().toString();
     //endTime = endTime.getHours() + ":" + endTime.getMinutes() + ":" + endTime.getSeconds()
     //secondsElapsed = userTimer.getTimeValues().seconds.toString();
+    secondsElapsed++;
 });
