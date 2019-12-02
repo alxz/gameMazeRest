@@ -16,7 +16,7 @@ $data = $resultSet['data'];
 if ( $opCode == 'INSERT') {
 	// code... insert data to the table
 	//echo "INSERT!";
-	$isFinished = 0;
+	$isFinished = $data['isFinished']; //if the game is finished
 	$userIUN = $data['user']; //uIUN,
 	$userFName = $data['user'];//uFName,
 	$userLName = $data['user']; //uLName,
@@ -60,6 +60,7 @@ if ( $opCode == 'INSERT') {
 	//echo "INSERT!";
 	$timeElapsed = $data['elapsedTime']; // uTimer,
 	$scoreTotal = $data['correctCount']; //uTotalScore,
+	$isFinished = $data['isFinished']; //if the game is finished
 	$timeFinish = $data['timefinish']; // date+time when finished. text,
 	$listOfQuestions = $data['listofquestions']; //listofquestions
 	$comments = $data['comments']; //Comments goes here
@@ -75,6 +76,7 @@ if ( $opCode == 'INSERT') {
 
 	$sql = "Update tabusers SET uTimer='$timeElapsed',".
 	                           " uTotalScore=$scoreTotal,".
+	                           " uIsFinished=$isFinished,".
 	                           " timefinish='$timeFinish',".
 	                           " listofquestions='$listOfQuestions',".
 	                           " comment='$comments'".

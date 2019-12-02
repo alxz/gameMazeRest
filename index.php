@@ -1,16 +1,15 @@
-<!doctype html>
+
 <html lang="en">
 <head>
 
-<!--  <script language="php">-->
-<!--      if (!empty($_POST['userId'])) {-->
-<!--        $userId = $_POST['userId'];-->
-<!--        } else {-->
-<!--        $userId = 'JamesBrown';-->
-<!--        }-->
-
-<!--     echo ($userId);-->
-<!--   </script>-->
+<?php
+  if (!empty($_POST['userId'])) {
+     $userId = $_POST['userId'];
+      } else {
+      $userId = 'JamesBrown';
+    }
+    //echo ($userId);
+?>
 
    <meta charset="UTF-8" />
    <title>Maze Pan with Phaser 3 Game</title>
@@ -26,7 +25,8 @@
 </head>
 <body>
    <div>
-       <h1>Welcome!
+       <h1>Welcome &nbsp;
+         <span id="userIUNBox"><?php echo $userId ?> </span> &nbsp;
 <!--           <input type="text" name="userIUNBox"> &nbsp;-->
            Time elapsed: <span id="userTimer"></span></h1>
        <br/>
@@ -96,13 +96,13 @@
             2.	What did you prefer the most and what did you like the least about it? <br>
             &nbsp; &nbsp; (plaese give us a few words... ):&nbsp;
           </span><br><br>
-         <textarea id="finQ2" name="finQ2" rows="5" ols="35"></textarea><br><br>
+         <textarea id="finQ2" name="finQ2" rows="5" ols="35" wrap="hard"></textarea><br><br>
 
          <span class="finQuestions">
             3.	What would you suggest as an improvement for the future? <br>
             &nbsp; &nbsp; (plaese give us a few words... ):&nbsp;
           </span><br><br>
-         <textarea id="finQ3" maxlength="255" style="width:350px; height:80px;" cols="42" rows="5" ></textarea><br><br>
+         <textarea id="finQ3" name="finQ3" rows="5" ols="35" wrap="hard"></textarea><br><br>
           <button id="finSubmit" >Submit</button> &nbsp;&nbsp;&nbsp;
           <button id="finExit" >Exit</button>
     </div>

@@ -48,7 +48,7 @@ App.prototype.start = function () {
     var hospitalBed;
     var totalQestionsAnswered = 0;
     var totalQestionsAsked = 0;
-    var listofquestions;
+    var listofquestions = "";
     var doorsHolder = [];
     var explosion;
     var music;
@@ -60,6 +60,7 @@ App.prototype.start = function () {
     var soundFinal;
     var gameState;
     var isSurveySent = false;
+    userIUN = "JohnDoe001";
     /****** { right: {image: 'png/doorR.png', key: 'doorR', offsetX: 340, offsetY: 80 },
                             down: {image: 'png/doorD.png', key: 'doorD', offsetX: -20, offsetY: 160 },
                             up: {image: 'png/doorU.png', key: 'doorU', offsetX: -20, offsetY: -180 },
@@ -68,11 +69,11 @@ App.prototype.start = function () {
     var doorsArray = [];//[[doorsHolder.right, doorsHolder.down],[doorsHolder.up,doorsHolder.right],[doorsHolder.left,doorsHolder.right]];
     const questionWindow = document.getElementById("questionWindow");
     const video = document.getElementById("video");
-    const vplayer = document.getElementById("vplayer");
     const finScr = document.getElementById("finScr");
-    const divfinQ2 = document.getElementById("finQ2");
-    const divfinQ3 = document.getElementById("finQ3");
+    // const divfinQ2 = document.getElementById("finQ2");
+    // const divfinQ3 = document.getElementById("finQ3");
     const submitMsgContainer = document.getElementById("submitMsg");
+    userIUN = document.getElementById("userIUNBox").innerHTML;
 
     function preload() {
         this.load.json('megaMAP', 'rest/getMap.php');
@@ -82,7 +83,7 @@ App.prototype.start = function () {
             'assets/ambientEasy.mp3'
         ]);
         this.load.audio('explosion', 'assets/explosion.mp3');
-        this.load.audio('soundStep', 'assets/walking.mp3');
+        this.load.audio('soundStep', 'assets/walking0.wav');
 
         this.load.audio('doorOpen', 'assets/doorOpen.wav');
         this.load.audio('soundFail', 'assets/wrongAnswer.mp3');
@@ -141,7 +142,7 @@ App.prototype.start = function () {
         //==================
         _this = this;
         this.load.image('gold-key', 'png/goldenKey.png'); //gold-key
-        //this.load.spritesheet('gold-key', 'png/gold-key.png', { frameWidth: 40, frameHeight: 40 });
+        this.load.spritesheet('gold-key-sprite', 'png/gold-key.png', { frameWidth: 40, frameHeight: 40 });
         this.load.image('messageBoard', 'png/messageBoard600x400.png');
 
         // Object.values(doorsHolder).forEach( function(door) {
@@ -152,8 +153,9 @@ App.prototype.start = function () {
         this.load.image('star', 'assets/star.png');
         this.load.image('bomb', 'assets/bomb.png');
         //this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
-        this.load.spritesheet('dude', 'png/docMUHCR4U1L4.png', {frameWidth: 50, frameHeight: 75});
-
+        //this.load.spritesheet('dude', 'png/docMUHCR4U1L4.png', {frameWidth: 50, frameHeight: 75});
+        //docMUHC50x75L4U4D4R4
+        this.load.spritesheet('dude', 'png/docMUHC50x75L4U4D4R4.png', {frameWidth: 50, frameHeight: 75});
     }
 
     function buildGameState(userName, sessionId) {
@@ -164,7 +166,7 @@ App.prototype.start = function () {
             elapsedTime: 0,
             timestart: startTime,
             timefinish: "",
-            listofquestions: "",
+            listofquestions: listofquestions,
             comments: "",
             sessionId: sessionId
         }
@@ -174,7 +176,9 @@ App.prototype.start = function () {
     function create() {
         // init other states
         megaMAP = game.cache.json.get('megaMAP');
-        gameState = buildGameState("JohnDoe", megaMAP.sessionId);
+
+        gameState = buildGameState(userIUN, megaMAP.sessionId);
+        gameState.user = userIUN;
         initMap = megaMAP.initMAP;
         maxRoomCountX = initMap[0].length;
         maxRoomCountY = initMap.length;
@@ -210,7 +214,6 @@ App.prototype.start = function () {
             fill: '#FDFC00',
             /* backgroundColor: '#479B85',*/
             shadow: "offsetX = 2, offsetY = 2, fill= true"
-
           });
 
         this.cameras.main.startFollow(player);
@@ -245,8 +248,9 @@ App.prototype.start = function () {
     }
 
     function breackingBad() {
-        stopPlayer();
         isPause = true;
+        stopPlayer();
+        music.pause();
         gameState.isFinished = 1;
         saveState('UPDATE', gameState);
         //show finScr
@@ -261,7 +265,8 @@ App.prototype.start = function () {
         drawScores(_this);
         player.prevPos = {x: player.x, y: player.y};
         playerNavigationHandler();
-
+        //highlighMapPos(0,0,thisRoomY,thisRoomX,"magenta");
+        // doorkeys.anims.play('rotatingKey', true);
         playSound(music);  // play background music
     }
 
@@ -293,6 +298,7 @@ App.prototype.start = function () {
             var nextDoor;
             var thisRoomX = door.roomCoord.roomX;
             var thisRoomY = door.roomCoord.roomY;
+
             switch (door.roomCoord.doorType) {
                 case 'U':
                     nextDoor = roomsMAP[thisRoomX][thisRoomY - 1].downDoor;
@@ -364,7 +370,8 @@ App.prototype.start = function () {
             //console.log(player.doorKeys);
             //save the state to the table:
             gameState.correctCount = totalQestionsAnswered;
-            listofquestions = listofquestions + " " + totalQestionsAsked;
+            listofquestions = listofquestions + "q:" +  key.question.qId + "; ";
+            gameState.listofquestions = listofquestions; //+ ":" +  " " + totalQestionsAsked;
             if (totalQestionsAnswered === 1) {
                 saveState('INSERT', gameState);
             } else {
@@ -381,6 +388,14 @@ App.prototype.start = function () {
 
         var ifCancelCallback = function (question) {
             playSound(soundFail);
+            //save state:
+            saveState('UPDATE', gameState);
+            // if (totalQestionsAnswered === 0) {
+            //     saveState('INSERT', gameState);
+            // } else {
+            //     saveState('UPDATE', gameState);
+            // }
+
             showVideo(question.questionURL, onVideoCloseCallback);
         }
 
@@ -391,6 +406,7 @@ App.prototype.start = function () {
         player.setVelocityX(0);
         player.setVelocityY(0);
         player.anims.play('turn');
+        soundStep.pause();
     }
 
     function buildWorld(scene) {
@@ -432,7 +448,7 @@ App.prototype.start = function () {
                         // lower left bar
                         walls.create(indX + 140 + (i * 20), indY + 370 + ((i * 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
                         // upper left bar
-                        walls.create(indX + 320 - (i * 20), indY + 120 + ((i * 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
+                        walls.create(indX + 310 - (i * 20), indY + 110 + ((i * 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
                         // lower right bar
                         walls.create(indX + 480 + (i * 20), indY + 500 - ((i * 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
                     }
@@ -553,7 +569,7 @@ App.prototype.start = function () {
                                 return getKeyCordinateWithProximity(keys, minProximity);
                             }
                         }
-                        ;
+
                         return c1;
                     }
                     if (x == 0 && y == 0) {
@@ -568,8 +584,17 @@ App.prototype.start = function () {
                         } else {
                             var coord = getKeyCordinateWithProximity(arrKeys, 70);
                             //doorkeys.create(coord.x, coord.y, 'star').setScale(0.8); //doors keys
-                            var myKey = doorkeys.create(coord.x, coord.y, 'gold-key').setScale(0.5); //doors keys
+                            //var myKey = doorkeys.create(coord.x, coord.y, 'gold-key').setScale(0.5); //doors keys
+                            scene.anims.create({
+                                key: 'rotatingKey',
+                                frames: scene.anims.generateFrameNumbers('gold-key-sprite', {start: 0, end: 6}),
+                                frameRate: 10,
+                                repeat: -1
+                            });
+
+                            var myKey = doorkeys.create(coord.x, coord.y, 'gold-key-sprite').setScale(0.8); //doors keys
                             myKey.question = megaMAP.questionList[keyIndex];
+                            myKey.anims.play('rotatingKey', true);
                             //console.log("question from key", myKey.question);
                             keyIndex++;
                             arrKeys[arrKeys.length] = coord;
@@ -650,7 +675,7 @@ App.prototype.start = function () {
 
     function initPlayer(scene) {
         player = scene.physics.add.sprite(400, 300, 'dude');
-        console.log('player', player);
+        //console.log('player', player);
         player.doorKeys = 0;
         //  Player physics properties. Give the little guy a slight bounce.
         player.setBounce(0.2);
@@ -662,10 +687,9 @@ App.prototype.start = function () {
             frameRate: 10,
             repeat: -1
         });
-
         scene.anims.create({
             key: 'up',
-            frames: scene.anims.generateFrameNumbers('dude', {start: 0, end: 3}),
+            frames: scene.anims.generateFrameNumbers('dude', {start: 8, end: 11}),
             frameRate: 10,
             repeat: -1
         });
@@ -678,17 +702,22 @@ App.prototype.start = function () {
 
         scene.anims.create({
             key: 'right',
-            frames: scene.anims.generateFrameNumbers('dude', {start: 5, end: 8}),
+            frames: scene.anims.generateFrameNumbers('dude', {start: 12, end: 15}),
             frameRate: 10,
             repeat: -1
         });
 
         scene.anims.create({
             key: 'down',
-            frames: scene.anims.generateFrameNumbers('dude', {start: 5, end: 8}),
+            frames: scene.anims.generateFrameNumbers('dude', {start: 4, end: 7}),
             frameRate: 10,
             repeat: -1
         });
+    }
+
+    function highlighMapPos(oldY,oldX,pY,pX,colorCode) {
+        document.getElementById('y' + oldY + 'x' + oldX).style.border = "";
+        document.getElementById('y' + pY + 'x' + pX).style.border = "2px solid " + colorCode;
     }
 
 /////////questions functionality
@@ -707,7 +736,7 @@ App.prototype.start = function () {
     //const questionWindow = document.getElementById("questionWindow");
 
     function buildQuestion(question, ifSuccessCallback, ifCancelCallback) {
-        console.log(question);
+        //console.log(question);
         var myQuestions = [question];
         // alert(myQuestions[0].qId + ') ' + myQuestions[0].qTxt + ' \n - ' +
         //   myQuestions[0].listAnswers[0].value + ' \n - ' +
@@ -770,12 +799,14 @@ App.prototype.start = function () {
                     }, 1000);
                 } else {
                     answerContainer.style.color = 'red';
-                    submitMsgContainer.innerHTML = "<h1><span style='color:red'>Sorry, wrong answer!</span></h1>";
+                    questionWindow.style.border = 'thin solid red';
+                    submitMsgContainer.innerHTML = "<h1><span style='color:red'>Sorry, wrong answer!</span></h1><br>";
                     setTimeout(function () {
                         submitMsgContainer.innerHTML = "";
+                        questionWindow.style.border = 'initial';
                         hideQuestion();
                         ifCancelCallback(question);
-                    }, 1000);
+                    }, 1200);
                 }
             });
         }
@@ -812,7 +843,6 @@ App.prototype.start = function () {
                 console.log("error", data);
             });
 
-
     }
 
     function hideVideo() {
@@ -835,6 +865,7 @@ App.prototype.start = function () {
     }
 
     function showFinalScreen() {
+        gameState.elapsedTime = secondsElapsed;
         playSound(soundFinal);
         finScr.style.display = "";
     }
@@ -845,22 +876,19 @@ App.prototype.start = function () {
     // }
 
     function submitFinalAnswer() {
+      Phaser.disable;
         //starsCount is global
         var respQ2 = document.getElementById("finQ2").value;
-        console.log('respQ2: ',respQ2);
+        var respQ2strWithOutQuotes= respQ2.replace(/['"]+/g, '')
+        console.log('respQ2: ',respQ2strWithOutQuotes);
         var respQ3 = document.getElementById("finQ3").value;
-        console.log('respQ3: ',respQ3);
-        gameState.comments = "1)Stars: " + starsCount + " 2)Likes: " + respQ2 + " 3)Suggest: " + respQ3;
+        var respQ3strWithOutQuotes= respQ3.replace(/['"]+/g, '')
+        console.log('respQ3: ',respQ3strWithOutQuotes);
+        gameState.comments = "1)Stars: " + starsCount + " 2)Likes: " + respQ2strWithOutQuotes + " 3)Suggest: " + respQ3strWithOutQuotes;
         console.log('comments: ',gameState.comments);
         gameState.listofquestions = listofquestions;
-
-        var d = new Date(); // for now
-            d.getHours(); // => 9
-            d.getMinutes(); // =>  30
-            d.getSeconds(); // => 51
-
-        gameState.timefinish = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();// endTime;
-        gameState.elapsedTime = secondsElapsed; //userTimer.getTimeValues().toString();//secondsElapsed; //gameState.timefinish;
+        var d = new Date();
+        gameState.timefinish = getFullDateTime(d);
         gameState.isFinished = 1;
 
         if (!isSurveySent) {
@@ -873,9 +901,28 @@ App.prototype.start = function () {
         //goBack() ; //go back to the previous page
     }
 
-
     $("#finSubmit").unbind("click");
     $("#finSubmit").bind("click", submitFinalAnswer);
+
+    $("#finExit").unbind("click");
+    $("#finExit").bind("click", opneAnotherURL);
+    //the following to prevent cutting space charactes in the textarea field:
+    {
+        $("#finQ2").keyup(function(e){
+         if(e.keyCode == 32){
+             // user has pressed backspace
+             document.getElementById("finQ2").value += " " ;
+         }
+       });
+       $("#finQ3").keyup(function(e){
+        if(e.keyCode == 32){
+            // user has pressed backspace
+            document.getElementById("finQ3").value += " " ;
+        }
+      });
+    }
+
+
 };
 
 var starsCount =0;
@@ -895,6 +942,10 @@ function goBack() {
     window.history.back();
 }
 
+function opneAnotherURL() {
+  window.open("./start.html","_self");
+}
+
 window.onload = function () {
     'use strict';
     var app = new App();
@@ -902,16 +953,42 @@ window.onload = function () {
 }
 
 var today = new Date();
+// var dd = String(today.getDate()).padStart(2, '0');
+// var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+// var yyyy = today.getFullYear();
+// var hour = ("0" + today.getHours()).slice(-2); //today.getHours() ;
+// var min = ("0" + today.getMinutes()).slice(-2); //today.getMinutes();
+// var sec = ("0" + today.getSeconds()).slice(-2); //today.getSeconds();
+//var startTime =  hour + ":" + min + ":" + sec;
+////var startTime = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds(); //Date.now();
+//today = mm + '/' + dd + '/' + yyyy;
+//var startTime = today + ' ' + startTime;
+var startTime = getFullDateTime(today);
+
 var userTimer;
 userTimer = new easytimer.Timer();
-var startTime = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds(); //Date.now();
+// var startTime = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds(); //Date.now();
 var endTime;
-var secondsElapsed;
+var secondsElapsed = 0;
 userTimer.start();  // -------- UNPAUSE when required!!! TIMER
 
 userTimer.addEventListener('secondsUpdated', function (e) {
     $('#userTimer').html(userTimer.getTimeValues().toString());
     //endTime = userTimer.getTimeValues().toString();
     //endTime = endTime.getHours() + ":" + endTime.getMinutes() + ":" + endTime.getSeconds()
-    secondsElapsed = userTimer.getTimeValues().seconds.toString();
+    //secondsElapsed = userTimer.getTimeValues().seconds.toString();
+    secondsElapsed++;
 });
+
+function getFullDateTime(today) {
+  var fullDay;
+  var dd = String(today.getDate()).padStart(2, '0');
+  var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+  var yyyy = today.getFullYear();
+  fullDay = mm + '/' + dd + '/' + yyyy;
+  var hour = ("0" + today.getHours()).slice(-2); //today.getHours() ;
+  var min = ("0" + today.getMinutes()).slice(-2); //today.getMinutes();
+  var sec = ("0" + today.getSeconds()).slice(-2); //today.getSeconds();
+  fullTime =  hour + ":" + min + ":" + sec;
+  return fullDay + ' ' + fullTime;
+}
