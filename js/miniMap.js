@@ -43,13 +43,13 @@
           //const mazeDiv = document.getElementById("mazeMap");
           const mazeDiv = document.getElementById(targetId);
           var maze = mazePassed;
-          mazeDiv.innerHTML = "Map: "+targetId+ "<br>"+makeTableHTMLGfx(maze);
+          mazeDiv.innerHTML = "Where are you now: "+ "<br>"+makeTableHTMLGfx(maze);
           // document.getElementById(mazePassed).className = "mazeContainerLeft";
             //mazeDiv.innerHTML = `${numCorrect} out of ${myQuestions.length}`;
         }
 
         function makeTableHTMLGfx(myArray) {
-            var result = "<pre><table id='table1'>";
+            var result = "<pre><table id='tableMiniMap'>";
             var resultStr ="";
             for(var i=0; i<myArray.length; i++) {
                 result += "<tr>";
@@ -62,7 +62,7 @@
                       resultStr += (key.toLowerCase() + value + '');
                     }
                     tabCellXId = 'y' + i + 'x' + j;
-                    result += '<td id="' + tabCellXId + '"><img src="./jpg/minimap/'+ resultStr +'.jpg" alt="[]" height="40" width="50"></td>';
+                    result += '<td class="miniMapTD" id="' + tabCellXId + '"><img src="./jpg/minimap/'+ resultStr +'.jpg" alt="[]" height="20" width="30"></td>';
                     resultStr = "";
                 }
                 result += '';

@@ -176,7 +176,7 @@ App.prototype.start = function () {
     function create() {
         // init other states
         megaMAP = game.cache.json.get('megaMAP');
-
+        this.cameras.main.setBackgroundColor('#333')
         gameState = buildGameState(userIUN, megaMAP.sessionId);
         gameState.user = userIUN;
         initMap = megaMAP.initMAP;
@@ -198,8 +198,6 @@ App.prototype.start = function () {
         //    }
         //  });
 
-        // console.log("megaMAP: "+megaMAP);
-        // console.log("roomsMAP: "+roomsMAP);
         showMazeGfx(megaMAP.doorsMAP, "mazeWDrsRmsMap");
 
         cursors = this.input.keyboard.createCursorKeys();
@@ -254,6 +252,7 @@ App.prototype.start = function () {
         gameState.isFinished = 1;
         saveState('UPDATE', gameState);
         //show finScr
+        //Phaser.disable;
         showFinalScreen();
     }
 
@@ -471,8 +470,7 @@ App.prototype.start = function () {
             return Math.floor(Math.random() * max) + min;
         }
 
-        var doorsIndex = 0; //we already have doorsMAP[][]
-        //roomsMAP = {'U': null, 'U': null,'U': null,'U': null, };
+        var doorsIndex = 0;
         roomsMAP = megaMAP.doorsMAP;
         megaMAP.doorsMAP.forEach((mapDoors, y) => {
                 mapDoors.forEach(function (mapDoor, x) {
@@ -610,25 +608,25 @@ App.prototype.start = function () {
         initPlayer(scene);
     }
 
-    function collectStar(player, star) {
-        star.disableBody(true, true);
-        //  Add and update the score
-        score += 10;
-        scoreText.setText('Score: ' + score);
-
-        if (stars.countActive(true) === 0) {
-            //  A new batch of stars to collect
-            stars.children.iterate(function (child) {
-                child.enableBody(true, child.x, 0, true, true);
-            });
-            var x = (player.x < 400) ? Phaser.Math.Between(400, 800) : Phaser.Math.Between(0, 400);
-            var bomb = bombs.create(x, 16, 'bomb');
-            bomb.setBounce(1);
-            bomb.setCollideWorldBounds(true);
-            bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
-            bomb.allowGravity = false;
-        }
-    }
+    // function collectStar(player, star) {
+    //     star.disableBody(true, true);
+    //     //  Add and update the score
+    //     score += 10;
+    //     scoreText.setText('Score: ' + score);
+    //
+    //     if (stars.countActive(true) === 0) {
+    //         //  A new batch of stars to collect
+    //         stars.children.iterate(function (child) {
+    //             child.enableBody(true, child.x, 0, true, true);
+    //         });
+    //         var x = (player.x < 400) ? Phaser.Math.Between(400, 800) : Phaser.Math.Between(0, 400);
+    //         var bomb = bombs.create(x, 16, 'bomb');
+    //         bomb.setBounce(1);
+    //         bomb.setCollideWorldBounds(true);
+    //         bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
+    //         bomb.allowGravity = false;
+    //     }
+    // }
 
     // function hitBomb (player, bomb)
     // {
@@ -644,21 +642,38 @@ App.prototype.start = function () {
         }
     }
 
+    function calcCoordOnMapPos(thisX,thisY) {
+        // player.x and player.y - its a player coordinates
+        var deltaX = Math.floor(thisX / 800);
+        var deltaY = Math.floor(thisY / 520);
+        player.mazeNewCoord = { mazeX: deltaX, mazeY: deltaY };
+        //required to id miniMap lcoation
+        if ((player.mazePrevCoord.mazeX != player.mazeNewCoord.mazeX)
+             || (player.mazePrevCoord.mazeY != player.mazeNewCoord.mazeY)) {
+               highlighMapPos(player.mazePrevCoord.mazeY,player.mazePrevCoord.mazeX,player.mazeNewCoord.mazeY,player.mazeNewCoord.mazeX,"magenta");
+               player.mazePrevCoord = { mazeX: deltaX, mazeY: deltaY };
+        }
+    }
+
     function playerNavigationHandler() {
 
         if (cursors.left.isDown) {
+           calcCoordOnMapPos(player.x,player.y);
             player.setVelocityX(-260);
             player.anims.play('left', true);
             playSound(soundStep);
         } else if (cursors.up.isDown) {
+           calcCoordOnMapPos(player.x,player.y);
             player.setVelocityY(-200);
             player.anims.play('up', true);
             playSound(soundStep);
         } else if (cursors.down.isDown) {
+           calcCoordOnMapPos(player.x,player.y);
             player.setVelocityY(200);
             player.anims.play('down', true);
             playSound(soundStep);
         } else if (cursors.right.isDown) {
+            calcCoordOnMapPos(player.x,player.y);
             player.setVelocityX(260);
             player.anims.play('right', true);
             playSound(soundStep);
@@ -666,7 +681,7 @@ App.prototype.start = function () {
         } else {
             stopPlayer();
         }
-
+        //console.log('player.mazeCoord: ', player.mazeCoord);
         // if (cursors.up.isDown && player.body.touching.down)
         // {
         //     player.setVelocityY(-330);
@@ -677,6 +692,9 @@ App.prototype.start = function () {
         player = scene.physics.add.sprite(400, 300, 'dude');
         //console.log('player', player);
         player.doorKeys = 0;
+        player.mazePrevCoord = { mazeX: 0,  mazeY: 0};  //required to id miniMap lcoation
+        player.mazeNewCoord = { mazeX: 0,  mazeY: 0}; //required to id miniMap lcoation
+         highlighMapPos(0,0,0,0,"magenta");
         //  Player physics properties. Give the little guy a slight bounce.
         player.setBounce(0.2);
         //player.setCollideWorldBounds(true);
@@ -876,7 +894,7 @@ App.prototype.start = function () {
     // }
 
     function submitFinalAnswer() {
-      Phaser.disable;
+
         //starsCount is global
         var respQ2 = document.getElementById("finQ2").value;
         var respQ2strWithOutQuotes= respQ2.replace(/['"]+/g, '')

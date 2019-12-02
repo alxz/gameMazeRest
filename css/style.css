@@ -6,6 +6,7 @@ body{
 	color: #333;
   font-weight: 300;
   text-align: center;
+	/* background-color: #333; */
   background-color: #f8f6f0;
 }
 h1{
@@ -157,6 +158,16 @@ table#table1 {
 	margin-left:auto;
 	margin-right:auto;
 	width:100px;
+}
+/* tableMiniMap */
+table#tableMiniMap {
+	text-align:center;
+	margin-left:auto;
+	margin-right:auto;
+	width:100px;
+}
+.miniMapTD {
+	border: 2px solid #333;
 }
 
 tr,td {

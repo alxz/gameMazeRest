@@ -5,13 +5,13 @@
   if (!empty($_POST['userId'])) {
      $userId = $_POST['userId'];
       } else {
-      $userId = 'JamesBrown';
+      $userId = 'JOHNDOE1';
     }
     //echo ($userId);
 ?>
 
    <meta charset="UTF-8" />
-   <title>Maze Pan with Phaser 3 Game</title>
+   <title>Security Week Challenge Game</title>
    <script src="//cdn.jsdelivr.net/npm/phaser@3.11.0/dist/phaser.js"></script>
    <link rel="stylesheet" href="css/style.css">
    <script src="js/jquery-3.4.1.min.js"></script>
@@ -22,7 +22,7 @@
        }
    </style>
 </head>
-<body>
+<body style="background-color: #333;">
    <div>
        <h1>Welcome &nbsp;
          <span id="userIUNBox"><?php echo $userId ?> </span> &nbsp;
