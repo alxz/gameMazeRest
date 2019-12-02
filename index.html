@@ -1,34 +1,47 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <title>Maze Pan with Phaser 3 Game</title>
-    <script src="//cdn.jsdelivr.net/npm/phaser@3.11.0/dist/phaser.js"></script>
-    <link rel="stylesheet" href="css/style.css">
-    <script src="js/jquery-3.4.1.min.js"></script>
-    <script src="lib/easytimer.min.js" type="text/javascript"></script>
-    <style type="text/css">
-        body {
-            margin: 0;
-        }
-    </style>
+
+<!--  <script language="php">-->
+<!--      if (!empty($_POST['userId'])) {-->
+<!--        $userId = $_POST['userId'];-->
+<!--        } else {-->
+<!--        $userId = 'JamesBrown';-->
+<!--        }-->
+
+<!--     echo ($userId);-->
+<!--   </script>-->
+
+   <meta charset="UTF-8" />
+   <title>Maze Pan with Phaser 3 Game</title>
+   <script src="//cdn.jsdelivr.net/npm/phaser@3.11.0/dist/phaser.js"></script>
+   <link rel="stylesheet" href="css/style.css">
+   <script src="js/jquery-3.4.1.min.js"></script>
+   <script src="lib/easytimer.min.js" type="text/javascript"></script>
+   <style type="text/css">
+       body {
+           margin: 0;
+       }
+   </style>
 </head>
 <body>
-    <div>
-        <h1>Find your way out the maze to help your patient. Time elapsed: <span id="userTimer"></span></h1>
-        <br/>
-    </div>
-    <div id="phaserDiv" class="classPhaserDiv">
-        <canvas></canvas>
-    </div>
-    <div id="mazeWDrsRmsMap" class="mazeContainerRight"></div>
-    <div class="mapsCont">
-      <div id="mazeMap" class="mazeContainerLeft"></div>
-    </div>
-    <!-- <div id="results"></div>
-      <script type="text/JavaScript">var scoreData = {};</script>
-    <div id="result"></div>
- -->    <div>
+   <div>
+       <h1>Welcome!
+<!--           <input type="text" name="userIUNBox"> &nbsp;-->
+           Time elapsed: <span id="userTimer"></span></h1>
+       <br/>
+   </div>
+   <div id="phaserDiv" class="classPhaserDiv">
+       <canvas></canvas>
+   </div>
+   <div id="mazeWDrsRmsMap" class="mazeContainerRight"></div>
+   <div class="mapsCont">
+     <div id="mazeMap" class="mazeContainerLeft"></div>
+   </div>
+   <!-- <div id="results"></div>
+     <script type="text/JavaScript">var scoreData = {};</script>
+   <div id="result"></div>
+-->    <div>
       <div id="mazeQeustions" class="mazeQuestions"></div>
     </div>
     <div id="question" style="display: none" class="question-popup">
@@ -55,7 +68,7 @@
             <br><br>
          </p>
          <div id="divVidPlayer">
-            <video id="vplayer" class="video-player" controls width="450">
+<!--            <video id="vplayer" class="video-player" controls width="450">-->
                 <!-- <source src="video/vid00001.mp4" type="video/mp4"> Sorry, your browser doesn\'t support embedded videos.</video> -->
          </div>
     </div>
@@ -83,7 +96,8 @@
             2.	What did you prefer the most and what did you like the least about it? <br>
             &nbsp; &nbsp; (plaese give us a few words... ):&nbsp;
           </span><br><br>
-         <textarea id="finQ2" maxlength="255" style="width:350px; height:80px;" cols="42" rows="5" ></textarea><br><br>
+         <textarea id="finQ2" name="finQ2" rows="5" ols="35"></textarea><br><br>
+
          <span class="finQuestions">
             3.	What would you suggest as an improvement for the future? <br>
             &nbsp; &nbsp; (plaese give us a few words... ):&nbsp;

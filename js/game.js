@@ -60,6 +60,7 @@ App.prototype.start = function () {
     var soundFinal;
     var gameState;
     var isSurveySent = false;
+    userIUN = "JohnDoe001";
     /****** { right: {image: 'png/doorR.png', key: 'doorR', offsetX: 340, offsetY: 80 },
                             down: {image: 'png/doorD.png', key: 'doorD', offsetX: -20, offsetY: 160 },
                             up: {image: 'png/doorU.png', key: 'doorU', offsetX: -20, offsetY: -180 },
@@ -68,11 +69,11 @@ App.prototype.start = function () {
     var doorsArray = [];//[[doorsHolder.right, doorsHolder.down],[doorsHolder.up,doorsHolder.right],[doorsHolder.left,doorsHolder.right]];
     const questionWindow = document.getElementById("questionWindow");
     const video = document.getElementById("video");
-    // const vplayer = document.getElementById("vplayer");
     const finScr = document.getElementById("finScr");
     // const divfinQ2 = document.getElementById("finQ2");
     // const divfinQ3 = document.getElementById("finQ3");
     const submitMsgContainer = document.getElementById("submitMsg");
+    //userIUN = document.getElementById("userIUNBox");
 
     function preload() {
         this.load.json('megaMAP', 'rest/getMap.php');
@@ -152,8 +153,9 @@ App.prototype.start = function () {
         this.load.image('star', 'assets/star.png');
         this.load.image('bomb', 'assets/bomb.png');
         //this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
-        this.load.spritesheet('dude', 'png/docMUHCR4U1L4.png', {frameWidth: 50, frameHeight: 75});
-
+        //this.load.spritesheet('dude', 'png/docMUHCR4U1L4.png', {frameWidth: 50, frameHeight: 75});
+        //docMUHC50x75L4U4D4R4
+        this.load.spritesheet('dude', 'png/docMUHC50x75L4U4D4R4.png', {frameWidth: 50, frameHeight: 75});
     }
 
     function buildGameState(userName, sessionId) {
@@ -174,7 +176,9 @@ App.prototype.start = function () {
     function create() {
         // init other states
         megaMAP = game.cache.json.get('megaMAP');
-        gameState = buildGameState("JohnDoe", megaMAP.sessionId);
+
+        gameState = buildGameState(userIUN, megaMAP.sessionId);
+        gameState.user = userIUN;
         initMap = megaMAP.initMAP;
         maxRoomCountX = initMap[0].length;
         maxRoomCountY = initMap.length;
@@ -262,7 +266,7 @@ App.prototype.start = function () {
         drawScores(_this);
         player.prevPos = {x: player.x, y: player.y};
         playerNavigationHandler();
-
+        //highlighMapPos(0,0,thisRoomY,thisRoomX,"magenta");
         // doorkeys.anims.play('rotatingKey', true);
         playSound(music);  // play background music
     }
@@ -295,6 +299,7 @@ App.prototype.start = function () {
             var nextDoor;
             var thisRoomX = door.roomCoord.roomX;
             var thisRoomY = door.roomCoord.roomY;
+
             switch (door.roomCoord.doorType) {
                 case 'U':
                     nextDoor = roomsMAP[thisRoomX][thisRoomY - 1].downDoor;
@@ -664,7 +669,7 @@ App.prototype.start = function () {
 
     function initPlayer(scene) {
         player = scene.physics.add.sprite(400, 300, 'dude');
-        console.log('player', player);
+        //console.log('player', player);
         player.doorKeys = 0;
         //  Player physics properties. Give the little guy a slight bounce.
         player.setBounce(0.2);
@@ -678,7 +683,7 @@ App.prototype.start = function () {
         });
         scene.anims.create({
             key: 'up',
-            frames: scene.anims.generateFrameNumbers('dude', {start: 0, end: 3}),
+            frames: scene.anims.generateFrameNumbers('dude', {start: 8, end: 11}),
             frameRate: 10,
             repeat: -1
         });
@@ -691,17 +696,22 @@ App.prototype.start = function () {
 
         scene.anims.create({
             key: 'right',
-            frames: scene.anims.generateFrameNumbers('dude', {start: 5, end: 8}),
+            frames: scene.anims.generateFrameNumbers('dude', {start: 12, end: 15}),
             frameRate: 10,
             repeat: -1
         });
 
         scene.anims.create({
             key: 'down',
-            frames: scene.anims.generateFrameNumbers('dude', {start: 5, end: 8}),
+            frames: scene.anims.generateFrameNumbers('dude', {start: 4, end: 7}),
             frameRate: 10,
             repeat: -1
         });
+    }
+
+    function highlighMapPos(oldY,oldX,pY,pX,colorCode) {
+        document.getElementById('y' + oldY + 'x' + oldX).style.border = "";
+        document.getElementById('y' + pY + 'x' + pX).style.border = "2px solid " + colorCode;
     }
 
 /////////questions functionality
@@ -720,7 +730,7 @@ App.prototype.start = function () {
     //const questionWindow = document.getElementById("questionWindow");
 
     function buildQuestion(question, ifSuccessCallback, ifCancelCallback) {
-        console.log(question);
+        //console.log(question);
         var myQuestions = [question];
         // alert(myQuestions[0].qId + ') ' + myQuestions[0].qTxt + ' \n - ' +
         //   myQuestions[0].listAnswers[0].value + ' \n - ' +
