@@ -19,8 +19,18 @@ SELECT `uId`, `uIUN`, `uFName`, `uLName`, `uRetryCount`, `uTimer`,
   <meta charset="UTF-8">
   <title>To review the table(s) data</title>
   <link rel="stylesheet" href="../css/style.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js">
-  <script src="jquery-3.4.1.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="../js/jquery-3.4.1.min.js"></script>
+  <script type="text/JavaScript">
+      function SubmitForm(formId) {
+          //var oForm = document.getElementById(formId);
+          //tabName
+          var resultsContainer = document.getElementById('tabName');
+          var selectedValue = document.getElementById('tabsFromDB').value;
+          resultsContainer.value = `${selectedValue}`;
+
+      }
+  </script>
 </head>
 <style>
 .data-table{
@@ -44,7 +54,7 @@ th, td {
 <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
 
 <h1>Show the content of a mySQL DB
-<a href="../../start.html" id="link" style="color: #FFFF00">... back to HOME</a></h1>
+<a href="../start.html" id="link" style="color: #FFFF00">... back to HOME</a></h1>
 <div>
   <div>
     <p>Please select a table name to display: &nbsp;&nbsp;&nbsp;
@@ -115,14 +125,7 @@ function display()
           resultsContainer = document.getElementById('tabName');
           resultsContainer.value = `${selectedValue}`;
 
-          function SubmitForm(formId) {
-              //var oForm = document.getElementById(formId);
-              //tabName
-              var resultsContainer = document.getElementById('tabName');
-              var selectedValue = document.getElementById('tabsFromDB').value;
-              resultsContainer.value = `${selectedValue}`;
 
-          }
         </script>
 <?php
 }
