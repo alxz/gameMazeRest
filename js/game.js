@@ -138,8 +138,8 @@ App.prototype.start = function () {
         this.load.spritesheet('doorR', 'png/doorRsprite.png', {frameWidth: 180, frameHeight: 180});
         //==============================================
         //blocks:
-        this.load.image('blockRed', 'png/block20x20red.png');
-        //this.load.image('blockRed', 'png/block20x20.png');
+        //this.load.image('blockRed', 'png/block20x20red.png');
+        this.load.image('blockRed', 'png/block20x20.png');
         //==================
         _this = this;
         this.load.image('gold-key', 'png/goldenKey.png'); //gold-key

@@ -63,7 +63,7 @@
                     }
                     tabCellXId = 'y' + i + 'x' + j;
                     if ((i === (myArray.length -1)) && (j === (myArray[i].length -1))) {
-                        result += '<td class="miniMapTD" style="border: 2px solid #FFFF00" id="' + tabCellXId + '"><img src="./jpg/minimap/'+ resultStr +'.jpg" alt="[]" height="20" width="30"></td>';
+                        result += '<td class="miniMapTD" style="border: 2px solid #FFFF00" id="' + tabCellXId + '"><img src="./jpg/minimap/'+ resultStr +'.jpg" alt="[]" height="30" width="40"></td>';
                     } else {
                         result += '<td class="miniMapTD" id="' + tabCellXId + '"><img src="./jpg/minimap/'+ resultStr +'.jpg" alt="[]" height="30" width="40"></td>';
                     }

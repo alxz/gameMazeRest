@@ -12,6 +12,7 @@
 
    <meta charset="UTF-8" />
    <title>Security Week Challenge Game</title>
+    <script src="js/phaser.js"></script>
    <script src="//cdn.jsdelivr.net/npm/phaser@3.11.0/dist/phaser.js"></script>
    <link rel="stylesheet" href="css/style.css">
    <script src="js/jquery-3.4.1.min.js"></script>
