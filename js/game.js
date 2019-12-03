@@ -35,6 +35,7 @@ App.prototype.start = function () {
     var gameOver = false;
     var scoreText;
     var scoreTextShade;
+    var scoreImg;
     var isPause = false;
     var keyIndex = 0;
     //var startTime;
@@ -60,7 +61,7 @@ App.prototype.start = function () {
     var soundFinal;
     var gameState;
     var isSurveySent = false;
-    userIUN = "JohnDoe001";
+    userIUN = "JohnDoe";
     /****** { right: {image: 'png/doorR.png', key: 'doorR', offsetX: 340, offsetY: 80 },
                             down: {image: 'png/doorD.png', key: 'doorD', offsetX: -20, offsetY: 160 },
                             up: {image: 'png/doorU.png', key: 'doorU', offsetX: -20, offsetY: -180 },
@@ -276,12 +277,9 @@ App.prototype.start = function () {
         scoreText.setText('Keys: ' + player.doorKeys + '   *   Score: ' + totalQestionsAnswered);
         scoreText.x = 50 + player.x - 400;
         scoreText.y = 50 + player.y - 300;
-        // scoreTextShade = this.add.text(17, 17, 'keys: 0', {fontSize: '32px', fill: '#ff00ff'});
-        // for (var i = 0; i < 3; i++) {
-        //   scoreText.
-        //   scoreText.setText('Keys: ' + player.doorKeys + '  <->  Score: ' + totalQestionsAnswered);
-        //   scoreText.x = 50-i + player.x - 400;
-        //   scoreText.y = 50-i + player.y - 300;
+
+        // for (var i=0; i< player.doorKeys; i++) {
+        //     scoreImg = scene.add.image(50 + player.x - 300, 50 + player.y - 300, 'gold-key').setScale(0.8) //scoreImg
         // }
     }
 
@@ -580,7 +578,7 @@ App.prototype.start = function () {
                             //draw the patient: hospitalBed
                             hospitalBed.create(400 + 800 * (x), 270 + 520 * (y), 'patientEmptyPlaceHolder').setScale(0.8);
                         } else {
-                            var coord = getKeyCordinateWithProximity(arrKeys, 70);
+                            var coord = getKeyCordinateWithProximity(arrKeys, 100);
                             //doorkeys.create(coord.x, coord.y, 'star').setScale(0.8); //doors keys
                             //var myKey = doorkeys.create(coord.x, coord.y, 'gold-key').setScale(0.5); //doors keys
                             scene.anims.create({
@@ -601,10 +599,6 @@ App.prototype.start = function () {
                 })
             }
         );
-        // for (var i = 0; i < doorsArray.length; i++) {
-        //    console.log('doorsArray: ' + doorsArray[i].roomCoord.doorType +
-        //      ' x: ' + doorsArray[i].roomCoord.roomX + ' y: ' + doorsArray[i].roomCoord.roomY);
-        // }
         initPlayer(scene);
     }
 

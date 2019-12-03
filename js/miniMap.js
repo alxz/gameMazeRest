@@ -43,7 +43,7 @@
           //const mazeDiv = document.getElementById("mazeMap");
           const mazeDiv = document.getElementById(targetId);
           var maze = mazePassed;
-          mazeDiv.innerHTML = "Where are you now: "+ "<br>"+makeTableHTMLGfx(maze);
+          mazeDiv.innerHTML = "<span style='color: #FFFF00'>Where are you now: </span>"+ "<br>"+makeTableHTMLGfx(maze);
           // document.getElementById(mazePassed).className = "mazeContainerLeft";
             //mazeDiv.innerHTML = `${numCorrect} out of ${myQuestions.length}`;
         }
@@ -62,7 +62,12 @@
                       resultStr += (key.toLowerCase() + value + '');
                     }
                     tabCellXId = 'y' + i + 'x' + j;
-                    result += '<td class="miniMapTD" id="' + tabCellXId + '"><img src="./jpg/minimap/'+ resultStr +'.jpg" alt="[]" height="20" width="30"></td>';
+                    if ((i === (myArray.length -1)) && (j === (myArray[i].length -1))) {
+                        result += '<td class="miniMapTD" style="border: 2px solid #FFFF00" id="' + tabCellXId + '"><img src="./jpg/minimap/'+ resultStr +'.jpg" alt="[]" height="20" width="30"></td>';
+                    } else {
+                        result += '<td class="miniMapTD" id="' + tabCellXId + '"><img src="./jpg/minimap/'+ resultStr +'.jpg" alt="[]" height="30" width="40"></td>';
+                    }
+
                     resultStr = "";
                 }
                 result += '';

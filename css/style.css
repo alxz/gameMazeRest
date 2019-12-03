@@ -161,6 +161,8 @@ table#table1 {
 }
 /* tableMiniMap */
 table#tableMiniMap {
+	padding: 2px;
+	border: solid 2px lightgray;
 	text-align:center;
 	margin-left:auto;
 	margin-right:auto;
