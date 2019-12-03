@@ -5,7 +5,7 @@
   if (!empty($_POST['userId'])) {
      $userId = $_POST['userId'];
       } else {
-      $userId = 'JOHNDOE1';
+      $userId = 'UNKNOWN';
     }
     //echo ($userId);
 ?>
