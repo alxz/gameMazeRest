@@ -330,6 +330,31 @@ tr,td {
 			display: table-row-group;
 		}
 
+.introTopDiv {
+	padding: 5px;
+	margin-left: auto;
+	margin-right: auto;
+}
+.introDiv {
+	padding: 10px;
+	margin-left: auto;
+	margin-right: auto;
+	float: left;
+}
+.introDivImg {
+	padding: 10px;
+	/* margin-left: auto;
+	margin-right: auto; */
+	margin: auto;
+	float: right;
+	background: lightgray;
+}
+.introMidDiv {
+	display: flex;
+	padding: 25px;
+	margin-left: auto;
+	margin-right: auto;
+}
 
 /* ====
 from coolgame

@@ -1,6 +1,7 @@
 <?php
-require_once('../lib/config.php');
 require_once('../lib/functions.php');
+require_once('../lib/classes.php');
+require_once('../lib/config.php');
 //<form method="post" action="showDBcont.php">
 /*
 DB TABLES STRUCTURE:
@@ -70,6 +71,9 @@ th, td {
 <button type="submit" value="Submit Request" name="submit">Submit Request</button>
 &nbsp; &nbsp; &nbsp;
 <button onclick="history.go(-1);">Back </button>
+&nbsp; &nbsp; &nbsp;
+<button type="submit" value="UpdateQuestions" name="update">Update Questions</button>
+&nbsp; &nbsp; &nbsp;
 </form>
 </body>
 </html>
@@ -132,6 +136,36 @@ function display()
 if(isset($_POST['submit']))
 {
   display();
+
+}
+
+if(isset($_POST['update']))
+{
+  $tabName = $_POST['tabName'];
+  echo '<br>Updating: $tabName<br>';
+  $qTxt = "";
+  $qIsTaken = 0;
+  $qIsAnswered = 0;
+  $questionURL = "";
+  // Create connection
+  $conn = createConnection (DBHOST, DBUSER, DBPASS, DBNAME);
+  // Check connection
+  if (!$conn) {
+      die("Connection failed: " . mysqli_connect_error());
+  }
+
+  $sql = "INSERT INTO $tabName (qTxt, qIsTaken, qIsAnswered, questionURL)
+  VALUES ('$qTxt', $qIsTaken, $qIsAnswered, $questionURL)";
+
+  if (mysqli_query($conn, $sql)) {
+      //echo "<br> New record created successfully <br>";
+      echo "INSERTED";
+  } else {
+    http_response_code(500);
+      echo "Error: " . $sql . "<br>" . mysqli_error($conn);
+  }
+
+  mysqli_close($conn);
 
 }
 // if(isset($_POST['tabsFromDB'])) {

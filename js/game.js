@@ -916,7 +916,8 @@ App.prototype.start = function () {
         if (!isSurveySent) {
             saveState('UPDATE', gameState);
             isSurveySent = true;
-            alert ('The survey has been submitted! Thanks for your opinion!');
+            //alert ('The survey has been submitted! Thanks for your opinion!');
+            // "Some words are better left unsaid."
         } else {
             alert ('This survey has already been submitted! Going backwards!');
         }
