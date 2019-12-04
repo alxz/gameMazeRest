@@ -31,18 +31,17 @@
            Time elapsed: <span id="userTimer"></span></h1>
        <br/>
    </div>
-   <div id="phaserDiv" class="classPhaserDiv">
-       <canvas></canvas>
+   <div id="mainDiv" class="classmainDiv">
+     <div id="phaserDiv" class="classPhaserDiv">
+         <canvas></canvas>
+     </div>
+     <div id="mazeWDrsRmsMap" class="mazeContainerRight"></div>
    </div>
-   <div id="mazeWDrsRmsMap" class="mazeContainerRight"></div>
    <div class="mapsCont">
      <div id="mazeMap" class="mazeContainerLeft"></div>
    </div>
-   <!-- <div id="results"></div>
-     <script type="text/JavaScript">var scoreData = {};</script>
-   <div id="result"></div>
--->    <div>
-      <div id="mazeQeustions" class="mazeQuestions"></div>
+    <div>
+    <div id="mazeQeustions" class="mazeQuestions"></div>
     </div>
     <div id="question" style="display: none" class="question-popup">
         <div id="questionWindow" class="question-container question-hide">
