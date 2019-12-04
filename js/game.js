@@ -873,7 +873,7 @@ App.prototype.start = function () {
         // vplayer.play();
         const vidPlayer = document.getElementById("divVidPlayer");
         vidPlayer.innerHTML = '<iframe src="' + qVideoURL
-            + '" width="420" height="300" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>';
+            + '" width="640" height="520" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>';
 
         $("#closeVideo").unbind("click");
         $("#closeVideo").bind("click", onVideoCloseCallback);

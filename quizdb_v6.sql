@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Dec 04, 2019 at 09:23 PM
+-- Generation Time: Dec 04, 2019 at 09:35 PM
 -- Server version: 5.7.23
 -- PHP Version: 7.0.32
 
@@ -128,10 +128,10 @@ INSERT INTO `tabanswers` (`ansId`, `ansTxt`, `ansQId`, `ansIsValid`) VALUES
 (82, 'There are three oceans total', 21, 1),
 (83, 'There are four oceans total', 21, 0),
 (84, 'There is only one ocean and two more seas', 21, 0),
-(85, '80% of the world’s supply of fresh cannabis comes from Canada!', 22, 0),
-(86, '80% of the world’s supply of crude oil  comes from Canada!', 22, 0),
-(87, '80% of the world’s supply of cranberries  comes from Canada!', 22, 0),
-(88, '80% of the world’s supply of maple syrup comes from Canada!', 22, 1);
+(85, '80% of the world\'s supply of fresh cannabis comes from Canada!', 22, 0),
+(86, '80% of the world\'s supply of crude oil  comes from Canada!', 22, 0),
+(87, '80% of the world\'s supply of cranberries  comes from Canada!', 22, 0),
+(88, '80% of the world\'s supply of maple syrup comes from Canada!', 22, 1);
 
 -- --------------------------------------------------------
 
@@ -197,7 +197,7 @@ CREATE TABLE IF NOT EXISTS `tabusers` (
   `comment` text COLLATE latin1_general_ci NOT NULL,
   `sessionId` text COLLATE latin1_general_ci NOT NULL,
   PRIMARY KEY (`uId`)
-) ENGINE=InnoDB AUTO_INCREMENT=42 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=44 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 --
 -- Dumping data for table `tabusers`
@@ -244,7 +244,9 @@ INSERT INTO `tabusers` (`uId`, `uIUN`, `uFName`, `uLName`, `uRetryCount`, `uTime
 (38, 'ALEXTHEKING ', 'ALEXTHEKING ', 'ALEXTHEKING ', 1, 0, 1, 0, '12/04/2019 08:39:26', '', 'q:4; ', 'Inserted: ', '7d186624-f988-49b5-b442-565d08911b6c'),
 (39, 'ALEXTHEKING ', 'ALEXTHEKING ', 'ALEXTHEKING ', 2, 71, 7, 1, '12/04/2019 08:40:14', '12/04/2019 08:41:41', 'q:3; q:8; q:10; q:7; q:4; q:11; q:5; ', '1)Stars: 4 2)Likes: 8fghfgjghj6 68 6 gj 3)Suggest: gjhk gj6 j 67 j6k', 'e9c43cb0-9b4d-4cef-8dde-1677626f1f59'),
 (40, 'JOHN-DOE ', 'JOHN-DOE ', 'JOHN-DOE ', 13, 47, 6, 1, '12/04/2019 10:21:07', '12/04/2019 10:21:54', 'q:3; q:10; q:6; q:7; q:12; q:5; ', '', '9ae1ed91-dd93-449d-a750-4dce42eb7c3e'),
-(41, 'JOHN-DOE ', 'JOHN-DOE ', 'JOHN-DOE ', 14, 0, 3, 0, '12/04/2019 12:01:28', '', 'q:13; q:19; q:7; ', '', '01c326da-6880-4c14-93c0-521c71f8b351');
+(41, 'JOHN-DOE ', 'JOHN-DOE ', 'JOHN-DOE ', 14, 0, 3, 0, '12/04/2019 12:01:28', '', 'q:13; q:19; q:7; ', '', '01c326da-6880-4c14-93c0-521c71f8b351'),
+(42, 'JOHN-DOE ', 'JOHN-DOE ', 'JOHN-DOE ', 15, 0, 1, 0, '12/04/2019 13:26:55', '', 'q:10; ', '', 'b7e2661e-b0be-4f5f-b8a3-2431b3e04c45'),
+(43, 'KILLERWHALE1 ', 'KILLERWHALE1 ', 'KILLERWHALE1 ', 1, 73, 7, 1, '12/04/2019 13:32:42', '12/04/2019 13:34:02', 'q:12; q:18; q:15; q:6; q:14; q:5; q:20; ', '1)Stars: 5 2)Likes: 1 3)Suggest: 2', '4cfb294a-0a78-438f-8025-e20cd8b4a178');
 
 --
 -- Constraints for dumped tables
