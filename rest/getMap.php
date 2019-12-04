@@ -2,7 +2,7 @@
         require_once('../lib/config.php');
         require_once('../lib/functions.php');
         require_once('../lib/classes.php');
-
+    // by Alexey Zapromyotov (c) 2019
       session_start();
       if (!isset($_SESSION['time'])) {
           $_SESSION['time'] = date("H:i:s");
@@ -23,6 +23,7 @@
       $answers = $question->get_listAnswers();
       $ansIndex = 0;
       $correctAns = 0;
+        shuffle($answers);
         foreach ($answers as $answer) {
           // code...
           $arrAnswers = array('key'=>$ansIndex+1,'value'=>$answer->get_ansTxt());
@@ -33,11 +34,13 @@
           }
           $ansIndex++;
         }
+        //shuffle($jsonListAllAns);
         $arr = array ('qId'=>$qId , 'question'=>$text , 'answers'=>$jsonListAllAns, 'correctAnswer'=> $correctAns, 'questionURL' => $questionURL);
         //echo "<br/>".$arr['questionurl']."<br/>";
         $jsonListAllQ[] = $arr;
     }
-    shuffle($jsonListAllQ);
+    shuffle($jsonListAllQ); //
+    $creator = "by Alexey Zapromyotov (c) 2019";
     // echo '<br>=====<br>';
     $mazeMapArr = mazeStruc();
     $maxYSize = count($mazeMapArr) - 1; //array indexes starts from 0

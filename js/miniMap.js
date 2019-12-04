@@ -1,4 +1,4 @@
-
+// by Alexey Zapromyotov (c) 2019
   // var arrMazeInit = <?php echo $arrMazeInit ?>;
   // var mazeQuestionsArr = <?php echo $mazeQuestionsArr ?>; //questions and answers JSON array
   // var mazeWDrsRms =<?php echo $mazeWithRoomsDoors ?>;
@@ -8,7 +8,6 @@
   //showMaze(arrMazeInit, "mazeMap");
   //showMazeGfx(mazeWDrsRms, "mazeWDrsRmsMap");
   //showMazeObj(mazeQuestionsArr, "mazeQeustions");
-
 
         function showMaze (mazePassed,targetId) {
           //here we are going to display the maze table/array

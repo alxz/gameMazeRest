@@ -1,6 +1,6 @@
 var App = function () {
 };
-
+// by Alexey Zapromyotov (c) 2019
 App.prototype.start = function () {
     var config = {
         type: Phaser.AUTO,
@@ -883,14 +883,16 @@ App.prototype.start = function () {
     function showFinalScreen() {
         gameState.elapsedTime = secondsElapsed;
         playSound(soundFinal);
+        var minSpent = Math.floor(gameState.elapsedTime / 60);
+        var secSpent = (gameState.elapsedTime % 60);
         finScr.style.display = "";
         const finScrTxtLine1 = document.getElementById('finScrTxtLine1');
         const finScrTxtLine2 = document.getElementById('finScrTxtLine2');
         const finScrTxtLine3 = document.getElementById('finScrTxtLine3');
-        const finScrTxtLine4 = document.getElementById('finScrTxtLine4');
-        finScrTxtLine2.innerHTML = "Your score: " + gameState.correctCount;
-        finScrTxtLine3.innerHTML = "Your time: " + gameState.elapsedTime;
-        finScrTxtLine4.innerHTML = "";
+        //const finScrTxtLine4 = document.getElementById('finScrTxtLine4');
+        finScrTxtLine2.innerHTML = "Your score: " + gameState.correctCount + " keys collected!";
+        finScrTxtLine3.innerHTML = "Your time: " + minSpent + " m " + secSpent + " s.";//gameState.elapsedTime;
+        //finScrTxtLine4.innerHTML = "";
 
     }
 
@@ -941,8 +943,7 @@ App.prototype.start = function () {
     //     }
     //   });
     // }
-
-
+    // by Alexey Zapromyotov (c) 2019
 };
 
 var starsCount =0;
@@ -973,9 +974,7 @@ window.onload = function () {
 }
 
 var today = new Date();
-
 var startTime = getFullDateTime(today);
-
 var userTimer;
 userTimer = new easytimer.Timer();
 // var startTime = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds(); //Date.now();
