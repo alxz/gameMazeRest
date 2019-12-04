@@ -133,6 +133,7 @@ App.prototype.start = function () {
         _this = this;
         this.load.image('gold-key', 'png/goldenKey.png'); //gold-key
         this.load.spritesheet('gold-key-sprite', 'png/gold-key.png', { frameWidth: 40, frameHeight: 40 });
+        this.load.spritesheet('green-key-sprite', 'png/keyAnimation.png', { frameWidth: 40, frameHeight: 100 });
         this.load.image('messageBoard', 'png/messageBoard600x400.png');
 
         this.load.image('star', 'assets/star.png');
@@ -596,6 +597,7 @@ App.prototype.start = function () {
                             var coord = getKeyCordinateWithProximity(arrKeys, 100);
                             //doorkeys.create(coord.x, coord.y, 'star').setScale(0.8); //doors keys
                             //var myKey = doorkeys.create(coord.x, coord.y, 'gold-key').setScale(0.5); //doors keys
+                            // 'green-key-sprite', {start: 0, end: 18} -vs- 'gold-key-sprite', {start: 0, end: 6}
                             scene.anims.create({
                                 key: 'rotatingKey',
                                 frames: scene.anims.generateFrameNumbers('gold-key-sprite', {start: 0, end: 6}),
@@ -877,8 +879,9 @@ App.prototype.start = function () {
         video.style.display = "";
         // vplayer.play();
         const vidPlayer = document.getElementById("divVidPlayer");
-        vidPlayer.innerHTML = '<iframe src="' + qVideoURL
-            + '" width="600" height="480" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>';
+        vidPlayer.innerHTML = '<div class="embed-container"><iframe src="' + qVideoURL
+            + '" width="600" height="480" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></div>';
+        //<style>.embed-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; height: auto; } .embed-container iframe, .embed-container object, .embed-container embed { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }</style><div class='embed-container'><iframe src='https://player.vimeo.com/video/11712103' frameborder='0' webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe></div>
 
         $("#closeVideo").unbind("click");
         $("#closeVideo").bind("click", onVideoCloseCallback);

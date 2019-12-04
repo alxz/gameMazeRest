@@ -1,7 +1,9 @@
 <?php
 
-$service_url = 'https://www.mymuhc.muhc.mcgill.ca/a/a.php';
-//include($service_url);
+$service_url = 'http://www.mymuhc.muhc.mcgill.ca/a/a.php';
+include($service_url);
+echo '<br><hr/><br>';
+include('https://www.mymuhc.muhc.mcgill.ca/a/a.php');
 
  echo "<h1>Kerberos Auth'd</h1>";
  echo "<br>Remote user: <b>     " . $_SERVER['REMOTE_USER'] . "</b>";
