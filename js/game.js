@@ -775,7 +775,7 @@ App.prototype.start = function () {
                         `<label>
                           <input type="radio" name="question${questionNumber}" value="${ind}">
                           ${currentQuestion.answers[ind].key} :
-                          ${currentQuestion.answers[ind].value}
+                          ${atob(currentQuestion.answers[ind].value)}
                           </label>`
                     );
                 }

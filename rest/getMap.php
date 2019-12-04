@@ -26,7 +26,7 @@
         shuffle($answers);
         foreach ($answers as $answer) {
           // code...
-          $arrAnswers = array('key'=>$ansIndex+1,'value'=>$answer->get_ansTxt());
+          $arrAnswers = array('key'=>$ansIndex+1,'value'=>base64_encode($answer->get_ansTxt()));
           $jsonListAllAns[] = $arrAnswers;
           if ($answer->get_ansIsValid() == 1) {
             // code...
@@ -34,7 +34,7 @@
           }
           $ansIndex++;
         }
-        //shuffle($jsonListAllAns);
+
         $arr = array ('qId'=>$qId , 'question'=>$text , 'answers'=>$jsonListAllAns, 'correctAnswer'=> $correctAns, 'questionURL' => $questionURL);
         //echo "<br/>".$arr['questionurl']."<br/>";
         $jsonListAllQ[] = $arr;
