@@ -96,13 +96,13 @@
             2.	What did you prefer the most and what did you like the least about it? <br>
             &nbsp; &nbsp; (Please say a few words... ):&nbsp;
           </span><br><br>
-         <textarea id="finQ2" name="finQ2" rows="5" ols="35" wrap="hard"></textarea><br><br>
+         <textarea id="finQ2" name="finQ2" rows="5" ols="35" wrap="hard" maxlength="250"></textarea><br><br>
 
          <span class="finQuestions">
             3.	What would you suggest as an improvement for the future? <br>
             &nbsp; &nbsp; (Please say a few words... ):&nbsp;
           </span><br><br>
-         <textarea id="finQ3" name="finQ3" rows="5" ols="35" wrap="hard"></textarea><br><br>
+         <textarea id="finQ3" name="finQ3" rows="5" ols="35" wrap="hard" maxlength="250"></textarea><br><br>
           <button id="finSubmit" >Submit</button> &nbsp;&nbsp;&nbsp;
           <button id="finExit" >Exit</button>
     </div>

@@ -17,7 +17,7 @@
       // code...
       //going over a llist of questions to create a JSON array:
       $qId = $question->get_qId();
-      $text = $question->get_qTxt();
+      $text = base64_encode($question->get_qTxt());
       $questionURL = $question->get_questionURL();
       $jsonListAllAns = [];
       $answers = $question->get_listAnswers();

@@ -28,7 +28,7 @@ App.prototype.start = function () {
     var player;
     var room;
     var stars;
-
+    var theGameIsStarted = false;
     var platforms;
     var cursors;
     var score = 0;
@@ -354,6 +354,10 @@ App.prototype.start = function () {
       // var soundOk;
       // var soundFail;
         if (isPause) return;
+        if (theGameIsStarted === false) {
+          //if the game has started then change the boolean flag:
+          theGameIsStarted = true;
+        }
         playSound(pickupKey);
         stopPlayer();
         isPause = true;
@@ -377,9 +381,9 @@ App.prototype.start = function () {
             //console.log(player.doorKeys);
             //save the state to the table:
             gameState.correctCount = totalQestionsAnswered;
-            listofquestions = listofquestions + "q:" +  key.question.qId + "; ";
+            listofquestions = listofquestions + "qT:" +  key.question.qId + "; ";
             gameState.listofquestions = listofquestions; //+ ":" +  " " + totalQestionsAsked;
-            if (totalQestionsAnswered === 1) {
+            if (totalQestionsAnswered === 1 && theGameIsStarted === true) {
                 saveState('INSERT', gameState);
             } else {
                 saveState('UPDATE', gameState);
@@ -395,17 +399,18 @@ App.prototype.start = function () {
 
         var ifCancelCallback = function (question) {
             playSound(soundFail);
+            gameState.correctCount = totalQestionsAnswered;
+            listofquestions = listofquestions + "qF:" +  key.question.qId + "; ";
+            gameState.listofquestions = listofquestions; //+ ":" +  " " + totalQestionsAsked;
             //save state:
-            saveState('UPDATE', gameState);
-            // if (totalQestionsAnswered === 0) {
-            //     saveState('INSERT', gameState);
-            // } else {
-            //     saveState('UPDATE', gameState);
-            // }
-
+            //saveState('UPDATE', gameState);
+            if (totalQestionsAnswered === 0 && theGameIsStarted === true) {
+                saveState('INSERT', gameState);
+            } else {
+                saveState('UPDATE', gameState);
+            }
             showVideo(question.questionURL, onVideoCloseCallback);
         }
-
         showQuestion(key.question, ifSuccessCallback, ifCancelCallback);
     }
 
@@ -783,7 +788,7 @@ App.prototype.start = function () {
                 // add this question and its answers to the output
                 output.push(
                     `<div class="slide">
-                       <div class="question"> ${currentQuestion.question} </div>
+                       <div class="question"> ${atob(currentQuestion.question)} </div>
                        <div class="answers"> ${answers.join("")} </div>
                      </div>`
                 );
@@ -873,7 +878,7 @@ App.prototype.start = function () {
         // vplayer.play();
         const vidPlayer = document.getElementById("divVidPlayer");
         vidPlayer.innerHTML = '<iframe src="' + qVideoURL
-            + '" width="640" height="520" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>';
+            + '" width="600" height="480" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>';
 
         $("#closeVideo").unbind("click");
         $("#closeVideo").bind("click", onVideoCloseCallback);
