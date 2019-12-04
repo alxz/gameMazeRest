@@ -77,13 +77,13 @@
          style="display: none">
          <br><br>
           <p><h3><span id="finScrTxtLine1" class="finMessage">Congratulations!</span></h3></p>
-          <p><h3><span id="finScrTxtLine2" class="finMessage"></span></h3></p>
-          <p><h3><span id="finScrTxtLine3" class="finMessage"></span></h3></p>
-          <p><h3><span id="finScrTxtLine4" class="finMessage"></span></h3></p>
+          <h3><span id="finScrTxtLine2" class="finMessage"></span></h3>
+          <h3><span id="finScrTxtLine3" class="finMessage"></span></h3>
+          <h3><span id="finScrTxtLine4" class="finMessage"></span></h3>
          <br>
          <span class="finQuestions">
             1.	Did you enjoy playing an educational game as a tool for learning? <br>
-            &nbsp; &nbsp; (plaese rate your answer from 1 [min] to 5 [max]):&nbsp;
+            &nbsp; &nbsp; (Please rate your answer from 1 [min] to 5 [max]):&nbsp;
           </span>
           <div class="divStars">
               <span class="starStyle" id="star1" onclick="star(1);">&#9733;</span>
@@ -94,13 +94,13 @@
           </div><br>
          <span class="finQuestions">
             2.	What did you prefer the most and what did you like the least about it? <br>
-            &nbsp; &nbsp; (plaese give us a few words... ):&nbsp;
+            &nbsp; &nbsp; (Please say a few words... ):&nbsp;
           </span><br><br>
          <textarea id="finQ2" name="finQ2" rows="5" ols="35" wrap="hard"></textarea><br><br>
 
          <span class="finQuestions">
             3.	What would you suggest as an improvement for the future? <br>
-            &nbsp; &nbsp; (plaese give us a few words... ):&nbsp;
+            &nbsp; &nbsp; (Please say a few words... ):&nbsp;
           </span><br><br>
          <textarea id="finQ3" name="finQ3" rows="5" ols="35" wrap="hard"></textarea><br><br>
           <button id="finSubmit" >Submit</button> &nbsp;&nbsp;&nbsp;
