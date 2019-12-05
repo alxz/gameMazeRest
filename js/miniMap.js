@@ -42,7 +42,7 @@
           //const mazeDiv = document.getElementById("mazeMap");
           const mazeDiv = document.getElementById(targetId);
           var maze = mazePassed;
-          mazeDiv.innerHTML = "<span style='color: #FFFF00'>Where are you now: </span>"+ "<br>"+makeTableHTMLGfx(maze);
+          mazeDiv.innerHTML = "<span style='color: #FFFF00; text-shadow: 2px 2px 4px #444444;'>Where are you now: </span>"+ "<br>"+makeTableHTMLGfx(maze);
           // document.getElementById(mazePassed).className = "mazeContainerLeft";
             //mazeDiv.innerHTML = `${numCorrect} out of ${myQuestions.length}`;
         }

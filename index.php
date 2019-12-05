@@ -24,7 +24,7 @@
    </style>
 </head>
 <body style="background-color: #333;">
-   <div>
+   <div class="divTopLabel">
        <h1>Welcome &nbsp;
          <span id="userIUNBox"><?php echo $userId ?> </span> &nbsp;
 <!--           <input type="text" name="userIUNBox"> &nbsp;-->
@@ -35,6 +35,7 @@
      <div id="phaserDiv" class="classPhaserDiv">
          <canvas></canvas>
      </div>
+       <br/><br/>
      <div id="mazeWDrsRmsMap" class="mazeContainerRight"></div>
    </div>
    <div class="mapsCont">
