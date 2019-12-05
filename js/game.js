@@ -19,7 +19,7 @@ App.prototype.start = function () {
         },
         canvas: document.querySelector('canvas')
     };
-
+    var language = '';
     var megaMAP;
     var initMap;
     var roomsMAP = [];
@@ -71,7 +71,8 @@ App.prototype.start = function () {
 
     const submitMsgContainer = document.getElementById("submitMsg");
     userIUN = document.getElementById("userIUNBox").innerHTML;
-
+    language = document.getElementById("languages").innerHTML; //id="languages"
+    //alert('Lang: ', language);
     function preload() {
         this.load.json('megaMAP', 'rest/getMap.php');
 
@@ -213,29 +214,6 @@ App.prototype.start = function () {
         this.physics.add.collider(player, hospitalBed, null, breakingBad, this);
         this.physics.add.overlap(player, doorkeys, collectKey, null, this);
 
-        //  Some stars to collect, 12 in total, evenly spaced 70 pixels apart along the x axis
-        // stars = this.physics.add.group({
-        //     key: 'star',
-        //     repeat: 11,
-        //     setXY: { x: 12, y: 0, stepX: 70 }
-        // });
-
-        // stars.children.iterate(function (child) {
-
-        //     //  Give each star a slightly different bounce
-        //     child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
-        // });
-
-        // bombs = this.physics.add.group();
-        //  The score
-        //  Collide the player and the stars with the platforms
-        // this.physics.add.collider(player, platforms);
-        // this.physics.add.collider(stars, platforms);
-        // this.physics.add.collider(bombs, platforms);
-
-        //  Checks to see if the player overlaps with any of the stars, if he does call the collectStar function
-        // this.physics.add.overlap(player, stars, collectStar, null, this);
-        // this.physics.add.collider(player, bombs, hitBomb, null, this);
     }
 
     function breakingBad() {
@@ -250,7 +228,6 @@ App.prototype.start = function () {
         saveState('UPDATE', gameState);
         //show finScr
         //Phaser.disable;
-        //cursors = ;
         this.input.keyboard.enabled = false; //to stop keyboard capture
         //Phaser.Input.Keyboard.clearCaptures();
         showFinalScreen();
@@ -263,8 +240,6 @@ App.prototype.start = function () {
         drawScores(_this);
         player.prevPos = {x: player.x, y: player.y};
         playerNavigationHandler();
-        //highlighMapPos(0,0,thisRoomY,thisRoomX,"magenta");
-        // doorkeys.anims.play('rotatingKey', true);
         playSound(music);  // play background music
     }
 
@@ -279,8 +254,11 @@ App.prototype.start = function () {
         scoreText.setText('Score: ' + totalQestionsAnswered);
         scoreText.x = 50 + player.x - 400;
         scoreText.y = 50 + player.y - 300;
-        divScoreText.innerHTML = "You have keys:  " + player.doorKeys + "<br><hr/><br>";
-
+        if (language === 'FRA') {
+          divScoreText.innerHTML = "Vous avez des clefs:  " + player.doorKeys + "<br><hr/><br>";
+        } else {
+          divScoreText.innerHTML = "You have keys:  " + player.doorKeys + "<br><hr/><br>";
+        }
     }
 
     function hitTheDoor(player, door) {
@@ -390,8 +368,7 @@ App.prototype.start = function () {
             gameState.correctCount = totalQestionsAnswered;
             listofquestions = listofquestions + "qF:" +  key.question.qId + "; ";
             gameState.listofquestions = listofquestions; //+ ":" +  " " + totalQestionsAsked;
-            //save state:
-            //saveState('UPDATE', gameState);
+
             if (totalQestionsAnswered === 0 && theGameIsStarted === true) {
                 saveState('INSERT', gameState);
             } else {
@@ -440,7 +417,6 @@ App.prototype.start = function () {
                       //scene.add.image(400 + indX, 270 + indY, 'baseRoomBack').setScale(0.8);
                     }
                     // Since I'm using only one backgroun now: baseRoomBack = RoomBG_red.png
-                    //scene.add.image(400 + indX, 270 + indY, 'baseRoomBack').setScale(0.8);
                     for (var i = 0; i < 9; i++) {
                         // Upper right bar
                         walls.create(indX + 500 + (i * 20), indY + 100 + ((i * 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
@@ -458,7 +434,6 @@ App.prototype.start = function () {
                     }
                 })
                 //arrAllDoorsRooms.push(arrOneLevelRooms);
-                //console.log('Hello world!');
             }
         );
 
@@ -605,26 +580,6 @@ App.prototype.start = function () {
         initPlayer(scene);
     }
 
-    // function collectStar(player, star) {
-    //     star.disableBody(true, true);
-    //     //  Add and update the score
-    //     score += 10;
-    //     scoreText.setText('Score: ' + score);
-    //
-    //     if (stars.countActive(true) === 0) {
-    //         //  A new batch of stars to collect
-    //         stars.children.iterate(function (child) {
-    //             child.enableBody(true, child.x, 0, true, true);
-    //         });
-    //         var x = (player.x < 400) ? Phaser.Math.Between(400, 800) : Phaser.Math.Between(0, 400);
-    //         var bomb = bombs.create(x, 16, 'bomb');
-    //         bomb.setBounce(1);
-    //         bomb.setCollideWorldBounds(true);
-    //         bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
-    //         bomb.allowGravity = false;
-    //     }
-    // }
-
     function playSound(sound) {
         if (!sound.isPlaying) {
             sound.play();
@@ -736,7 +691,6 @@ App.prototype.start = function () {
         buildQuestion(question, ifSuccessCallback, ifCancelCallback);
     }
 
-
     function hideQuestion() {
       //_this.input.keyboard.enabled = true;
         document.getElementById("question").style.display = "none";
@@ -747,12 +701,6 @@ App.prototype.start = function () {
     function buildQuestion(question, ifSuccessCallback, ifCancelCallback) {
         //console.log(question);
         var myQuestions = [question];
-        // alert(myQuestions[0].qId + ') ' + myQuestions[0].qTxt + ' \n - ' +
-        //   myQuestions[0].listAnswers[0].value + ' \n - ' +
-        //   myQuestions[0].listAnswers[1].value + ' \n - ' +
-        //   myQuestions[0].listAnswers[2].value + ' \n - ' +
-        //   myQuestions[0].listAnswers[3].value + ' \n video: ' +
-        //   myQuestions[0].questionURL);
         function buildQuiz() {
             // we'll need a place to store the HTML output
             const output = [];
@@ -764,22 +712,45 @@ App.prototype.start = function () {
                 // and for each available answer...
                 for (ind in currentQuestion.answers) {
                     // ...add an HTML radio button
-                    answers.push(
-                        `<label>
-                          <input type="radio" name="question${questionNumber}" value="${ind}">
-                          ${currentQuestion.answers[ind].key} :
-                          ${atob(currentQuestion.answers[ind].value)}
-                          </label>`
-                    );
+                    if (language === 'FRA') {
+                        // we use FRENCH LANGUAGE
+                        answers.push(
+                            `<label>
+                              <input type="radio" name="question${questionNumber}" value="${ind}">
+                              ${currentQuestion.answers[ind].key} :
+                              ${atob(currentQuestion.answersFRA[ind].value)}
+                              </label>`
+                        );
+                    } else {
+                      answers.push(
+                          `<label>
+                            <input type="radio" name="question${questionNumber}" value="${ind}">
+                            ${currentQuestion.answers[ind].key} :
+                            ${atob(currentQuestion.answers[ind].value)}
+                            </label>`
+                      );
+                    }
+
                 }
 
                 // add this question and its answers to the output
-                output.push(
-                    `<div class="slide">
-                       <div class="question"> ${atob(currentQuestion.question)} </div>
-                       <div class="answers"> ${answers.join("")} </div>
-                     </div>`
-                );
+                if (language === 'FRA') {
+                  output.push(
+                      `<div class="slide">
+                         <div class="question"> ${atob(currentQuestion.questionFRA)}</div>
+                         <div class="answers"> ${answers.join("")} </div>
+                       </div>`
+                  );
+                } else {
+                  output.push(
+                      `<div class="slide">
+                         <div class="question"> ${atob(currentQuestion.question)}</div>
+                         <div class="answers"> ${answers.join("")} </div>
+                       </div>`
+                  );
+                }
+
+
             });
 
             // finally combine our output list into one string of HTML and put it on the page
@@ -799,7 +770,12 @@ App.prototype.start = function () {
                 // if answer is correct
                 if (userAnswer === currentQuestion.correctAnswer) {
                     answerContainer.style.color = 'lightgreen';
-                    submitMsgContainer.innerHTML = "<h1><span style='color:yellow'>Congratulations! Correct answer!</span></h1>";
+                    if (language === 'FRA') {
+                      submitMsgContainer.innerHTML = "<h1><span style='color:yellow'>Felicitations! Bonne reponse!</span></h1>";
+                    } else {
+                      submitMsgContainer.innerHTML = "<h1><span style='color:yellow'>Congratulations! Correct answer!</span></h1>";
+                    }
+
                     setTimeout(function () {
                         submitMsgContainer.innerHTML = "";
                         //console.log('Corerct Answer given');
@@ -809,7 +785,12 @@ App.prototype.start = function () {
                 } else {
                     answerContainer.style.color = 'red';
                     questionWindow.style.border = 'thin solid red';
-                    submitMsgContainer.innerHTML = "<h1><span style='color:red'>Sorry, wrong answer!</span></h1><br>";
+                    if (language === 'FRA') {
+                      submitMsgContainer.innerHTML = "<h1><span style='color:red'>Desole, mauvaise reponse!</span></h1><br>";
+                    } else {
+                      submitMsgContainer.innerHTML = "<h1><span style='color:red'>Sorry, wrong answer!</span></h1><br>";
+                    }
+
                     setTimeout(function () {
                         submitMsgContainer.innerHTML = "";
                         questionWindow.style.border = 'initial';

@@ -20,14 +20,18 @@
       $text = base64_encode($question->get_qTxt());
       $questionURL = $question->get_questionURL();
       $jsonListAllAns = [];
+      $jsonListAllAnsFRA = [];
       $answers = $question->get_listAnswers();
+      $textFRA = base64_encode($question->get_qTxtFRA()); //qTxtFRA
       $ansIndex = 0;
       $correctAns = 0;
         shuffle($answers);
         foreach ($answers as $answer) {
           // code...
-          $arrAnswers = array('key'=>$ansIndex+1,'value'=>base64_encode($answer->get_ansTxt()));
+          $arrAnswers = array('key'=>$ansIndex+1,'value'=>(base64_encode($answer->get_ansTxt())));
+          $arrAnswersFRA = array('key'=>$ansIndex+1,'value'=>(base64_encode($answer->get_ansTxtFRA())));
           $jsonListAllAns[] = $arrAnswers;
+          $jsonListAllAnsFRA[] = $arrAnswersFRA;
           if ($answer->get_ansIsValid() == 1) {
             // code...
             $correctAns = $ansIndex;
@@ -35,7 +39,8 @@
           $ansIndex++;
         }
 
-        $arr = array ('qId'=>$qId , 'question'=>$text , 'answers'=>$jsonListAllAns, 'correctAnswer'=> $correctAns, 'questionURL' => $questionURL);
+        $arr = array ('qId'=>$qId , 'question'=>$text , 'answers'=>$jsonListAllAns, 'correctAnswer'=> $correctAns,
+                        'questionURL' => $questionURL, 'questionFRA'=>$textFRA, 'answersFRA'=>$jsonListAllAnsFRA );
         //echo "<br/>".$arr['questionurl']."<br/>";
         $jsonListAllQ[] = $arr;
     }

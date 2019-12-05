@@ -8,6 +8,14 @@
       } else {
       $userId = 'UNKNOWN';
     }
+
+  //languages
+  if (!empty($_POST['languages'])) {
+     $languages = $_POST['languages'];
+      } else {
+      $languages = 'ENG';
+    }
+
   try {
     // include('https://www.mymuhc.muhc.mcgill.ca/a/a.php');
     if(isset($_SERVER['REMOTE_USER'])) {
@@ -36,9 +44,10 @@
 <body style="background-color: #333;">
    <div class="divTopLabel">
        <h1>Welcome &nbsp;
-         <span id="userIUNBox"><?php echo $userId ?> </span> &nbsp;
-<!--           <input type="text" name="userIUNBox"> &nbsp;-->
-           Time elapsed: <span id="userTimer"></span></h1>
+         <span id="userIUNBox"><?php echo $userId ?> </span> &nbsp; * &nbsp;
+           Language: <span id="languages"><?php echo $languages ?></span> &nbsp; * &nbsp;
+           Time elapsed: <span id="userTimer"></span> &nbsp;
+       </h1>
        <br/>
    </div>
    <div id="mainDiv" class="classmainDiv">

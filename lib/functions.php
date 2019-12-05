@@ -110,24 +110,9 @@ function mazeQuestionsArr($mazeInit,$listQuestions) {
     $resultMaze = array();
     $roomsCount = 0;
     $jsonArr = json_decode($listQuestions);
+    $maxQuestionsCount = count($listQuestions);
     //print_r($listQuestions);
     //echo $jsonArr[0]->question;
-    foreach ($jsonArr as $key => $value) {
-      // // code...
-      // echo '<br>key:'.$key." Q:".$jsonArr[$key]->question.'<br>';
-      // echo '- '.$jsonArr[$key]->answers[0]->value.'<br>';
-      // echo '- '.$jsonArr[$key]->answers[1]->value.'<br>';
-      // echo '- '.$jsonArr[$key]->answers[2]->value.'<br>';
-      // echo '- '.$jsonArr[$key]->answers[3]->value.'<br>';
-
-      foreach ($value as $keyVal => $valueVal) {
-        // code...
-        //echo 'key: '.$key.' value: '.$valueVal.' and a $keyVal:'.$keyVal. ' <br>';
-        //print_r($valueVal);
-      }
-      //echo 'key: '.$key.' value: '.$value["question"].' <br>';
-      //echo "key/value: [$key -> $value]";
-    }
     // echo '<br>';
     foreach ($mazeInit as $key => $value) {
       foreach ($value as $subKey => $subValue) {
@@ -149,7 +134,7 @@ function mazeQuestionsArr($mazeInit,$listQuestions) {
           // if ($indexQ >= ($roomsCount / 2)) {
           //   $indexQ = 0;
           // }
-          if ($indexQ > 12) {
+          if ($indexQ > $maxQuestionsCount) {
             $indexQ = 0;
           }
           //$strIndex = (string) $indexQ;
@@ -166,6 +151,7 @@ function mazeQuestionsArr($mazeInit,$listQuestions) {
           $qObj->listAnswers = $jsonArr[$indexQ]->answers;
           $qObj->validAnswer = $jsonArr[$indexQ]->correctAnswer;
           $qObj->questionURL = $jsonArr[$indexQ]->questionURL;
+          $qObj->qTxtFRA = $jsonArr[$indexQ]->questionFRA;
           $indexQ++;
           //$listQuestions
         } else {
@@ -178,6 +164,7 @@ function mazeQuestionsArr($mazeInit,$listQuestions) {
           $qObj->listAnswers = null;
           $qObj->validAnswer = -1;
           $qObj->questionURL = "";
+          $qObj->qTxtFRA = "";
         }
         // echo 'objId: '.$qObj->qId.'<br>';
         // echo 'objTXT: '.$qObj->qTxt.'<br>';
@@ -204,8 +191,8 @@ function createConnection($dBHOST, $dBUSER, $dBPASS, $dBNAME) {
 }
 
 function readTable($tableName, $connStr) {
-  //$sql = "SELECT qId, qTxt, qIsTaken, qIsAnswered FROM tabQuestions";
-  $sql = "SELECT qId, qTxt, qIsTaken, qIsAnswered FROM ".$tableName;
+  //$sql = "SELECT qId, qTxt, qIsTaken, qIsAnswered, qTxtFRA FROM tabQuestions";
+  $sql = "SELECT qId, qTxt, qIsTaken, qIsAnswered, qTxtFRA FROM ".$tableName;
   $result = $connStr->query($sql);
     if ($result->num_rows > 0) {
         // output data of each row
@@ -215,12 +202,12 @@ function readTable($tableName, $connStr) {
               $row["qTxt"]. " - IsTaken: " . $row["qIsTaken"].
               " - IsAnswered: " . $row["qIsAnswered"]."</td></tr>";
               //SELECT `ansId`, `ansTxt`, `ansQId`, `ansIsValid` FROM `tabanswers` WHERE 1
-              $sql = "SELECT ansId, ansTxt, ansQId, ansIsValid FROM tabanswers WHERE ansQId=".$row["qId"];
+              $sql = "SELECT ansId, ansTxt, ansQId, ansIsValid, ansTxtFRA FROM tabanswers WHERE ansQId=".$row["qId"];
               $resultAns = $connStr->query($sql);
                 if ($resultAns->num_rows > 0) {
                   echo "<tr>";
                   while($rowAns = $resultAns->fetch_assoc()) {
-                      echo "<td style='padding: 10px;'>" ."AnswerId: " . $rowAns["ansId"]. "<br> Text: ". $rowAns["ansTxt"]."</td>";
+                      echo "<td style='padding: 10px;'>" ."AnswerId: " . $rowAns["ansId"]. "<br> Text: ". $rowAns["ansTxt"]."/". $rowAns["ansTxtFRA"]."</td>";
                   }
                   echo "</tr>";
                 }
@@ -299,7 +286,7 @@ function uuid()
 
 function getAllQuestions($table, $connStr)
 {
-    $sql = "SELECT qId, qTxt, qIsTaken, qIsAnswered, questionurl FROM ".$table;
+    $sql = "SELECT qId, qTxt, qIsTaken, qIsAnswered, questionurl, qTxtFRA FROM ".$table;
     $result = $connStr->query($sql);
       if ($result->num_rows > 0) {
         $listQuestions = [];
@@ -311,12 +298,13 @@ function getAllQuestions($table, $connStr)
                 $nextQuestion->qIsTaken = $row["qIsTaken"];
                 $nextQuestion->qIsAnswered = $row["qIsAnswered"];
                 $nextQuestion->questionURL = $row["questionurl"];
+                $nextQuestion->qTxtFRA = $row["qTxtFRA"];
 
                 //$sql = "SELECT ansId, ansTxt, ansQId, ansIsValid FROM tabanswers WHERE ansQId=".$row["qId"];
                 //echo "Object: ".$nextQuestion->get_qTxt();
 
                 //SELECT `ansId`, `ansTxt`, `ansQId`, `ansIsValid` FROM `tabanswers` WHERE 1
-                $sql = "SELECT ansId, ansTxt, ansQId, ansIsValid FROM tabanswers WHERE ansQId=".$row["qId"];
+                $sql = "SELECT ansId, ansTxt, ansQId, ansIsValid, ansTxtFRA FROM tabanswers WHERE ansQId=".$row["qId"];
                 $resultAns = $connStr->query($sql);
                   if ($resultAns->num_rows > 0) {
                     $listAnswers = [];
@@ -326,12 +314,12 @@ function getAllQuestions($table, $connStr)
                           $nextAns->ansTxt = $rowAns["ansTxt"];
                           $nextAns->ansQId = $rowAns["ansQId"];
                           $nextAns->ansIsValid = $rowAns["ansIsValid"];
+                          $nextAns->ansTxtFRA = $rowAns["ansTxtFRA"]; //ansTxtFRA
                         $listAnswers[] = $nextAns;
                     }
                   }
               $nextQuestion->listAnswers = $listAnswers;
               $listQuestions[] = $nextQuestion;
-
           }
 
       } else {
