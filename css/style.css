@@ -155,12 +155,13 @@ table#table1 {
 /* tableMiniMap */
 table#tableMiniMap {
 	padding: 2px;
-	border: solid 2px lightgray;
+	/* border: solid 2px lightgray; */
 	text-align:center;
 	margin-left:auto;
 	margin-right:auto;
 	width:100px;
 	border-collapse: collapse;
+	background-color: lightgrey
 }
 .miniMapTD {
 	/* border:  solid #FFF; */
@@ -184,7 +185,7 @@ table#tableMiniMap {
 	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 	text-align: center;
 }
-.mazeContainerRight {
+.scoreAndMiniMap-container {
 	border: 1px solid;
 	padding: 10px;
 	/*box-shadow: 5px 10px 18px red;*/
@@ -197,6 +198,10 @@ table#tableMiniMap {
 	/* margin:auto; */
 	/* width:45%;
 	float:left; */
+}
+.scoreText-container {
+	color: #FFFF00;
+	text-shadow: 2px 2px 4px #444444;
 }
 .divTopLabel {
 	color: white;
@@ -265,7 +270,7 @@ tr,td {
 	font-size: 20px;
 	width: 30px;
 	height: 30px;
-	background-color: lightgray;
+	/* background-color: lightgray; */
 }
 .finScr-container {
 	position: absolute;
@@ -277,7 +282,7 @@ tr,td {
 	    z-index: 100;
 }
 .finMessage {
-	text-shadow: 2px 2px;
+	text-shadow: 2px 2px #FC00FF;;
 	border: 1px;
 	color: white;
 	font-size: 30px;
@@ -403,8 +408,8 @@ tr,td {
 	left: 0; */
 	margin-left: auto;
 	margin-right: auto;
-	width: 80%;
-	height: 80%;
+	/* width: 80%;
+	height: 80%; */
 }
 
 /* ====

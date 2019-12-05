@@ -35,6 +35,7 @@ App.prototype.start = function () {
     var gameOver = false;
     var scoreText;
     var scoreTextShade;
+    var scoreTextShade0;
     var scoreImgs;
     var isPause = false;
     var keyIndex = 0;
@@ -66,6 +67,7 @@ App.prototype.start = function () {
     const questionWindow = document.getElementById("questionWindow");
     const video = document.getElementById("video");
     const finScr = document.getElementById("finScr");
+    const divScoreText = document.getElementById("divScoreText");
 
     const submitMsgContainer = document.getElementById("submitMsg");
     userIUN = document.getElementById("userIUNBox").innerHTML;
@@ -183,28 +185,25 @@ App.prototype.start = function () {
         //    }
         //  });
 
-        showMazeGfx(megaMAP.doorsMAP, "mazeWDrsRmsMap");
+        showMazeGfx(megaMAP.doorsMAP, "divMiniMap");
 
         cursors = this.input.keyboard.createCursorKeys();
-        // this.cursors = this.input.keyboard.addKeys(
-        //                 {up:Phaser.Input.Keyboard.KeyCodes.W,
-        //                 down:Phaser.Input.Keyboard.KeyCodes.S,
-        //                 left:Phaser.Input.Keyboard.KeyCodes.A,
-        //                 right:Phaser.Input.Keyboard.KeyCodes.D});
-        //this.input.keyboard.addKeys({ 'up': Phaser.Input.Keyboard.KeyCodes.W, 'down': Phaser.Input.Keyboard.KeyCodes.S });
-
         // walls = this.physics.add.staticGroup();
         // walls.create(160, 450, 'wall400x230').setScale(0.8).refreshBody();
 
         buildWorld(this);
+        scoreTextShade0 = this.add.text(15, 15, 'keys: 0', {fontSize: '32px', fill: '#0031FF'});
         scoreTextShade = this.add.text(17, 17, 'keys: 0', {fontSize: '32px', fill: '#ff00ff'});
+
         scoreText = this.add.text(16, 16, 'keys: 0',
           {
             fontSize: '32px',
             fill: '#FDFC00',
             /* backgroundColor: '#479B85',*/
-            shadow: "offsetX = 2, offsetY = 2, fill= true"
+            shadow: "offsetX = 5, offsetY = 5, fill= true"
           });
+          divScoreText.style = "scoreText-container";
+          divScoreText.innerHTML = "You have keys: <br><hr/><br>";
 
         //scoreImgs = this.physics.add.group();
 
@@ -270,16 +269,18 @@ App.prototype.start = function () {
     }
 
     function drawScores(scene) {
-        scoreTextShade.setText('Keys: ' + player.doorKeys + '   *   Score: ' + totalQestionsAnswered);
+      // ('Keys: ' + player.doorKeys + '   *   Score: ' + totalQestionsAnswered)
+      scoreTextShade0.setText('Score: ' + totalQestionsAnswered);
+      scoreTextShade0.x = 49 + player.x - 400;
+      scoreTextShade0.y = 49 + player.y - 300;
+        scoreTextShade.setText('Score: ' + totalQestionsAnswered);
         scoreTextShade.x = 51 + player.x - 400;
         scoreTextShade.y = 51 + player.y - 300;
-        scoreText.setText('Keys: ' + player.doorKeys + '   *   Score: ' + totalQestionsAnswered);
+        scoreText.setText('Score: ' + totalQestionsAnswered);
         scoreText.x = 50 + player.x - 400;
         scoreText.y = 50 + player.y - 300;
+        divScoreText.innerHTML = "You have keys:  " + player.doorKeys + "<br><hr/><br>";
 
-        // for (var i=0; i< player.doorKeys; i++) {
-        //     scoreImg = scene.add.image(50 + player.x - 300, 50 + player.y - 300, 'gold-key').setScale(0.8) //scoreImg
-        // }
     }
 
     function hitTheDoor(player, door) {
@@ -349,11 +350,7 @@ App.prototype.start = function () {
 
 
     function collectKey(player, key) {
-      // var doorOpen;
-      // var soundStep;
-      // var pickupKey;
-      // var soundOk;
-      // var soundFail;
+
         if (isPause) return;
         if (theGameIsStarted === false) {
           //if the game has started then change the boolean flag:
@@ -362,12 +359,7 @@ App.prototype.start = function () {
         playSound(pickupKey);
         stopPlayer();
         isPause = true;
-        //console.log(megaMAP);
-        //alert('player.doorKeys' + player.doorKeys);
-        // key.disableBody(true, true);
-        //isPause = false;
-        // player.doorKeys ++;
-        //console.log(player.doorKeys);
+
         totalQestionsAsked++;
         var ifSuccessCallback = function () {
             playSound(soundOk);
@@ -376,10 +368,6 @@ App.prototype.start = function () {
             player.doorKeys++;
             totalQestionsAnswered++;
 
-            //draw the keys:
-            //scoreKeysRedraw();
-
-            //console.log(player.doorKeys);
             //save the state to the table:
             gameState.correctCount = totalQestionsAnswered;
             listofquestions = listofquestions + "qT:" +  key.question.qId + "; ";
@@ -389,7 +377,6 @@ App.prototype.start = function () {
             } else {
                 saveState('UPDATE', gameState);
             }
-
         };
 
         var onVideoCloseCallback = function () {
@@ -425,7 +412,6 @@ App.prototype.start = function () {
     function buildWorld(scene) {
         //We get our source from the following rest:
         // megaMAP = game.cache.json.get('megaMAP');
-        // showMazeGfx(megaMAP.doorsMAP, "mazeWDrsRmsMap");
         // roomsMAP = game.cache.json.get('doorsMAP');
         doors = scene.physics.add.group({
             immovable: true
@@ -592,7 +578,7 @@ App.prototype.start = function () {
                             //this is our final room - no keys required...
                             //TODO: place a final room sprite here!!!
                             //draw the patient: hospitalBed
-                            hospitalBed.create(400 + 800 * (x), 270 + 520 * (y), 'patientEmptyPlaceHolder').setScale(0.8);
+                            hospitalBed.create(400 + 800 * (x), 270 + 520 * (y), 'patientEmptyPlaceHolder').setScale(1.2);
                         } else {
                             var coord = getKeyCordinateWithProximity(arrKeys, 100);
                             //doorkeys.create(coord.x, coord.y, 'star').setScale(0.8); //doors keys
@@ -881,7 +867,13 @@ App.prototype.start = function () {
         const vidPlayer = document.getElementById("divVidPlayer");
         vidPlayer.innerHTML = '<div class="embed-container"><iframe src="' + qVideoURL
             + '" width="600" height="480" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></div>';
-        //<style>.embed-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; height: auto; } .embed-container iframe, .embed-container object, .embed-container embed { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }</style><div class='embed-container'><iframe src='https://player.vimeo.com/video/11712103' frameborder='0' webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe></div>
+        //<style>.embed-container { position: relative; padding-bottom: 56.25%; height: 0;
+        //            overflow: hidden; max-width: 100%; height: auto; }
+        //            .embed-container iframe, .embed-container object,
+        //            .embed-container embed { position: absolute; top: 0;
+        //            left: 0; width: 100%; height: 100%; }</style><div class='embed-container'>
+        //            <iframe src='https://player.vimeo.com/video/11712103'
+        //            frameborder='0' webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe></div>
 
         $("#closeVideo").unbind("click");
         $("#closeVideo").bind("click", onVideoCloseCallback);
@@ -898,7 +890,7 @@ App.prototype.start = function () {
         const finScrTxtLine2 = document.getElementById('finScrTxtLine2');
         const finScrTxtLine3 = document.getElementById('finScrTxtLine3');
         //const finScrTxtLine4 = document.getElementById('finScrTxtLine4');
-        finScrTxtLine2.innerHTML = "Your score: " + gameState.correctCount + " keys collected!";
+        finScrTxtLine2.innerHTML = "Answered: " + gameState.correctCount + " questions!";
         finScrTxtLine3.innerHTML = "Your time: " + minSpent + " m " + secSpent + " s.";//gameState.elapsedTime;
         //finScrTxtLine4.innerHTML = "";
 

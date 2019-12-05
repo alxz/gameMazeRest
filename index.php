@@ -2,11 +2,21 @@
 <head>
 
 <?php
+
   if (!empty($_POST['userId'])) {
      $userId = $_POST['userId'];
       } else {
       $userId = 'UNKNOWN';
     }
+  try {
+    // include('https://www.mymuhc.muhc.mcgill.ca/a/a.php');
+    if(isset($_SERVER['REMOTE_USER'])) {
+      $userId = $_SERVER['REMOTE_USER'];
+    }
+  } catch (\Exception $e) {
+    $errorLog = $e;
+  }
+
     //echo ($userId);
 ?>
 
@@ -36,7 +46,10 @@
          <canvas></canvas>
      </div>
        <br/><br/>
-     <div id="mazeWDrsRmsMap" class="mazeContainerRight"></div>
+     <div id="mazeWDrsRmsMap" class="scoreAndMiniMap-container">
+       <div id="divScoreText" class="scoreText-container"></div>
+       <div id="divMiniMap" class="miniMap-container"></div>
+     </div>
    </div>
    <div class="mapsCont">
      <div id="mazeMap" class="mazeContainerLeft"></div>
@@ -93,41 +106,18 @@
               <span class="starStyle" id="star5" onclick="star(5);">&#9733;</span>
           </div><br>
          <span class="finQuestions">
-            2.	What did you prefer the most and what did you like the least about it? <br>
-            &nbsp; &nbsp; (Please say a few words... ):&nbsp;
+            2.	What did you prefer the most and what did you like the least about it?
           </span><br><br>
-         <textarea id="finQ2" name="finQ2" rows="5" ols="35" wrap="hard" maxlength="250"></textarea><br><br>
+         <textarea id="finQ2" name="finQ2" rows="3" cols="65" wrap="hard" maxlength="250" placeholder="Please say a few words..."></textarea><br><br>
 
          <span class="finQuestions">
-            3.	What would you suggest as an improvement for the future? <br>
-            &nbsp; &nbsp; (Please say a few words... ):&nbsp;
+            3.	What would you suggest as an improvement for the future?
           </span><br><br>
-         <textarea id="finQ3" name="finQ3" rows="5" ols="35" wrap="hard" maxlength="250"></textarea><br><br>
+         <textarea id="finQ3" name="finQ3" rows="3" cols="65" wrap="hard" maxlength="250" placeholder="Please say a few words..."></textarea><br><br>
           <button id="finSubmit" >Submit</button> &nbsp;&nbsp;&nbsp;
           <button id="finExit" >Exit</button>
     </div>
 
-
-    <!-- <script>
-        const Http = new XMLHttpRequest();
-        const url='https://www.mymuhc.muhc.mcgill.ca/a/a.php';
-        Http.open("GET", url);
-        Http.send();
-
-        Http.onreadystatechange = (e) => {
-          console.log(Http.responseText)
-        }
-
-                //   this.load.json('userInfo', 'https://www.mymuhc.muhc.mcgill.ca/a/a.php');
-                //   userInfo = game.cache.json.get('userInfo');
-                //   userIUN = (userInfo.REMOTE_USER);
-                //   console.log('User name: ' + userIUN);
-                // } catch (e) {
-                //   console.log('Error retrieving user name! Will use the defaul supplied. ' + e);
-                // } finally {
-                //   console.log('User name: ' + userIUN);
-                // }
-     </script> -->
     <script src="./js/miniMap.js" type="text/javascript"></script> <!-- Load phase file -->
     <script src="./js/game.js" type="text/javascript"></script> <!-- Load phase file -->
 
