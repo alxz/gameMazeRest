@@ -17,10 +17,11 @@
     }
 
   try {
-    // include('https://www.mymuhc.muhc.mcgill.ca/a/a.php');
-    if(isset($_SERVER['REMOTE_USER'])) {
-      $userId = $_SERVER['REMOTE_USER'];
-    }
+    //include('https://www.mymuhc.muhc.mcgill.ca/a/a.php');
+    $userId = $_SERVER['REMOTE_USER'];
+    // if(isset($_SERVER['REMOTE_USER'])) {
+    //   $userId = $_SERVER['REMOTE_USER'];
+    // }
   } catch (\Exception $e) {
     $errorLog = $e;
   }
@@ -45,7 +46,11 @@
    <div class="divTopLabel">
        <h1>Welcome &nbsp;
          <span id="userIUNBox"><?php echo $userId ?> </span> &nbsp; * &nbsp;
-           Language: <span id="languages"><?php echo $languages ?></span> &nbsp; * &nbsp;
+           Language:
+           <button id="langChange" class="buttonAsLink">
+             <span id="languages"><?php echo $languages ?></span>
+           </button>
+           &nbsp; * &nbsp;
            Time elapsed: <span id="userTimer"></span> &nbsp;
        </h1>
        <br/>
@@ -57,7 +62,9 @@
        <br/><br/>
      <div id="mazeWDrsRmsMap" class="scoreAndMiniMap-container">
        <div id="divScoreText" class="scoreText-container"></div>
+       <div id="divMiniMapText" class="scoreText-container"></div>
        <div id="divMiniMap" class="miniMap-container"></div>
+
      </div>
    </div>
    <div class="mapsCont">
@@ -83,12 +90,11 @@
     <div id="video"
          class="video-container"
          style="display: none">
-         <span class="video-close" id="closeVideo"> [X] </span>
-         <p><br>
+
+         <p>
             <h1><span id="vidScrTxt" class="vidScrMessage">Sorry, wrong answer!!!</span></h1>
-            <h1><span id="vidScrTxt2" class="vidScrMessage">You will have to watch the video to find the right answer:</span></h1>
-            <br><br>
          </p>
+         <span class="video-close" id="closeVideo"> [X] </span>
          <div id="divVidPlayer">
 <!--            <video id="vplayer" class="video-player" controls width="450">-->
                 <!-- <source src="video/vid00001.mp4" type="video/mp4"> Sorry, your browser doesn\'t support embedded videos.</video> -->
@@ -98,14 +104,14 @@
          class="finScr-container"
          style="display: none">
          <br><br>
-          <p><h3><span id="finScrTxtLine1" class="finMessage">Congratulations!</span></h3></p>
+          <p><h3><span id="finScrTxtLine1" class="finMessage">Félicitations! Congratulations!</span></h3></p>
           <h3><span id="finScrTxtLine2" class="finMessage"></span></h3>
           <h3><span id="finScrTxtLine3" class="finMessage"></span></h3>
           <h3><span id="finScrTxtLine4" class="finMessage"></span></h3>
          <br>
          <span class="finQuestions">
             1.	Did you enjoy playing an educational game as a tool for learning? <br>
-            &nbsp; &nbsp; (Please rate your answer from 1 [min] to 5 [max]):&nbsp;
+            &nbsp; Avez-vous aimé jouer à un jeu éducatif comme outil d'apprentissage?<br>
           </span>
           <div class="divStars">
               <span class="starStyle" id="star1" onclick="star(1);">&#9733;</span>
@@ -115,16 +121,17 @@
               <span class="starStyle" id="star5" onclick="star(5);">&#9733;</span>
           </div><br>
          <span class="finQuestions">
-            2.	What did you prefer the most and what did you like the least about it?
+            2.	What did you prefer the most and what did you like the least about it? <br>
+            &nbsp; Qu'avez-vous aimé le plus et qu'avez-vous le moins aimé du jeu?
           </span><br><br>
          <textarea id="finQ2" name="finQ2" rows="3" cols="65" wrap="hard" maxlength="250" placeholder="Please say a few words..."></textarea><br><br>
 
          <span class="finQuestions">
-            3.	What would you suggest as an improvement for the future?
+            3.	What would you suggest as an improvement for the future?<br>
+            &nbsp; Que suggéreriez-vous comme une amélioration pour l'avenir?
           </span><br><br>
          <textarea id="finQ3" name="finQ3" rows="3" cols="65" wrap="hard" maxlength="250" placeholder="Please say a few words..."></textarea><br><br>
-          <button id="finSubmit" >Submit</button> &nbsp;&nbsp;&nbsp;
-          <button id="finExit" >Exit</button>
+          <button id="finSubmit" >Submit</button>
     </div>
 
     <script src="./js/miniMap.js" type="text/javascript"></script> <!-- Load phase file -->

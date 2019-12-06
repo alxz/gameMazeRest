@@ -73,6 +73,10 @@ App.prototype.start = function () {
     userIUN = document.getElementById("userIUNBox").innerHTML;
     language = document.getElementById("languages").innerHTML; //id="languages"
     //alert('Lang: ', language);
+    //a button action to change the language:
+    $("#langChange").unbind("click");
+    $("#langChange").bind("click", changeLanguage);
+
     function preload() {
         this.load.json('megaMAP', 'rest/getMap.php');
 
@@ -88,25 +92,23 @@ App.prototype.start = function () {
         this.load.audio('pickupKey', 'assets/pickupKey.mp3');
         this.load.audio('soundOk', 'assets/okay.mp3');
         this.load.audio('soundFinal', 'assets/fanfareFinale.mp3');
-
-
-        // loading rooms assets: 16 rooms types in total!
-        this.load.image('u0d1l0r1', 'jpg/u0d1l0r1.jpg');
-        this.load.image('u0d1l1r0', 'jpg/u0d1l1r0.jpg');
-        this.load.image('u1d0l0r1', 'jpg/u1d0l0r1.jpg');
-        this.load.image('u1d0l1r1', 'jpg/u1d0l1r1.jpg');
-        this.load.image('u0d0l1r1', 'jpg/u0d0l1r1.jpg');
-        this.load.image('u1d0l1r0', 'jpg/u1d0l1r0.jpg');
-        this.load.image('u0d0l0r0', 'jpg/u0d0l0r0.jpg');
-        this.load.image('u0d0l0r1', 'jpg/u0d0l0r1.jpg');
-        this.load.image('u0d0l1r0', 'jpg/u0d0l1r0.jpg');
-        this.load.image('u0d1l0r0', 'jpg/u0d1l0r0.jpg');
-        this.load.image('u0d1l1r1', 'jpg/u0d1l1r1.jpg');
-        this.load.image('u1d0l0r0', 'jpg/u1d0l0r0.jpg');
-        this.load.image('u1d1l0r0', 'jpg/u1d1l0r0.jpg');
-        this.load.image('u1d1l0r1', 'jpg/u1d1l0r1.jpg');
-        this.load.image('u1d1l1r0', 'jpg/u1d1l1r0.jpg');
-        this.load.image('u1d1l1r1', 'jpg/u1d1l1r1.jpg');
+        // // loading rooms assets: 16 rooms types in total!
+        // this.load.image('u0d1l0r1', 'jpg/u0d1l0r1.jpg');
+        // this.load.image('u0d1l1r0', 'jpg/u0d1l1r0.jpg');
+        // this.load.image('u1d0l0r1', 'jpg/u1d0l0r1.jpg');
+        // this.load.image('u1d0l1r1', 'jpg/u1d0l1r1.jpg');
+        // this.load.image('u0d0l1r1', 'jpg/u0d0l1r1.jpg');
+        // this.load.image('u1d0l1r0', 'jpg/u1d0l1r0.jpg');
+        // this.load.image('u0d0l0r0', 'jpg/u0d0l0r0.jpg');
+        // this.load.image('u0d0l0r1', 'jpg/u0d0l0r1.jpg');
+        // this.load.image('u0d0l1r0', 'jpg/u0d0l1r0.jpg');
+        // this.load.image('u0d1l0r0', 'jpg/u0d1l0r0.jpg');
+        // this.load.image('u0d1l1r1', 'jpg/u0d1l1r1.jpg');
+        // this.load.image('u1d0l0r0', 'jpg/u1d0l0r0.jpg');
+        // this.load.image('u1d1l0r0', 'jpg/u1d1l0r0.jpg');
+        // this.load.image('u1d1l0r1', 'jpg/u1d1l0r1.jpg');
+        // this.load.image('u1d1l1r0', 'jpg/u1d1l1r0.jpg');
+        // this.load.image('u1d1l1r1', 'jpg/u1d1l1r1.jpg');
 
         //baseRoomBack = RoomBG_red.png 1000 px X 650px
         // scale 0.8 we have: 800 x 520
@@ -115,7 +117,6 @@ App.prototype.start = function () {
         this.load.image('RoomBG_03', 'png/RoomBG_03_red.png');
         this.load.image('RoomBG_04', 'png/RoomBG_04_green.png');
         this.load.image('RoomBG_05', 'png/RoomBG_05_orange.png');
-
 
         this.load.image('baseRoomBack', 'png/RoomBG_red_withBG.png');
         this.load.image('finalRoom', 'png/RoomBG_01_final.png');
@@ -130,8 +131,8 @@ App.prototype.start = function () {
         this.load.spritesheet('doorR', 'png/doorRsprite.png', {frameWidth: 180, frameHeight: 180});
         //==============================================
         //blocks:
-        //this.load.image('blockRed', 'png/block20x20red.png');
-        this.load.image('blockRed', 'png/block20x20.png');
+        this.load.image('blockRed', 'png/block20x20red.png');
+        //this.load.image('blockRed', 'png/block20x20.png');
         //==================
         _this = this;
         this.load.image('gold-key', 'png/goldenKey.png'); //gold-key
@@ -158,7 +159,6 @@ App.prototype.start = function () {
             comments: "",
             sessionId: sessionId
         }
-
     }
 
     function create() {
@@ -186,7 +186,7 @@ App.prototype.start = function () {
         //    }
         //  });
 
-        showMazeGfx(megaMAP.doorsMAP, "divMiniMap");
+        showMazeGfx(megaMAP.doorsMAP, "divMiniMap",language);
 
         cursors = this.input.keyboard.createCursorKeys();
         // walls = this.physics.add.staticGroup();
@@ -679,7 +679,7 @@ App.prototype.start = function () {
 
     function highlighMapPos(oldY,oldX,pY,pX,colorCode) {
         document.getElementById('y' + oldY + 'x' + oldX).style.border = "";
-        document.getElementById('y' + pY + 'x' + pX).style.border = "2px solid " + colorCode;
+        document.getElementById('y' + pY + 'x' + pX).style.border = "3px solid " + colorCode;
     }
 
 /////////questions functionality
@@ -832,8 +832,21 @@ App.prototype.start = function () {
             .fail(function (data) {
                 console.log("error", data);
             });
-
     }
+
+    function changeLanguage() {
+      let message="";
+      if (language === 'FRA') {
+        language = 'ENG';
+        message = "You are here:";
+      } else {
+        language = 'FRA';
+        message = "Vous etes ici:";
+      }
+      document.getElementById("languages").innerHTML = language;
+      document.getElementById("divMiniMapText").innerHTML = message;
+    }
+
 
     function hideVideo() {
         const vidPlayer = document.getElementById("divVidPlayer");
@@ -843,8 +856,18 @@ App.prototype.start = function () {
     }
 
     function showVideo(qVideoURL, onVideoCloseCallback) {
+      let messageForVideo = "";
+      if (language === 'FRA') {
+          // we use FRENCH LANGUAGE
+          messageForVideo = "Desole, mauvaise reponse!!!<br> Vous devrez regarder la vidéo pour trouver la bonne réponse:";
+        } else {
+          messageForVideo = "Sorry, wrong answer!!! <br>  You will have to watch the video to find the right answer:";
+        }
         video.style.display = "";
         // vplayer.play();
+        const vidScrTxt = document.getElementById("vidScrTxt");
+        //const vidScrTxt2 = document.getElementById("vidScrTxt2");
+        vidScrTxt.innerHTML = messageForVideo;
         const vidPlayer = document.getElementById("divVidPlayer");
         vidPlayer.innerHTML = '<div class="embed-container"><iframe src="' + qVideoURL
             + '" width="600" height="480" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></div>';
@@ -908,8 +931,8 @@ App.prototype.start = function () {
     $("#finSubmit").unbind("click");
     $("#finSubmit").bind("click", submitFinalAnswer);
 
-    $("#finExit").unbind("click");
-    $("#finExit").bind("click", opneAnotherURL);
+    // $("#finExit").unbind("click");
+    // $("#finExit").bind("click", opneAnotherURL);
     //the following to prevent cutting space charactes in the textarea field:
     // {
     //     $("#finQ2").keyup(function(e){
@@ -954,6 +977,7 @@ window.onload = function () {
     var app = new App();
     app.start();
 }
+
 
 var today = new Date();
 var startTime = getFullDateTime(today);

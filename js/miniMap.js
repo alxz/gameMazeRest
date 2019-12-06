@@ -37,14 +37,19 @@
             return result;
         }
 
-        function showMazeGfx (mazePassed,targetId) {
+        function showMazeGfx (mazePassed,targetId,lang) {
           //here we are going to display the maze table/array
           //const mazeDiv = document.getElementById("mazeMap");
           const mazeDiv = document.getElementById(targetId);
-          var maze = mazePassed;
-          mazeDiv.innerHTML = "<span class='scoreText-container'>Where are you now </span>"
-                            + "<br>"+makeTableHTMLGfx(maze)
-                            + "<span class='scoreText-container'>Ou etes-vous maintenant</span>";          
+          // var maze = mazePassed;
+          // var message = "";
+          // if (lang === "FRA") {
+          //   message = "Vous etes ici:";
+          // } else {
+          //   message = "You are here:";
+          // }
+          //mazeDiv.innerHTML = "<span class='scoreText-container'>"+ message +"</span>"
+          mazeDiv.innerHTML = makeTableHTMLGfx(maze);
           // document.getElementById(mazePassed).className = "mazeContainerLeft";
             //mazeDiv.innerHTML = `${numCorrect} out of ${myQuestions.length}`;
         }
