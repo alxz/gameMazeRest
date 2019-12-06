@@ -1,33 +1,39 @@
 <html lang="en">
 <head>
 
-<?php
+  <?php
+    $userId = 'UNKNOWN';
+      //languages
+    $languages = 'FRA';
+    $langLabel = 'English';
 
-  if (!empty($_POST['userId'])) {
-     $userId = $_POST['userId'];
-      } else {
-      $userId = 'UNKNOWN';
+    if (!empty($_POST['languages'])) {
+      if ($_POST['languages'] == 'French') {
+        $languages = 'FRA';
+        $langLabel = 'English';
+      } else if ($_POST['languages'] == 'English') {
+        $languages = 'ENG';
+        $langLabel = 'Francais';
+      }
     }
 
-  //languages
-  if (!empty($_POST['languages'])) {
-     $languages = $_POST['languages'];
-      } else {
-      $languages = 'ENG';
+    try {
+      include('https://www.mymuhc.muhc.mcgill.ca/a/a.php');
+      $userId = $_SERVER['REMOTE_USER'];
+      // if(isset($_SERVER['REMOTE_USER'])) {
+      //   $userId = $_SERVER['REMOTE_USER'];
+      // }
+    } catch (\Exception $e) {
+      $errorLog = $e;
     }
 
-  try {
-    //include('https://www.mymuhc.muhc.mcgill.ca/a/a.php');
-    $userId = $_SERVER['REMOTE_USER'];
-    // if(isset($_SERVER['REMOTE_USER'])) {
-    //   $userId = $_SERVER['REMOTE_USER'];
-    // }
-  } catch (\Exception $e) {
-    $errorLog = $e;
-  }
-
-    //echo ($userId);
-?>
+    if (!empty($_POST['userId'])) {
+       $userId = $_POST['userId'];
+        } else {
+        $userId = 'UNKNOWN';
+      }
+      //echo ($userId);
+  ?>
 
    <meta charset="UTF-8" />
    <title>Security Week Challenge Game</title>
@@ -44,14 +50,12 @@
 </head>
 <body style="background-color: #333;">
    <div class="divTopLabel">
-       <h1>Welcome &nbsp;
+       <h1>Salut &nbsp;
          <span id="userIUNBox"><?php echo $userId ?> </span> &nbsp; * &nbsp;
-           Language:
+         Timer: <span id="userTimer"></span> &nbsp; &nbsp; * &nbsp;
            <button id="langChange" class="buttonAsLink">
-             <span id="languages"><?php echo $languages ?></span>
+             <span id="languages"><?php echo $langLabel ?></span>
            </button>
-           &nbsp; * &nbsp;
-           Time elapsed: <span id="userTimer"></span> &nbsp;
        </h1>
        <br/>
    </div>
@@ -110,8 +114,8 @@
           <h3><span id="finScrTxtLine4" class="finMessage"></span></h3>
          <br>
          <span class="finQuestions">
-            1.	Did you enjoy playing an educational game as a tool for learning? <br>
-            &nbsp; Avez-vous aimé jouer à un jeu éducatif comme outil d'apprentissage?<br>
+            1. Avez-vous aimé jouer à un jeu éducatif comme outil d'apprentissage?<br>
+            &nbsp;	Did you enjoy playing an educational game as a tool for learning?  <br>
           </span>
           <div class="divStars">
               <span class="starStyle" id="star1" onclick="star(1);">&#9733;</span>
@@ -121,14 +125,14 @@
               <span class="starStyle" id="star5" onclick="star(5);">&#9733;</span>
           </div><br>
          <span class="finQuestions">
-            2.	What did you prefer the most and what did you like the least about it? <br>
-            &nbsp; Qu'avez-vous aimé le plus et qu'avez-vous le moins aimé du jeu?
+            2. Qu'avez-vous aimé le plus et qu'avez-vous le moins aimé du jeu? <br>
+            &nbsp; 	What did you prefer the most and what did you like the least about it?
           </span><br><br>
          <textarea id="finQ2" name="finQ2" rows="3" cols="65" wrap="hard" maxlength="250" placeholder="Please say a few words..."></textarea><br><br>
 
          <span class="finQuestions">
-            3.	What would you suggest as an improvement for the future?<br>
-            &nbsp; Que suggéreriez-vous comme une amélioration pour l'avenir?
+            3. Que suggéreriez-vous comme une amélioration pour l'avenir? <br>
+            &nbsp; 	What would you suggest as an improvement for the future?
           </span><br><br>
          <textarea id="finQ3" name="finQ3" rows="3" cols="65" wrap="hard" maxlength="250" placeholder="Please say a few words..."></textarea><br><br>
           <button id="finSubmit" >Submit</button>

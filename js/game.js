@@ -71,7 +71,16 @@ App.prototype.start = function () {
 
     const submitMsgContainer = document.getElementById("submitMsg");
     userIUN = document.getElementById("userIUNBox").innerHTML;
-    language = document.getElementById("languages").innerHTML; //id="languages"
+    var langLabel = document.getElementById("languages").innerHTML; //id="languages"
+
+    // the lagnage label has inversed logic:
+    if (langLabel === 'English') {
+      language = 'FRA';
+    } else {
+      language = 'ENG';
+    }
+    changeLanguage(false);
+
     //alert('Lang: ', language);
     //a button action to change the language:
     $("#langChange").unbind("click");
@@ -131,8 +140,8 @@ App.prototype.start = function () {
         this.load.spritesheet('doorR', 'png/doorRsprite.png', {frameWidth: 180, frameHeight: 180});
         //==============================================
         //blocks:
-        this.load.image('blockRed', 'png/block20x20red.png');
-        //this.load.image('blockRed', 'png/block20x20.png');
+        //this.load.image('blockRed', 'png/block20x20red.png');
+        this.load.image('blockRed', 'png/block20x20.png');
         //==================
         _this = this;
         this.load.image('gold-key', 'png/goldenKey.png'); //gold-key
@@ -419,13 +428,13 @@ App.prototype.start = function () {
                     // Since I'm using only one backgroun now: baseRoomBack = RoomBG_red.png
                     for (var i = 0; i < 9; i++) {
                         // Upper right bar
-                        walls.create(indX + 500 + (i * 20), indY + 100 + ((i * 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
+                        walls.create(indX + 500 + (i * 30), indY + 90 + ((i * 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
                         // lower left bar
-                        walls.create(indX + 140 + (i * 20), indY + 370 + ((i * 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
+                        walls.create(indX + 110 + (i * 30), indY + 360 + ((i * 0.70) * 30), 'blockRed').setScale(0.8).refreshBody();
                         // upper left bar
-                        walls.create(indX + 310 - (i * 20), indY + 110 + ((i * 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
+                        walls.create(indX + 310 - (i * 30), indY + 90 + ((i * 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
                         // lower right bar
-                        walls.create(indX + 480 + (i * 20), indY + 500 - ((i * 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
+                        walls.create(indX + 480 + (i * 28), indY + 500 - ((i * 0.70) * 28), 'blockRed').setScale(0.8).refreshBody();
                     }
                     for (var i = 0; i < 6; i++) {
                       walls.create(indX + 220 + (i * 20), indY + 370 + ((i * 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
@@ -460,6 +469,7 @@ App.prototype.start = function () {
                         roomsMAP[x][y].upperDoor = doorsArray[doorsIndex];
                         doorsIndex++;
                         for (var i = 0; i < 3; i++) {
+                          //vertical bars for upper and lower doors:
                             walls.create((indX + 320), indY + (20 + i * 40), 'blockRed').setScale(0.8).refreshBody();
                             walls.create((indX + 480), indY + (20 + i * 40), 'blockRed').setScale(0.8).refreshBody();
                         }
@@ -477,6 +487,7 @@ App.prototype.start = function () {
                         roomsMAP[x][y].downDoor = doorsArray[doorsIndex];
                         doorsIndex++;
                         for (var i = 0; i < 2; i++) {
+                          //vertical bars for upper and lower doors:
                             walls.create((indX + 320), indY + (500 + i * 20), 'blockRed').setScale(0.8).refreshBody();
                             walls.create((indX + 480), indY + (500 + i * 20), 'blockRed').setScale(0.8).refreshBody();
                         }
@@ -494,8 +505,11 @@ App.prototype.start = function () {
                         roomsMAP[x][y].leftDoor = doorsArray[doorsIndex];
                         doorsIndex++;
                         for (var i = 0; i < 4; i++) {
-                            walls.create(indX - 0 + (i * 40), indY + (210 - i * 20), 'blockRed').setScale(0.8).refreshBody();
-                            walls.create(indX - 0 + (i * 40), indY + (340 + i * 20), 'blockRed').setScale(0.8).refreshBody();
+                          //diaganal bars for left door
+                            walls.create(indX - 20 + (i * 40), indY + (200 ), 'blockRed').setScale(0.8).refreshBody();
+                            //walls.create(indX - 0 + (i * 40), indY + (210 - i * 20), 'blockRed').setScale(0.8).refreshBody();
+                            //walls.create(indX - 0 + (i * 40), indY + (340 + i * 20), 'blockRed').setScale(0.8).refreshBody();
+                            walls.create(indX - 20 + (i * 25), indY + (340 ), 'blockRed').setScale(0.8).refreshBody();
                         }
 
                     } else if (mapDoor.L === 0) {
@@ -514,8 +528,10 @@ App.prototype.start = function () {
                         roomsMAP[x][y].rightDoor = doorsArray[doorsIndex];
                         doorsIndex++;
                         for (var i = 0; i < 3; i++) {
-                            walls.create(indX + 710 + (i * 40), indY + (170 + i * 20), 'blockRed').setScale(0.8).refreshBody();
+                            walls.create(indX - 20 - (i * 40), indY + (200 ), 'blockRed').setScale(0.8).refreshBody();
+                            walls.create(indX + 700 + (i * 40), indY + (160 + i * 20), 'blockRed').setScale(0.8).refreshBody();
                             walls.create(indX + 700 + (i * 40), indY + (380 - i * 20), 'blockRed').setScale(0.8).refreshBody();
+                            walls.create(indX - 20 - (i * 25), indY + (340 ), 'blockRed').setScale(0.8).refreshBody();
                         }
 
                     } else if (mapDoor.R === 0) {
@@ -834,16 +850,26 @@ App.prototype.start = function () {
             });
     }
 
-    function changeLanguage() {
+    function changeLanguage(flag) {
       let message="";
-      if (language === 'FRA') {
-        language = 'ENG';
-        message = "You are here:";
+      if (flag) {
+        if (language === 'FRA') {
+          language = 'ENG';
+          langLabel = 'Francais';
+          message = "You are here:";
+        } else {
+          language = 'FRA';
+          langLabel = 'English';
+          message = "Vous etes ici:";
+        }
       } else {
-        language = 'FRA';
-        message = "Vous etes ici:";
+        if (language === 'ENG') {
+          message = "You are here:";
+        } else {
+          message = "Vous etes ici:";
+        }
       }
-      document.getElementById("languages").innerHTML = language;
+      document.getElementById("languages").innerHTML = langLabel;
       document.getElementById("divMiniMapText").innerHTML = message;
     }
 

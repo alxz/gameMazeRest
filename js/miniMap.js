@@ -41,7 +41,7 @@
           //here we are going to display the maze table/array
           //const mazeDiv = document.getElementById("mazeMap");
           const mazeDiv = document.getElementById(targetId);
-          // var maze = mazePassed;
+          var maze = mazePassed;
           // var message = "";
           // if (lang === "FRA") {
           //   message = "Vous etes ici:";
