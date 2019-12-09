@@ -18,11 +18,11 @@
     }
 
     try {
-      include('https://www.mymuhc.muhc.mcgill.ca/a/a.php');
-      $userId = $_SERVER['REMOTE_USER'];
-      // if(isset($_SERVER['REMOTE_USER'])) {
-      //   $userId = $_SERVER['REMOTE_USER'];
-      // }
+      //include('https://www.mymuhc.muhc.mcgill.ca/a/a.php');
+      //$userId = $_SERVER['REMOTE_USER'];
+      if(isset($_SERVER['REMOTE_USER'])) {
+        $userId = $_SERVER['REMOTE_USER'];
+      }
     } catch (\Exception $e) {
       $errorLog = $e;
     }

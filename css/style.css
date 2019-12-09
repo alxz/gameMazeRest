@@ -345,26 +345,39 @@ tr,td {
 	margin-left: auto;
 	margin-right: auto;
 }
-.introDiv {
-	padding: 10px;
+.introDivUp {
+	padding: 3px;
 	margin-left: auto;
 	margin-right: auto;
-	float: left;
+	float: none;
+}
+.introDivDown {
+	padding: 5px;
+	margin-left: 5%;
+	margin-right: auto;
+	float: none;
+	text-align: left;
 }
 .introDivImg {
-	padding: 10px;
+	padding: 3px;
 	/* margin-left: auto;
 	margin-right: auto; */
-	margin: auto;
-	float: right;
-	background: lightgray;
+	margin-left: auto;
+	margin-right: auto;
+	float: none;
 }
 .introMidDiv {
 	display: flex;
-	padding: 25px;
-	margin-left: auto;
-	margin-right: auto;
+	margin-left: 5%;
+	margin-right: 5%;
 }
+.iframeIntro {
+	border: none;
+	height:400px;
+	width:800px;
+}
+
+
 .embed-container 	{
 	/* position: relative;
 	padding-bottom: 56.25%; */

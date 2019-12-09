@@ -920,8 +920,18 @@ App.prototype.start = function () {
         const finScrTxtLine2 = document.getElementById('finScrTxtLine2');
         const finScrTxtLine3 = document.getElementById('finScrTxtLine3');
         //const finScrTxtLine4 = document.getElementById('finScrTxtLine4');
-        finScrTxtLine2.innerHTML = "Answered: " + gameState.correctCount + " questions!";
-        finScrTxtLine3.innerHTML = "Your time: " + minSpent + " m " + secSpent + " s.";//gameState.elapsedTime;
+        var finScrTxtLine2Msg = "Answered: " + gameState.correctCount + " questions!";
+        var finScrTxtLine3Msg = "Time: " + minSpent + " m " + secSpent + " s.";
+        if (language === 'FRA') {
+          finScrTxtLine2Msg = "Repondu aux questions: " + gameState.correctCount + " questions!";
+          finScrTxtLine3Msg = "Temps: " + minSpent + " m " + secSpent + " s.";
+        }
+        //else {
+        //   finScrTxtLine2Msg = "Answered: " + gameState.correctCount + " questions!";
+        //   finScrTxtLine3Msg = "Time: " + minSpent + " m " + secSpent + " s.";
+        // }
+        finScrTxtLine2.innerHTML = finScrTxtLine2Msg;
+        finScrTxtLine3.innerHTML = finScrTxtLine3Msg;//gameState.elapsedTime;
         //finScrTxtLine4.innerHTML = "";
 
     }
@@ -980,13 +990,21 @@ App.prototype.start = function () {
 var starsCount =0;
 
 function star(starX) {
-  for (var i = 1; i < 6; i++) {
-    $('#star'+i).css('color', '');
-  }
-  for (var i = 1; i < starX + 1; i++) {
-    $('#star'+i).css('color', 'yellow');
+  try {
+    for (var i = 1; i < 6; i++) {
+      $('#star'+i).css('color', '');
+    }
+    for (var i = 1; i < starX + 1; i++) {
+      $('#star'+i).css('color', 'yellow');
+    }
+  } catch (e) {
+    console.log('error counting stars! ');
   }
   starsCount = starX;
+}
+
+function getStarsCount() {
+  return starsCount;
 }
 
 function goBack() {
