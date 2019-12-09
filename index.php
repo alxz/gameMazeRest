@@ -1,44 +1,43 @@
-<html lang="en">
+<!doctype html> <html lang="en">
+<?php
+  $userId = 'UNKNOWN';
+    //languages
+  $languages = 'FRA';
+  $langLabel = 'English';
+
+  if (!empty($_POST['languages'])) {
+    if ($_POST['languages'] == 'French') {
+      $languages = 'FRA';
+      $langLabel = 'English';
+    } else if ($_POST['languages'] == 'English') {
+      $languages = 'ENG';
+      $langLabel = 'Francais';
+    }
+  }
+
+  try {
+    //include('https://www.mymuhc.muhc.mcgill.ca/a/a.php');
+    //$userId = $_SERVER['REMOTE_USER'];
+    if(isset($_SERVER['REMOTE_USER'])) {
+      $userId = $_SERVER['REMOTE_USER'];
+    }
+  } catch (\Exception $e) {
+    $errorLog = $e;
+  }
+
+  if (!empty($_POST['userId'])) {
+     $userId = $_POST['userId'];
+      } else {
+      $userId = 'UNKNOWN';
+    }
+    //echo ($userId);
+?>
 <head>
-
-  <?php
-    $userId = 'UNKNOWN';
-      //languages
-    $languages = 'FRA';
-    $langLabel = 'English';
-
-    if (!empty($_POST['languages'])) {
-      if ($_POST['languages'] == 'French') {
-        $languages = 'FRA';
-        $langLabel = 'English';
-      } else if ($_POST['languages'] == 'English') {
-        $languages = 'ENG';
-        $langLabel = 'Francais';
-      }
-    }
-
-    try {
-      //include('https://www.mymuhc.muhc.mcgill.ca/a/a.php');
-      //$userId = $_SERVER['REMOTE_USER'];
-      if(isset($_SERVER['REMOTE_USER'])) {
-        $userId = $_SERVER['REMOTE_USER'];
-      }
-    } catch (\Exception $e) {
-      $errorLog = $e;
-    }
-
-    if (!empty($_POST['userId'])) {
-       $userId = $_POST['userId'];
-        } else {
-        $userId = 'UNKNOWN';
-      }
-      //echo ($userId);
-  ?>
-
    <meta charset="UTF-8" />
    <title>Security Week Challenge Game</title>
-    <script src="js/phaser.js"></script>
-   <script src="//cdn.jsdelivr.net/npm/phaser@3.11.0/dist/phaser.js"></script>
+    <!-- <script src="js/phaser.js"></script> -->
+
+   <script src="//cdn.jsdelivr.net/npm/phaser@3.16.2/dist/phaser.js"></script>
    <link rel="stylesheet" href="css/style.css">
    <script src="js/jquery-3.4.1.min.js"></script>
    <script src="lib/easytimer.min.js" type="text/javascript"></script>

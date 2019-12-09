@@ -3,7 +3,7 @@ var App = function () {
 // by Alexey Zapromyotov (c) 2019
 App.prototype.start = function () {
     var config = {
-        type: Phaser.AUTO,
+        type: Phaser.CANVAS,
         width: 800,
         height: 520,
         physics: {
@@ -51,7 +51,7 @@ App.prototype.start = function () {
     var totalQestionsAsked = 0;
     var listofquestions = "";
     var doorsHolder = [];
-    var explosion;
+    //var explosion;
     var music;
     var doorOpen;
     var soundStep;
@@ -93,32 +93,6 @@ App.prototype.start = function () {
         this.load.audio('theme', [
             'assets/bgCut1.mp3'
         ]);
-        this.load.audio('explosion', 'assets/explosion.mp3');
-        this.load.audio('soundStep', 'assets/walking0.wav');
-
-        this.load.audio('doorOpen', 'assets/doorOpen.wav');
-        this.load.audio('soundFail', 'assets/wrongAnswer.mp3');
-        this.load.audio('pickupKey', 'assets/pickupKey.mp3');
-        this.load.audio('soundOk', 'assets/okay.mp3');
-        this.load.audio('soundFinal', 'assets/fanfareFinale.mp3');
-        // // loading rooms assets: 16 rooms types in total!
-        // this.load.image('u0d1l0r1', 'jpg/u0d1l0r1.jpg');
-        // this.load.image('u0d1l1r0', 'jpg/u0d1l1r0.jpg');
-        // this.load.image('u1d0l0r1', 'jpg/u1d0l0r1.jpg');
-        // this.load.image('u1d0l1r1', 'jpg/u1d0l1r1.jpg');
-        // this.load.image('u0d0l1r1', 'jpg/u0d0l1r1.jpg');
-        // this.load.image('u1d0l1r0', 'jpg/u1d0l1r0.jpg');
-        // this.load.image('u0d0l0r0', 'jpg/u0d0l0r0.jpg');
-        // this.load.image('u0d0l0r1', 'jpg/u0d0l0r1.jpg');
-        // this.load.image('u0d0l1r0', 'jpg/u0d0l1r0.jpg');
-        // this.load.image('u0d1l0r0', 'jpg/u0d1l0r0.jpg');
-        // this.load.image('u0d1l1r1', 'jpg/u0d1l1r1.jpg');
-        // this.load.image('u1d0l0r0', 'jpg/u1d0l0r0.jpg');
-        // this.load.image('u1d1l0r0', 'jpg/u1d1l0r0.jpg');
-        // this.load.image('u1d1l0r1', 'jpg/u1d1l0r1.jpg');
-        // this.load.image('u1d1l1r0', 'jpg/u1d1l1r0.jpg');
-        // this.load.image('u1d1l1r1', 'jpg/u1d1l1r1.jpg');
-
         //baseRoomBack = RoomBG_red.png 1000 px X 650px
         // scale 0.8 we have: 800 x 520
         this.load.image('RoomBG_01', 'png/RoomBG_01_blue.png');
@@ -126,6 +100,13 @@ App.prototype.start = function () {
         this.load.image('RoomBG_03', 'png/RoomBG_03_red.png');
         this.load.image('RoomBG_04', 'png/RoomBG_04_green.png');
         this.load.image('RoomBG_05', 'png/RoomBG_05_orange.png');
+        this.load.audio('soundStep', 'assets/walking0.wav');
+
+        this.load.audio('doorOpen', 'assets/doorOpen.wav');
+        this.load.audio('soundFail', 'assets/wrongAnswer.mp3');
+        this.load.audio('pickupKey', 'assets/pickupKey.mp3');
+        this.load.audio('soundOk', 'assets/okay.mp3');
+        this.load.audio('soundFinal', 'assets/fanfareFinale.mp3');
 
         this.load.image('baseRoomBack', 'png/RoomBG_red_withBG.png');
         this.load.image('finalRoom', 'png/RoomBG_01_final.png');
@@ -171,6 +152,11 @@ App.prototype.start = function () {
     }
 
     function create() {
+        this.input.addDownCallback(function() {
+          if (game.sound.context.state === 'suspended') {
+            game.sound.context.resume();
+          }
+        });
         // init other states
         megaMAP = game.cache.json.get('megaMAP');
         this.cameras.main.setBackgroundColor('#333')
@@ -179,15 +165,7 @@ App.prototype.start = function () {
         initMap = megaMAP.initMAP;
         maxRoomCountX = initMap[0].length;
         maxRoomCountY = initMap.length;
-        music = this.sound.add('theme');
-        explosion = this.sound.add('explosion');
-        soundStep = this.sound.add('soundStep');
 
-        doorOpen = this.sound.add('doorOpen');
-        pickupKey = this.sound.add('pickupKey');
-        soundOk = this.sound.add('soundOk');
-        soundFail = this.sound.add('soundFail');
-        soundFinal = this.sound.add('soundFinal');
         //  music.play();
         //  this.input.addDownCallback(function() {
         //    if (game.sound.context.state === 'suspended') {
@@ -223,12 +201,25 @@ App.prototype.start = function () {
         this.physics.add.collider(player, hospitalBed, null, breakingBad, this);
         this.physics.add.overlap(player, doorkeys, collectKey, null, this);
 
+/*
+      // SOUND MUSIC disabling to debug IE11 issues:
+        music = this.sound.add('theme');
+        soundStep = this.sound.add('soundStep');
+
+        doorOpen = this.sound.add('doorOpen');
+        pickupKey = this.sound.add('pickupKey');
+        soundOk = this.sound.add('soundOk');
+        soundFail = this.sound.add('soundFail');
+        soundFinal = this.sound.add('soundFinal');
+        //SOUND MUSIC STOPED To Debug IE11 issues
+*/
     }
 
     function breakingBad() {
         isPause = true;
         stopPlayer();
-        music.pause();
+//SOUND MUSIC STOPED To Debug IE11 issues
+        // music.pause();
         gameState.isFinished = 1;
         gameState.elapsedTime = secondsElapsed;
         var d = new Date();
@@ -392,7 +383,7 @@ App.prototype.start = function () {
         player.setVelocityX(0);
         player.setVelocityY(0);
         player.anims.play('turn');
-        soundStep.pause();
+        // soundStep.pause(); //SOUND MUSIC STOPED To Debug IE11 issues
     }
 
     function buildWorld(scene) {
@@ -624,16 +615,16 @@ App.prototype.start = function () {
                         //doorkeys.create(coord.x, coord.y, 'star').setScale(0.8); //doors keys
                         //var myKey = doorkeys.create(coord.x, coord.y, 'gold-key').setScale(0.5); //doors keys
                         // 'green-key-sprite', {start: 0, end: 18} -vs- 'gold-key-sprite', {start: 0, end: 6}
-                        scene.anims.create({
-                            key: 'rotatingKey',
-                            frames: scene.anims.generateFrameNumbers('gold-key-sprite', {start: 0, end: 6}),
-                            frameRate: 10,
-                            repeat: -1
-                        });
 
+                        // // scene.anims.create({
+                        // //     key: 'rotatingKey',
+                        // //     frames: scene.anims.generateFrameNumbers('gold-key-sprite', {start: 0, end: 6}),
+                        // //     frameRate: 10,
+                        // //     repeat: -1
+                        // // });
                         var myKey = doorkeys.create(coord.x, coord.y, 'gold-key-sprite').setScale(0.8); //doors keys
                         myKey.question = megaMAP.questionList[keyIndex];
-                        myKey.anims.play('rotatingKey', true);
+                        /// //myKey.anims.play('rotatingKey', true);
                         //console.log("question from key", myKey.question);
                         keyIndex++;
                         arrKeys[arrKeys.length] = coord;
@@ -784,9 +775,10 @@ App.prototype.start = function () {
     }
 
     function playSound(sound) {
-        if (!sound.isPlaying) {
-            sound.play();
-        }
+      //sounds: //SOUND MUSIC STOPED To Debug IE11 issues
+        // if (!sound.isPlaying) {
+        //     sound.play();
+        // }
     }
 
     function calcCoordOnMapPos(thisX,thisY) {
@@ -1176,15 +1168,17 @@ App.prototype.start = function () {
         playSound(soundFinal);
         var minSpent = Math.floor(gameState.elapsedTime / 60);
         var secSpent = (gameState.elapsedTime % 60);
+        var correctAnswers =0;
+        correctAnswers = gameState.correctCount;
         finScr.style.display = "";
         const finScrTxtLine1 = document.getElementById('finScrTxtLine1');
         const finScrTxtLine2 = document.getElementById('finScrTxtLine2');
         const finScrTxtLine3 = document.getElementById('finScrTxtLine3');
         //const finScrTxtLine4 = document.getElementById('finScrTxtLine4');
-        var finScrTxtLine2Msg = "Answered: " + gameState.correctCount + " questions!";
+        var finScrTxtLine2Msg = "Answered: " + correctAnswers + " questions!";
         var finScrTxtLine3Msg = "Time: " + minSpent + " m " + secSpent + " s.";
         if (language === 'FRA') {
-          finScrTxtLine2Msg = "Repondu aux questions: " + gameState.correctCount + " questions!";
+          finScrTxtLine2Msg = "Repondu aux questions: " + correctAnswers + " questions!";
           finScrTxtLine3Msg = "Temps: " + minSpent + " m " + secSpent + " s.";
         }
         //else {
@@ -1302,6 +1296,24 @@ userTimer.addEventListener('secondsUpdated', function (e) {
 });
 
 function getFullDateTime(today) {
+
+  if (!String.prototype.padStart) {
+      String.prototype.padStart = function padStart(targetLength,padString) {
+          targetLength = targetLength>>0; //truncate if number or convert non-number to 0;
+          padString = String((typeof padString !== 'undefined' ? padString : ' '));
+          if (this.length > targetLength) {
+              return String(this);
+          }
+          else {
+              targetLength = targetLength-this.length;
+              if (targetLength > padString.length) {
+                  padString += padString.repeat(targetLength/padString.length); //append to original to ensure we are longer than needed
+              }
+              return padString.slice(0,targetLength) + String(this);
+          }
+      };
+  }
+
   var fullDay;
   var dd = String(today.getDate()).padStart(2, '0');
   var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
