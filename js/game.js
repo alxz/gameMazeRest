@@ -201,8 +201,9 @@ App.prototype.start = function () {
         this.physics.add.collider(player, hospitalBed, null, breakingBad, this);
         this.physics.add.overlap(player, doorkeys, collectKey, null, this);
 
-/*
+
       // SOUND MUSIC disabling to debug IE11 issues:
+      if ( !(msieversion()) ) {
         music = this.sound.add('theme');
         soundStep = this.sound.add('soundStep');
 
@@ -212,14 +213,20 @@ App.prototype.start = function () {
         soundFail = this.sound.add('soundFail');
         soundFinal = this.sound.add('soundFinal');
         //SOUND MUSIC STOPED To Debug IE11 issues
-*/
+      }
+
+
     }
 
     function breakingBad() {
         isPause = true;
         stopPlayer();
-//SOUND MUSIC STOPED To Debug IE11 issues
-        // music.pause();
+        //SOUND MUSIC STOPED To Debug IE11 issues
+        if ( !(msieversion()) ) {
+          music.pause();
+        }
+
+        //
         gameState.isFinished = 1;
         gameState.elapsedTime = secondsElapsed;
         var d = new Date();
@@ -227,7 +234,7 @@ App.prototype.start = function () {
         userTimer.stop();
         saveState('UPDATE', gameState);
         //show finScr
-        //Phaser.disable;
+        Phaser.disable;
         this.input.keyboard.enabled = false; //to stop keyboard capture
         //Phaser.Input.Keyboard.clearCaptures();
         showFinalScreen();
@@ -383,7 +390,9 @@ App.prototype.start = function () {
         player.setVelocityX(0);
         player.setVelocityY(0);
         player.anims.play('turn');
-        // soundStep.pause(); //SOUND MUSIC STOPED To Debug IE11 issues
+        if ( !(msieversion()) ) {
+         soundStep.pause(); //SOUND MUSIC STOPED To Debug IE11 issues
+       }
     }
 
     function buildWorld(scene) {
@@ -776,9 +785,11 @@ App.prototype.start = function () {
 
     function playSound(sound) {
       //sounds: //SOUND MUSIC STOPED To Debug IE11 issues
-        // if (!sound.isPlaying) {
-        //     sound.play();
-        // }
+      if ( !(msieversion()) ) {
+          if (!sound.isPlaying) {
+              sound.play();
+          }
+        }
     }
 
     function calcCoordOnMapPos(thisX,thisY) {
@@ -1192,6 +1203,7 @@ App.prototype.start = function () {
     }
 
     function submitFinalAnswer() {
+
         //starsCount is global
         var respQ2 = document.getElementById("finQ2").value;
         var respQ2strWithOutQuotes= respQ2.replace(/['"]+/g, '')
@@ -1222,23 +1234,27 @@ App.prototype.start = function () {
     $("#finSubmit").unbind("click");
     $("#finSubmit").bind("click", submitFinalAnswer);
 
+    //checking if the browser is IE or others
+    if (  msieversion() ) {
+      //the following to prevent cutting space charactes in the textarea field:
+      {
+          $("#finQ2").keyup(function(e){
+           if(e.keyCode == 32){
+               // user has pressed backspace
+               document.getElementById("finQ2").value += " " ;
+           }
+         });
+         $("#finQ3").keyup(function(e){
+          if(e.keyCode == 32){
+              // user has pressed backspace
+              document.getElementById("finQ3").value += " " ;
+          }
+        });
+      }
+    }
     // $("#finExit").unbind("click");
     // $("#finExit").bind("click", opneAnotherURL);
-    //the following to prevent cutting space charactes in the textarea field:
-    // {
-    //     $("#finQ2").keyup(function(e){
-    //      if(e.keyCode == 32){
-    //          // user has pressed backspace
-    //          document.getElementById("finQ2").value += " " ;
-    //      }
-    //    });
-    //    $("#finQ3").keyup(function(e){
-    //     if(e.keyCode == 32){
-    //         // user has pressed backspace
-    //         document.getElementById("finQ3").value += " " ;
-    //     }
-    //   });
-    // }
+
     // by Alexey Zapromyotov (c) 2019
 };
 
@@ -1296,32 +1312,65 @@ userTimer.addEventListener('secondsUpdated', function (e) {
 });
 
 function getFullDateTime(today) {
-
-  if (!String.prototype.padStart) {
-      String.prototype.padStart = function padStart(targetLength,padString) {
-          targetLength = targetLength>>0; //truncate if number or convert non-number to 0;
-          padString = String((typeof padString !== 'undefined' ? padString : ' '));
-          if (this.length > targetLength) {
-              return String(this);
-          }
-          else {
-              targetLength = targetLength-this.length;
-              if (targetLength > padString.length) {
-                  padString += padString.repeat(targetLength/padString.length); //append to original to ensure we are longer than needed
-              }
-              return padString.slice(0,targetLength) + String(this);
-          }
-      };
-  }
-
   var fullDay;
-  var dd = String(today.getDate()).padStart(2, '0');
-  var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-  var yyyy = today.getFullYear();
-  fullDay = mm + '/' + dd + '/' + yyyy;
-  var hour = ("0" + today.getHours()).slice(-2); //today.getHours() ;
-  var min = ("0" + today.getMinutes()).slice(-2); //today.getMinutes();
-  var sec = ("0" + today.getSeconds()).slice(-2); //today.getSeconds();
-  fullTime =  hour + ":" + min + ":" + sec;
-  return fullDay + ' ' + fullTime;
+  var fullTime;
+  var today = new Date();
+  try {
+    var dd = String(today.getDate()).padStart(2, '0');
+    var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+    var yyyy = today.getFullYear();
+    fullDay = mm + '/' + dd + '/' + yyyy;
+    var hour = ("0" + today.getHours()).slice(-2); //today.getHours() ;
+    var min = ("0" + today.getMinutes()).slice(-2); //today.getMinutes();
+    var sec = ("0" + today.getSeconds()).slice(-2); //today.getSeconds();
+    fullTime =  hour + ":" + min + ":" + sec;
+    today = fullDay + ' ' + fullTime;
+  } catch (e) {
+    console.log('error getting current time and date!');
+  }
+    return today;
+}
+
+if (!String.prototype.padStart) {
+    String.prototype.padStart = function padStart(targetLength,padString) {
+        targetLength = targetLength>>0; //truncate if number or convert non-number to 0;
+        padString = String((typeof padString !== 'undefined' ? padString : ' '));
+        if (this.length > targetLength) {
+            return String(this);
+        }
+        else {
+            targetLength = targetLength-this.length;
+            if (targetLength > padString.length) {
+                padString += padString.repeat(targetLength/padString.length); //append to original to ensure we are longer than needed
+            }
+            return padString.slice(0,targetLength) + String(this);
+        }
+    };
+}
+
+function msieversion()
+{  //checking if this is IE or something else?
+    var ua = window.navigator.userAgent;
+    //var msie = ua.indexOf("MSIE ");
+
+    function ieVersion(uaString) {
+      uaString = uaString || navigator.userAgent;
+      var match = /\b(MSIE |Trident.*?rv:|Edge\/)(\d+)/.exec(uaString);
+      if (match) return parseInt(match[2])
+    }
+
+    var msie = ieVersion(ua);
+    if (msie >= 12) { //EDGE!
+       return false; //this is not really IE, but better versions - EDGE!
+    } else if (msie > 0 ) // If Internet Explorer, return version number
+    {
+        //alert(parseInt(ua.substring(msie + 5, ua.indexOf(".", msie))));
+        return true;
+    }
+    else  // If another browser, return 0
+    {
+        //alert('otherbrowser');
+        //Thanks GOD this is NOT IE!!!
+    }
+    return false;
 }
