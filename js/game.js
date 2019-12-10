@@ -1,8 +1,10 @@
 var App = function () {
 };
 // by Alexey Zapromyotov (c) 2019
+let isBrowserIE = false;
+isBrowserIE = msieversion();
 App.prototype.start = function () {
-    var config = {
+    let config = {
         type: Phaser.CANVAS,
         width: 800,
         height: 520,
@@ -51,7 +53,6 @@ App.prototype.start = function () {
     var totalQestionsAsked = 0;
     var listofquestions = "";
     var doorsHolder = [];
-    //var explosion;
     var music;
     var doorOpen;
     var soundStep;
@@ -61,7 +62,7 @@ App.prototype.start = function () {
     var soundFinal;
     var gameState;
     var isSurveySent = false;
-    userIUN = "JohnDoe";
+    //userIUN = "JohnDoe";
 
     var doorsArray = [];
     const questionWindow = document.getElementById("questionWindow");
@@ -71,9 +72,9 @@ App.prototype.start = function () {
 
     const submitMsgContainer = document.getElementById("submitMsg");
     userIUN = document.getElementById("userIUNBox").innerHTML;
-    var langLabel = document.getElementById("languages").innerHTML; //id="languages"
+    let langLabel = document.getElementById("languages").innerHTML; //id="languages"
 
-    // the lagnage label has inversed logic:
+    // the language label has inversed logic:
     if (langLabel === 'English') {
       language = 'FRA';
     } else {
@@ -159,7 +160,7 @@ App.prototype.start = function () {
         });
         // init other states
         megaMAP = game.cache.json.get('megaMAP');
-        this.cameras.main.setBackgroundColor('#333')
+        this.cameras.main.setBackgroundColor('#333');
         gameState = buildGameState(userIUN, megaMAP.sessionId);
         gameState.user = userIUN;
         initMap = megaMAP.initMAP;
@@ -201,35 +202,31 @@ App.prototype.start = function () {
         this.physics.add.collider(player, hospitalBed, null, breakingBad, this);
         this.physics.add.overlap(player, doorkeys, collectKey, null, this);
 
-
       // SOUND MUSIC disabling to debug IE11 issues:
-      if ( !(msieversion()) ) {
+      if (!isBrowserIE) {
         music = this.sound.add('theme');
         soundStep = this.sound.add('soundStep');
-
         doorOpen = this.sound.add('doorOpen');
         pickupKey = this.sound.add('pickupKey');
         soundOk = this.sound.add('soundOk');
         soundFail = this.sound.add('soundFail');
         soundFinal = this.sound.add('soundFinal');
-        //SOUND MUSIC STOPED To Debug IE11 issues
+        //SOUND MUSIC STOPPED To Debug IE11 issues
       }
-
-
     }
 
     function breakingBad() {
         isPause = true;
         stopPlayer();
         //SOUND MUSIC STOPED To Debug IE11 issues
-        if ( !(msieversion()) ) {
+        if (!isBrowserIE) {
           music.pause();
         }
 
         //
         gameState.isFinished = 1;
         gameState.elapsedTime = secondsElapsed;
-        var d = new Date();
+        let d = new Date();
         gameState.timefinish = getFullDateTime(d);
         userTimer.stop();
         saveState('UPDATE', gameState);
@@ -272,14 +269,13 @@ App.prototype.start = function () {
         if (player.doorKeys > 0 && !door.isOpen) {
             playSound(doorOpen);
             stopPlayer();
-            //scoreKeysRedraw();
             door.body.checkCollision.none = true;
             door.isOpen = true;
             player.doorKeys--;
             //console.log("The door has been opened!", door);
-            var nextDoor;
-            var thisRoomX = door.roomCoord.roomX;
-            var thisRoomY = door.roomCoord.roomY;
+            let nextDoor;
+            let thisRoomX = door.roomCoord.roomX;
+            let thisRoomY = door.roomCoord.roomY;
 
             switch (door.roomCoord.doorType) {
                 case 'U':
@@ -325,14 +321,6 @@ App.prototype.start = function () {
         player.x = player.prevPos.x;
         player.y = player.prevPos.y;
     }
-
-    function scoreKeysRedraw() {
-      // for (var i=0; i < player.doorKeys; i++ ){
-      //   scoreImgs.create(player.x-300 + (i*20), player.y-250, 'gold-key').setScale(0.8);
-      // }
-
-    }
-
 
     function collectKey(player, key) {
 
@@ -390,7 +378,7 @@ App.prototype.start = function () {
         player.setVelocityX(0);
         player.setVelocityY(0);
         player.anims.play('turn');
-        if ( !(msieversion()) ) {
+        if (!isBrowserIE) {
          soundStep.pause(); //SOUND MUSIC STOPED To Debug IE11 issues
        }
     }
@@ -625,15 +613,18 @@ App.prototype.start = function () {
                         //var myKey = doorkeys.create(coord.x, coord.y, 'gold-key').setScale(0.5); //doors keys
                         // 'green-key-sprite', {start: 0, end: 18} -vs- 'gold-key-sprite', {start: 0, end: 6}
 
-                        // // scene.anims.create({
-                        // //     key: 'rotatingKey',
-                        // //     frames: scene.anims.generateFrameNumbers('gold-key-sprite', {start: 0, end: 6}),
-                        // //     frameRate: 10,
-                        // //     repeat: -1
-                        // // });
+                        scene.anims.create({
+                            key: 'rotatingKey',
+                            frames: scene.anims.generateFrameNumbers('gold-key-sprite', {start: 0, end: 6}),
+                            frameRate: 10,
+                            repeat: -1
+                        });
+
                         var myKey = doorkeys.create(coord.x, coord.y, 'gold-key-sprite').setScale(0.8); //doors keys
                         myKey.question = megaMAP.questionList[keyIndex];
-                        /// //myKey.anims.play('rotatingKey', true);
+
+                        myKey.anims.play('rotatingKey', true);
+
                         //console.log("question from key", myKey.question);
                         keyIndex++;
                         arrKeys[arrKeys.length] = coord;
@@ -785,7 +776,7 @@ App.prototype.start = function () {
 
     function playSound(sound) {
       //sounds: //SOUND MUSIC STOPED To Debug IE11 issues
-      if ( !(msieversion()) ) {
+      if ( !isBrowserIE ) {
           if (!sound.isPlaying) {
               sound.play();
           }
@@ -1234,8 +1225,8 @@ App.prototype.start = function () {
     $("#finSubmit").unbind("click");
     $("#finSubmit").bind("click", submitFinalAnswer);
 
-    //checking if the browser is IE or others
-    if (  msieversion() ) {
+    // //checking if the browser is IE or others
+    // if (!isBrowserIE) {
       //the following to prevent cutting space charactes in the textarea field:
       {
           $("#finQ2").keyup(function(e){
@@ -1251,7 +1242,7 @@ App.prototype.start = function () {
           }
         });
       }
-    }
+    // }
     // $("#finExit").unbind("click");
     // $("#finExit").bind("click", opneAnotherURL);
 
@@ -1294,7 +1285,7 @@ window.onload = function () {
 }
 
 
-var today = new Date();
+let today = new Date();
 var startTime = getFullDateTime(today);
 var userTimer;
 userTimer = new easytimer.Timer();
