@@ -101,9 +101,9 @@ App.prototype.start = function () {
         this.load.image('RoomBG_03', 'png/RoomBG_03_red.png');
         this.load.image('RoomBG_04', 'png/RoomBG_04_green.png');
         this.load.image('RoomBG_05', 'png/RoomBG_05_orange.png');
-        this.load.audio('soundStep', 'assets/walking0.wav');
+        this.load.audio('soundStep', 'assets/walking0.mp3');
 
-        this.load.audio('doorOpen', 'assets/doorOpen.wav');
+        this.load.audio('doorOpen', 'assets/doorOpen.mp3');
         this.load.audio('soundFail', 'assets/wrongAnswer.mp3');
         this.load.audio('pickupKey', 'assets/pickupKey.mp3');
         this.load.audio('soundOk', 'assets/okay.mp3');
@@ -202,9 +202,6 @@ App.prototype.start = function () {
         this.physics.add.collider(player, doors, null, hitTheDoor, this);
         this.physics.add.collider(player, hospitalBed, null, breakingBad, this);
         this.physics.add.overlap(player, doorkeys, collectKey, null, this);
-
-      // SOUND MUSIC disabling to debug IE11 issues:
-      if (!isBrowserIE) {
         music = this.sound.add('theme');
         soundStep = this.sound.add('soundStep');
         doorOpen = this.sound.add('doorOpen');
@@ -212,8 +209,10 @@ App.prototype.start = function () {
         soundOk = this.sound.add('soundOk');
         soundFail = this.sound.add('soundFail');
         soundFinal = this.sound.add('soundFinal');
-        //SOUND MUSIC STOPPED To Debug IE11 issues
-      }
+      // // SOUND MUSIC disabling to debug IE11 issues:
+      // if (!isBrowserIE) {
+      //   //SOUND MUSIC STOPPED To Debug IE11 issues
+      // }
     }
 
     function breakingBad() {
@@ -234,6 +233,7 @@ App.prototype.start = function () {
         //show finScr
         Phaser.disable;
         _this.input.keyboard.enabled = false; //to stop keyboard capture
+        //_this.input.keyboard.stopImmediatePropagation();
         //Phaser.Input.Keyboard.clearCaptures();
         this.scene.pause();
         game.scene.pause("default");
@@ -381,9 +381,9 @@ App.prototype.start = function () {
         player.setVelocityX(0);
         player.setVelocityY(0);
         player.anims.play('turn');
-        if (!isBrowserIE) {
+        //if (!isBrowserIE) {
          soundStep.pause(); //SOUND MUSIC STOPED To Debug IE11 issues
-       }
+       //}
     }
 
     function buildWorld(scene) {
@@ -642,11 +642,14 @@ App.prototype.start = function () {
 
     function playSound(sound) {
       //sounds: //SOUND MUSIC STOPED To Debug IE11 issues
-      if ( !isBrowserIE ) {
-          if (!sound.isPlaying) {
-              sound.play();
-          }
-        }
+      // if ( !isBrowserIE ) {
+      //     if (!sound.isPlaying) {
+      //         sound.play();
+      //     }
+      // }
+      if (!sound.isPlaying) {
+          sound.play();
+      }
     }
 
     function calcCoordOnMapPos(thisX,thisY) {
@@ -848,7 +851,7 @@ App.prototype.start = function () {
                       } else {
                         questionWindow.style.border = 'thin solid white';
                       }
-                      
+
                       hideQuestion();
                       ifCancelCallback(question);
                   }, 1200);

@@ -91,17 +91,12 @@
         </div>
     </div>
 
-    <div id="video"
-         class="video-container"
-         style="display: none">
-
+    <div id="video" class="video-container" style="display: none">
          <p>
             <h1><span id="vidScrTxt" class="vidScrMessage">Sorry, wrong answer!!!</span></h1>
          </p>
          <span class="video-close" id="closeVideo"> [X] </span>
          <div id="divVidPlayer">
-<!--            <video id="vplayer" class="video-player" controls width="450">-->
-                <!-- <source src="video/vid00001.mp4" type="video/mp4"> Sorry, your browser doesn\'t support embedded videos.</video> -->
          </div>
     </div>
     <div id="finScr"
