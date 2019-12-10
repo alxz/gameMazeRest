@@ -9,7 +9,6 @@ SELECT `uId`, `uIUN`, `uFName`, `uLName`, `uRetryCount`, `uTimer`,
   `uTotalScore`, `uIsFinished`, `timestart`, `timefinish`, `listofquestions`,
   `comment` FROM `tabusers`
 
-
 */
 
 
@@ -72,18 +71,27 @@ th, td {
 &nbsp; &nbsp; &nbsp;
 <button onclick="history.go(-1);">Back </button>
 &nbsp; &nbsp; &nbsp;<hr/><br>
-<button type="submit" value="showDetails" name="detailsShow">Detailed Info</button>
+<button type="submit" value="detailsShow" name="detailsShow">Detailed Info</button>
 &nbsp; &nbsp; &nbsp;
 
-<div id="divDetails" class="details-hidden">
+<div id="divDetails" class="details-hidden" style="display: none;">
   <div id="dvInput" class="input-info">
-    <p>UIN: &nbsp;<input type="text" id="userIUNVar" name="userIUNVar" /></p>
+    <p>UIN: &nbsp;<input type="text" id="userIUNVar" name="userIUNVar" /> &nbsp; Use % symbol to display all</p>
+  </div>
+  <div id="divButton">
+    <button type="submit" value="getStat" name="getStat" "> Get Statistics </button>
   </div>
 </div>
 </form>
 </body>
 </html>
-
+<script type="text/JavaScript">
+  function getUserData() {
+    //console.log('userIUNVar');
+    var userIUN = document.getElementById("userIUNVar").value;
+    //alert('User name: ' + userIUN);
+  }
+</script>
 <?php
 //echo displayAllTAbles(); //displayAllTAbles - to place a selection of tables
 function display()
@@ -135,18 +143,76 @@ function display()
           resultsContainer = document.getElementById('tabName');
           resultsContainer.value = `${selectedValue}`;
         </script>
+
 <?php
 }
 
+function getUserDataPHP() {
+  $outVar = "<br>";
+    //$tabName = $_POST['tabName']; //tabusers
+      $tabName = 'tabusers';
 
-if(isset($_POST['submit']))
-{
-  display();
+  $userID = $_POST['userIUNVar'];
+//  $text="<script type='text/JavaScript'>document.writeln(document.getElementById('userIUNVar').innerHTML);</script>";
+
+  echo 'userID: '.$userID.'<br>';
+  echo 'Sorting ascending by less time elapsed time (column name is uTimer) and only those finished the task: <br>';
+  $connection = createConnection (DBHOST, DBUSER, DBPASS, DBNAME);
+  if(mysqli_connect_errno()){
+      die("connection failed: "
+          . mysqli_connect_error()
+          . " (" . mysqli_connect_errno()
+          . ")");
+  }
+
+  $query = "SELECT * FROM ".$tabName." WHERE uIsFinished=1 AND uIUN LIKE '".$userID."%'"." ORDER BY uTimer,uRetryCount,uTotalScore ASC";
+  $result = mysqli_query($connection,$query);
+  $run = $connection->query($query) or die("Last error: {$connection->error}\n");
+  $all_property = array();  //declare an array for saving property
+  //echo '<br> ... still alive<br>';
+  //showing property
+  echo '<br><table class="data-table" ><tr class="data-heading">';  //initialize table tag
+  while ($property = mysqli_fetch_field($result)) {
+      echo '<td>' . $property->name . '</td>';  //get field name for header
+      array_push($all_property, $property->name);  //save those to array
+  }
+  echo '</tr>'; //end tr tag
+
+  //showing all data
+  while ($row = mysqli_fetch_array($result)) {
+      echo "<tr>";
+      foreach ($all_property as $item) {
+          echo '<td>' . $row[$item] . '</td>'; //get items using property value
+      }
+      echo '</tr>';
+  }
+  echo "</table>";
+
 
 }
-if(isset($_POST['showDetails'])) {
 
-  //<p>Selected name: &nbsp;<input type="text" id="tabName" value="tabquestions" name="tabName" /></p>
+
+if(isset($_POST['submit'])) {
+  display();
+} elseif (isset($_POST['detailsShow'])) {
+  //echo 'HellO!';
+  //divDetails
+  echo '<script type="text/JavaScript"> document.getElementById("divDetails").style.display = "";</script>';
+  // echo '<script type="text/JavaScript">'
+  //       .'document.getElementById("divButton").innerHTML = \'<button type="submit" value="getStat" name="getStat" onclick="getUserData()"> Get Statistics </button>\';</script>';
+  // echo '<br/><hr/><br/>';
+  //getUserDataPHP();
+
+  // $("#finSubmit").unbind("click");
+  // $("#finSubmit").bind("click", getUserData);
+
+  //$varDetails = $_POST['detailsShow'];
+  //var_dump(isset($varDetails));
+
+}
+if (isset($_POST['getStat'])) {
+  // code...
+  getUserDataPHP();
 }
 
 

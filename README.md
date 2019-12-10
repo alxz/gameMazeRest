@@ -1,9 +1,9 @@
 # gameMazeRest
 Quiz Type Game using REST calls with PHP and JS using Phaser 3 engine.
-Simple quiz-based game to test your knowledge of anythings (depending on the questions/answers provided). 
-The character should reached the final destinatin point in a shortest time possible. 
-You should pickup the a to open the door in the room. 
-There could be more than one door in the room and so more than one key. 
+Simple quiz-based game to test your knowledge of anything (depending on the questions/answers provided).
+The character should reached the final destination point in a shortest time possible.
+You should pickup the a to open the door in the room.
+There could be more than one door in the room and so more than one key.
 Each key is only for one time use.
 
 Enjoy and have fun!
@@ -15,13 +15,15 @@ Install into your web server application directory.
 Start with "start.html", then it will call start.php file with main programm modules.
 Database content/schema file: "quizdb_vX.sql" - where X-represents the latest version.
 REST procedure could be found in  ./rest
-Graphics resourses are:
+Graphics recourses are:
 ./jpg
 ./png
 Sounds:
 ./assets
 Scripts JS:
 ./js
+some video(HTML5) resources only required for game banner:
+./video
 
 Phaser 3 (the next generation of the Phaser Game Framework):
 https://phaser.io/phaser3
