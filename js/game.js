@@ -153,11 +153,12 @@ App.prototype.start = function () {
     }
 
     function create() {
-        this.input.addDownCallback(function() {
-          if (game.sound.context.state === 'suspended') {
-            game.sound.context.resume();
-          }
-        });
+      if (!isBrowserIE) {
+        if (game.sound.context.state === 'suspended') {
+          game.sound.context.resume();
+        }
+      }
+
         // init other states
         megaMAP = game.cache.json.get('megaMAP');
         this.cameras.main.setBackgroundColor('#333');
@@ -232,8 +233,10 @@ App.prototype.start = function () {
         saveState('UPDATE', gameState);
         //show finScr
         Phaser.disable;
-        this.input.keyboard.enabled = false; //to stop keyboard capture
+        _this.input.keyboard.enabled = false; //to stop keyboard capture
         //Phaser.Input.Keyboard.clearCaptures();
+        this.scene.pause();
+        game.scene.pause("default");
         showFinalScreen();
     }
 
@@ -424,7 +427,7 @@ App.prototype.start = function () {
                 // Upper right bar
                 walls.create(indX + 500 + (i * 30), indY + 90 + ((i * 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
                 // lower left bar
-                walls.create(indX + 110 + (i * 30), indY + 360 + ((i * 0.70) * 30), 'blockRed').setScale(0.8).refreshBody();
+                walls.create(indX + 110 + (i * 20), indY + 360 + ((i * 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
                 // upper left bar
                 walls.create(indX + 310 - (i * 30), indY + 90 + ((i * 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
                 // lower right bar
@@ -634,143 +637,6 @@ App.prototype.start = function () {
           }
         }
 
-        // megaMAP.doorsMAP.forEach((mapDoors, y) => {
-        //         mapDoors.forEach(function (mapDoor, x) {
-        //             var indX = 800 * (x);
-        //             var indY = 520 * (y);
-        //             var keysCount = -1;
-        //
-        //             if (mapDoor.U === 1) {
-        //                 keysCount++;
-        //                 doorsArray[doorsIndex] = doors.create(indX + 400, indY + 80, 'doorU').setScale(.8);
-        //                 doorsArray[doorsIndex].roomCoord = {roomX: x, roomY: y, doorType: 'U'};
-        //                 roomsMAP[x][y].upperDoor = doorsArray[doorsIndex];
-        //                 doorsIndex++;
-        //                 for (var i = 0; i < 3; i++) {
-        //                   //vertical bars for upper and lower doors:
-        //                     walls.create((indX + 320), indY + (20 + i * 40), 'blockRed').setScale(0.8).refreshBody();
-        //                     walls.create((indX + 480), indY + (20 + i * 40), 'blockRed').setScale(0.8).refreshBody();
-        //                 }
-        //             } else if (mapDoor.U === 0) {
-        //                 roomsMAP[x][y].upperDoor = doors.create(-100, -100, 'star');
-        //                 roomsMAP[x][y].upperDoor.visible = false; // not really a door, just replacement
-        //                 for (var i = 0; i < 9; i++) {
-        //                     walls.create(indX + 320 + (i * 20), indY + 100, 'blockRed').setScale(0.8).refreshBody();
-        //                 }
-        //             }
-        //             if (mapDoor.D === 1) {
-        //                 keysCount++;
-        //                 doorsArray[doorsIndex] = doors.create(indX + 400, indY + 500, 'doorD').setScale(0.8);
-        //                 doorsArray[doorsIndex].roomCoord = {roomX: x, roomY: y, doorType: 'D'};
-        //                 roomsMAP[x][y].downDoor = doorsArray[doorsIndex];
-        //                 doorsIndex++;
-        //                 for (var i = 0; i < 2; i++) {
-        //                   //vertical bars for upper and lower doors:
-        //                     walls.create((indX + 320), indY + (500 + i * 20), 'blockRed').setScale(0.8).refreshBody();
-        //                     walls.create((indX + 480), indY + (500 + i * 20), 'blockRed').setScale(0.8).refreshBody();
-        //                 }
-        //             } else if (mapDoor.D === 0) {
-        //                 roomsMAP[x][y].downDoor = doors.create(-100, -100, 'star');
-        //                 roomsMAP[x][y].downDoor.visible = false; // not really a door, just replacement
-        //                 for (var i = 0; i < 9; i++) {
-        //                     walls.create(indX + 320 + (i * 20), indY + 500, 'blockRed').setScale(0.8).refreshBody();
-        //                 }
-        //             }
-        //             if (mapDoor.L === 1) {
-        //                 keysCount++;
-        //                 doorsArray[doorsIndex] = doors.create(indX + 80, indY + 260, 'doorL').setScale(0.8);
-        //                 doorsArray[doorsIndex].roomCoord = {roomX: x, roomY: y, doorType: 'L'};
-        //                 roomsMAP[x][y].leftDoor = doorsArray[doorsIndex];
-        //                 doorsIndex++;
-        //                 for (var i = 0; i < 4; i++) {
-        //                   //diaganal bars for left door
-        //                     walls.create(indX - 20 + (i * 40), indY + (200 ), 'blockRed').setScale(0.8).refreshBody();
-        //                     //walls.create(indX - 0 + (i * 40), indY + (210 - i * 20), 'blockRed').setScale(0.8).refreshBody();
-        //                     //walls.create(indX - 0 + (i * 40), indY + (340 + i * 20), 'blockRed').setScale(0.8).refreshBody();
-        //                     walls.create(indX - 20 + (i * 25), indY + (340 ), 'blockRed').setScale(0.8).refreshBody();
-        //                 }
-        //
-        //             } else if (mapDoor.L === 0) {
-        //                 roomsMAP[x][y].leftDoor = doors.create(-100, -100, 'star');
-        //                 roomsMAP[x][y].leftDoor.visible = false; // not really a door, just replacement
-        //                 for (var i = 0; i < 3; i++) {
-        //                     walls.create(indX + 40, indY + 270 + (i * 40), 'blockRed').setScale(0.8).refreshBody();
-        //                     walls.create(indX + 20 + (i * 40), indY + 240, 'blockRed').setScale(0.8).refreshBody();
-        //                     walls.create(indX + 20 + (i * 40), indY + 380, 'blockRed').setScale(0.8).refreshBody();
-        //                 }
-        //             }
-        //             if (mapDoor.R === 1) {
-        //                 keysCount++;
-        //                 doorsArray[doorsIndex] = doors.create(indX + 720, indY + 260, 'doorR').setScale(0.8);
-        //                 doorsArray[doorsIndex].roomCoord = {roomX: x, roomY: y, doorType: 'R'};
-        //                 roomsMAP[x][y].rightDoor = doorsArray[doorsIndex];
-        //                 doorsIndex++;
-        //                 for (var i = 0; i < 3; i++) {
-        //                     walls.create(indX - 20 - (i * 40), indY + (200 ), 'blockRed').setScale(0.8).refreshBody();
-        //                     walls.create(indX + 700 + (i * 40), indY + (160 + i * 20), 'blockRed').setScale(0.8).refreshBody();
-        //                     walls.create(indX + 700 + (i * 40), indY + (380 - i * 20), 'blockRed').setScale(0.8).refreshBody();
-        //                     walls.create(indX - 20 - (i * 25), indY + (340 ), 'blockRed').setScale(0.8).refreshBody();
-        //                 }
-        //
-        //             } else if (mapDoor.R === 0) {
-        //                 roomsMAP[x][y].rightDoor = doors.create(-100, -100, 'star');
-        //                 roomsMAP[x][y].rightDoor.visible = false; // not really a door, just replacement
-        //                 for (var i = 0; i < 3; i++) {
-        //                     walls.create(indX + 740, indY + 270 + (i * 40), 'blockRed').setScale(0.8).refreshBody();
-        //                     walls.create(indX + 700 + (i * 40), indY + 240, 'blockRed').setScale(0.8).refreshBody();
-        //                     walls.create(indX + 700 + (i * 40), indY + 380, 'blockRed').setScale(0.8).refreshBody();
-        //                 }
-        //             }
-        //             //doorkeys
-        //             var arrKeys = [];
-        //             var getKeyCordinateWithProximity = function (keys, minProximity) {
-        //                 //console.log('keys',keys);
-        //                 var c1 = {x: 400 + indX + randomPlsOrMin(50, 80), y: 260 + indY + randomPlsOrMin(50, 30)};
-        //                 var check = 0;
-        //                 for (var i = 0; i < keys.length; i++) {
-        //                     var c0 = keys[i];
-        //                     var isProximityXGood = Math.abs(c0.x - c1.x) > minProximity;
-        //                     var isProximityYGood = Math.abs(c0.y - c1.y) > minProximity;
-        //
-        //                     if (!isProximityXGood && !isProximityYGood) {
-        //                         return getKeyCordinateWithProximity(keys, minProximity);
-        //                     }
-        //                 }
-        //
-        //                 return c1;
-        //             }
-        //             if (x == 0 && y == 0) {
-        //                 keysCount = keysCount + 1;
-        //             }
-        //             for (var i = 0; i < keysCount; i++) {
-        //                 if (x == maxRoomCountX - 1 && y == maxRoomCountY - 1) {
-        //                     //this is our final room - no keys required...
-        //                     //TODO: place a final room sprite here!!!
-        //                     //draw the patient: hospitalBed
-        //                     hospitalBed.create(400 + 800 * (x), 270 + 520 * (y), 'patientEmptyPlaceHolder').setScale(1.2);
-        //                 } else {
-        //                     var coord = getKeyCordinateWithProximity(arrKeys, 100);
-        //                     //doorkeys.create(coord.x, coord.y, 'star').setScale(0.8); //doors keys
-        //                     //var myKey = doorkeys.create(coord.x, coord.y, 'gold-key').setScale(0.5); //doors keys
-        //                     // 'green-key-sprite', {start: 0, end: 18} -vs- 'gold-key-sprite', {start: 0, end: 6}
-        //                     scene.anims.create({
-        //                         key: 'rotatingKey',
-        //                         frames: scene.anims.generateFrameNumbers('gold-key-sprite', {start: 0, end: 6}),
-        //                         frameRate: 10,
-        //                         repeat: -1
-        //                     });
-        //
-        //                     var myKey = doorkeys.create(coord.x, coord.y, 'gold-key-sprite').setScale(0.8); //doors keys
-        //                     myKey.question = megaMAP.questionList[keyIndex];
-        //                     myKey.anims.play('rotatingKey', true);
-        //                     //console.log("question from key", myKey.question);
-        //                     keyIndex++;
-        //                     arrKeys[arrKeys.length] = coord;
-        //                 }
-        //             }
-        //         })
-        //     }
-        // );
         initPlayer(scene);
     }
 
@@ -822,11 +688,6 @@ App.prototype.start = function () {
         } else {
             stopPlayer();
         }
-        //console.log('player.mazeCoord: ', player.mazeCoord);
-        // if (cursors.up.isDown && player.body.touching.down)
-        // {
-        //     player.setVelocityY(-330);
-        // }
     }
 
     function initPlayer(scene) {
@@ -939,51 +800,6 @@ App.prototype.start = function () {
               //        </div>`
               //   );
             }
-            // myQuestions.forEach((currentQuestion, questionNumber) => {
-            //     // we'll want to store the list of answer choices
-            //     const answers = [];
-            //
-            //     // and for each available answer...
-            //     for (ind in currentQuestion.answers) {
-            //         // ...add an HTML radio button
-            //         if (language === 'FRA') {
-            //             // we use FRENCH LANGUAGE
-            //             answers.push(
-            //                 `<label>
-            //                   <input type="radio" name="question${questionNumber}" value="${ind}">
-            //                   ${currentQuestion.answers[ind].key} :
-            //                   ${atob(currentQuestion.answersFRA[ind].value)}
-            //                   </label>`
-            //             );
-            //         } else {
-            //           answers.push(
-            //               `<label>
-            //                 <input type="radio" name="question${questionNumber}" value="${ind}">
-            //                 ${currentQuestion.answers[ind].key} :
-            //                 ${atob(currentQuestion.answers[ind].value)}
-            //                 </label>`
-            //           );
-            //         }
-            //
-            //     }
-            //
-            //     // add this question and its answers to the output
-            //     if (language === 'FRA') {
-            //       output.push(
-            //           `<div class="slide">
-            //              <div class="question"> ${atob(currentQuestion.questionFRA)}</div>
-            //              <div class="answers"> ${answers.join("")} </div>
-            //            </div>`
-            //       );
-            //     } else {
-            //       output.push(
-            //           `<div class="slide">
-            //              <div class="question"> ${atob(currentQuestion.question)}</div>
-            //              <div class="answers"> ${answers.join("")} </div>
-            //            </div>`
-            //       );
-            //     }
-            // });
 
             // finally combine our output list into one string of HTML and put it on the page
             quizContainer.innerHTML = output.join("");
@@ -1027,49 +843,18 @@ App.prototype.start = function () {
 
                   setTimeout(function () {
                       submitMsgContainer.innerHTML = "";
-                      questionWindow.style.border = 'initial';
+                      if (!isBrowserIE) {
+                        questionWindow.style.border = 'initial';
+                      } else {
+                        questionWindow.style.border = 'thin solid white';
+                      }
+                      
                       hideQuestion();
                       ifCancelCallback(question);
                   }, 1200);
               }
             }
-            // myQuestions.forEach((currentQuestion, questionNumber) => {
-            //     const answerContainer = answerContainers[questionNumber];
-            //     const selector = `input[name=question${questionNumber}]:checked`;
-            //     const userAnswer = parseInt((answerContainer.querySelector(selector) || {}).value);
-            //
-            //     // if answer is correct
-            //     if (userAnswer === currentQuestion.correctAnswer) {
-            //         answerContainer.style.color = 'lightgreen';
-            //         if (language === 'FRA') {
-            //           submitMsgContainer.innerHTML = "<h1><span style='color:yellow'>Felicitations! Bonne reponse!</span></h1>";
-            //         } else {
-            //           submitMsgContainer.innerHTML = "<h1><span style='color:yellow'>Congratulations! Correct answer!</span></h1>";
-            //         }
-            //
-            //         setTimeout(function () {
-            //             submitMsgContainer.innerHTML = "";
-            //             //console.log('Corerct Answer given');
-            //             hideQuestion();
-            //             ifSuccessCallback(question);
-            //         }, 1000);
-            //     } else {
-            //         answerContainer.style.color = 'red';
-            //         questionWindow.style.border = 'thin solid red';
-            //         if (language === 'FRA') {
-            //           submitMsgContainer.innerHTML = "<h1><span style='color:red'>Desole, mauvaise reponse!</span></h1><br>";
-            //         } else {
-            //           submitMsgContainer.innerHTML = "<h1><span style='color:red'>Sorry, wrong answer!</span></h1><br>";
-            //         }
-            //
-            //         setTimeout(function () {
-            //             submitMsgContainer.innerHTML = "";
-            //             questionWindow.style.border = 'initial';
-            //             hideQuestion();
-            //             ifCancelCallback(question);
-            //         }, 1200);
-            //     }
-            // });
+
         }
 
         function showSlide(n) {
@@ -1173,6 +958,9 @@ App.prototype.start = function () {
         var correctAnswers =0;
         correctAnswers = gameState.correctCount;
         finScr.style.display = "";
+        _this.scene.pause();
+        // game.scene.pause("default");
+        _this.input.keyboard.enabled = false;
         const finScrTxtLine1 = document.getElementById('finScrTxtLine1');
         const finScrTxtLine2 = document.getElementById('finScrTxtLine2');
         const finScrTxtLine3 = document.getElementById('finScrTxtLine3');
@@ -1190,7 +978,21 @@ App.prototype.start = function () {
         finScrTxtLine2.innerHTML = finScrTxtLine2Msg;
         finScrTxtLine3.innerHTML = finScrTxtLine3Msg;//gameState.elapsedTime;
         //finScrTxtLine4.innerHTML = "";
-
+        //  the following to prevent cutting space charactes in the textarea field:
+          {
+              $("#finQ2").keyup(function(e){
+               if(e.keyCode == 32){
+                   // user has pressed backspace
+                   document.getElementById("finQ2").value += " " ;
+               }
+             });
+             $("#finQ3").keyup(function(e){
+              if(e.keyCode == 32){
+                  // user has pressed backspace
+                  document.getElementById("finQ3").value += " " ;
+              }
+            });
+          }
     }
 
     function submitFinalAnswer() {
@@ -1227,21 +1029,6 @@ App.prototype.start = function () {
 
     // //checking if the browser is IE or others
     // if (!isBrowserIE) {
-      //the following to prevent cutting space charactes in the textarea field:
-      {
-          $("#finQ2").keyup(function(e){
-           if(e.keyCode == 32){
-               // user has pressed backspace
-               document.getElementById("finQ2").value += " " ;
-           }
-         });
-         $("#finQ3").keyup(function(e){
-          if(e.keyCode == 32){
-              // user has pressed backspace
-              document.getElementById("finQ3").value += " " ;
-          }
-        });
-      }
     // }
     // $("#finExit").unbind("click");
     // $("#finExit").bind("click", opneAnotherURL);
@@ -1306,6 +1093,24 @@ function getFullDateTime(today) {
   var fullDay;
   var fullTime;
   var today = new Date();
+
+  if (!String.prototype.padStart) {
+      String.prototype.padStart = function padStart(targetLength,padString) {
+          targetLength = targetLength>>0; //truncate if number or convert non-number to 0;
+          padString = String((typeof padString !== 'undefined' ? padString : ' '));
+          if (this.length > targetLength) {
+              return String(this);
+          }
+          else {
+              targetLength = targetLength-this.length;
+              if (targetLength > padString.length) {
+                  padString += padString.repeat(targetLength/padString.length); //append to original to ensure we are longer than needed
+              }
+              return padString.slice(0,targetLength) + String(this);
+          }
+      };
+  }
+
   try {
     var dd = String(today.getDate()).padStart(2, '0');
     var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
@@ -1322,22 +1127,7 @@ function getFullDateTime(today) {
     return today;
 }
 
-if (!String.prototype.padStart) {
-    String.prototype.padStart = function padStart(targetLength,padString) {
-        targetLength = targetLength>>0; //truncate if number or convert non-number to 0;
-        padString = String((typeof padString !== 'undefined' ? padString : ' '));
-        if (this.length > targetLength) {
-            return String(this);
-        }
-        else {
-            targetLength = targetLength-this.length;
-            if (targetLength > padString.length) {
-                padString += padString.repeat(targetLength/padString.length); //append to original to ensure we are longer than needed
-            }
-            return padString.slice(0,targetLength) + String(this);
-        }
-    };
-}
+
 
 function msieversion()
 {  //checking if this is IE or something else?

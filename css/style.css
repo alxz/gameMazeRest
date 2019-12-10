@@ -51,7 +51,7 @@ button:hover{
   /*optional*/
   font-family: arial, sans-serif;
   /*input has OS specific font-family*/
-  color: #069;
+  color: #f5f5f5;
   text-decoration: underline;
   cursor: pointer;
 	margin-bottom: 0px;
