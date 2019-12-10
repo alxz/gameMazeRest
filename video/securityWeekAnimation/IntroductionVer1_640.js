@@ -9687,7 +9687,7 @@ p.nominalBounds = new cjs.Rectangle(-44.9,72.7,273.6,202.7);
 	this.initialize(mode,startPosition,loop,{howToPlay:340});
 
 	// timeline functions:
-	this.frame_781 = function() {
+	this.frame_777 = function() {
 		/* Stop at This Frame
 		The  timeline will stop/pause at the frame where you insert this code.
 		Can also be used to stop/pause the timeline of movieclips.
@@ -9698,7 +9698,7 @@ p.nominalBounds = new cjs.Rectangle(-44.9,72.7,273.6,202.7);
 	}
 
 	// actions tween:
-	this.timeline.addTween(cjs.Tween.get(this).wait(781).call(this.frame_781).wait(1));
+	this.timeline.addTween(cjs.Tween.get(this).wait(777).call(this.frame_777).wait(5));
 
 	// question
 	this.instance = new lib.문제();
@@ -9707,7 +9707,7 @@ p.nominalBounds = new cjs.Rectangle(-44.9,72.7,273.6,202.7);
 	this.instance.alpha = 0;
 	this.instance._off = true;
 
-	this.timeline.addTween(cjs.Tween.get(this.instance).wait(498).to({_off:false},0).to({regY:1,scaleX:1.95,scaleY:1.95,x:74.3,y:38.7,alpha:0.82},6).wait(129).to({regY:1.1,scaleX:0.18,scaleY:0.19,x:82,y:31.6,alpha:0},6).wait(143));
+	this.timeline.addTween(cjs.Tween.get(this.instance).wait(498).to({_off:false},0).to({regY:1,scaleX:1.95,scaleY:1.95,x:74.3,y:38.7,alpha:0.82},6).wait(129).to({regY:1.1,scaleX:0.18,scaleY:0.19,x:82,y:31.6,alpha:0},6).wait(138).to({_off:true},1).wait(4));
 
 	// text
 	this.instance_1 = new lib.설명1("synched",54);
@@ -10613,7 +10613,7 @@ lib.properties = {
 	color: "#333333",
 	opacity: 1.00,
 	manifest: [
-		{src:"images/IntroductionVer1_640_atlas_.png?1575996605827", id:"IntroductionVer1_640_atlas_"}
+		{src:"images/IntroductionVer1_640_atlas_.png?1576003217456", id:"IntroductionVer1_640_atlas_"}
 	],
 	preloads: []
 };

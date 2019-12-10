@@ -109,7 +109,7 @@ App.prototype.start = function () {
         this.load.audio('soundOk', 'assets/okay.mp3');
         this.load.audio('soundFinal', 'assets/fanfareFinale.mp3');
 
-        this.load.image('baseRoomBack', 'png/RoomBG_red_withBG.png');
+        //this.load.image('baseRoomBack', 'png/RoomBG_red_withBG.png');
         this.load.image('finalRoom', 'png/RoomBG_01_final.png');
         // rooms assets section completed!
         this.load.image('hospitalBed', 'png/hospitalBed.png');
@@ -135,6 +135,7 @@ App.prototype.start = function () {
         //this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
         //this.load.spritesheet('dude', 'png/docMUHCR4U1L4.png', {frameWidth: 50, frameHeight: 75});
         //docMUHC50x75L4U4D4R4
+        //this.load.spritesheet('docOther', 'png/docOther.png', {frameWidth: 50, frameHeight: 75}); //docOther.png
         this.load.spritesheet('dude', 'png/docMUHC50x75L4U4D4R4.png', {frameWidth: 50, frameHeight: 75});
     }
 
