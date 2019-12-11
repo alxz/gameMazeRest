@@ -1,43 +1,13 @@
-<!doctype html> <html lang="en">
-<?php
-  $userId = 'UNKNOWN';
-    //languages
-  $languages = 'FRA';
-  $langLabel = 'English';
-
-  if (!empty($_POST['languages'])) {
-    if ($_POST['languages'] == 'French') {
-      $languages = 'FRA';
-      $langLabel = 'English';
-    } else if ($_POST['languages'] == 'English') {
-      $languages = 'ENG';
-      $langLabel = 'Francais';
-    }
-  }
-
-  try {
-    //include('https://www.mymuhc.muhc.mcgill.ca/a/a.php');
-    //$userId = $_SERVER['REMOTE_USER'];
-    if(isset($_SERVER['REMOTE_USER'])) {
-      $userId = $_SERVER['REMOTE_USER'];
-    }
-  } catch (\Exception $e) {
-    $errorLog = $e;
-  }
-
-  if (!empty($_POST['userId'])) {
-     $userId = $_POST['userId'];
-      } else {
-      $userId = 'UNKNOWN';
-    }
-    //echo ($userId);
-?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
 <head>
+  <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
    <meta charset="UTF-8" />
    <title>Security Week Challenge Game</title>
-    <script src="js/phaser.min.js"></script>
+
+    <!-- <script src="js/phaser.min.js"></script> -->
     <script src="//cdn.jsdelivr.net/npm/phaser@3.21.0/dist/phaser.js"></script>
-    <script src="//cdn.jsdelivr.net/npm/phaser@3.21.0/dist/phaser.min.js"></script>
+    <!-- <script src="//cdn.jsdelivr.net/npm/phaser@3.21.0/dist/phaser.min.js"></script> -->
    <!-- <script src="//cdn.jsdelivr.net/npm/phaser@3.16.2/dist/phaser.js"></script> -->
    <link rel="stylesheet" href="css/style.css">
    <script src="js/jquery-3.4.1.min.js"></script>
@@ -49,9 +19,46 @@
    </style>
 </head>
 <body style="background-color: #333;">
+  <?php
+    if (!empty($_POST['userId'])) {
+         $userId = $_POST['userId'];
+    } else {
+      $userId = 'UNKNOWN';
+    }
+    echo '<script type="text/JavaScript">console.log("UserID: '.$userId.'");</script>';
+      //languages
+    $languages = 'FRA';
+    $langLabel = 'English';
+
+    if (!empty($_POST['languages'])) {
+      if ($_POST['languages'] == 'French') {
+        $languages = 'FRA';
+        $langLabel = 'English';
+      } else if ($_POST['languages'] == 'English') {
+        $languages = 'ENG';
+        $langLabel = 'Francais';
+      }
+    }
+
+    try {
+      if (!empty($_SERVER['REMOTE_USER'])) {
+         $userId = $_SERVER['REMOTE_USER'];
+         chop($userId,"@MUHCAD.MUHCFRD.CA");
+      }
+      // echo '<script type="text/JavaScript">console.log("UserID: '.$userId.'");</script>';
+    } catch (\Exception $e) {
+      $errorLog = $e;
+      if (!empty($_POST['userId'])) {
+         $userId = $_POST['userId'];
+      }
+    }
+    echo '<script type="text/JavaScript">console.log("UserID at load: '.$userId.'");</script>';
+  ?>
+  <input type="hidden" id="custId" name="custId" value="<?php echo $userId ?>">
    <div class="divTopLabel">
        <h1>Salut &nbsp;
-         <span id="userIUNBox"><?php echo $userId ?> </span> &nbsp; * &nbsp;
+         <span id="userIUNBox"><?php echo $_SERVER['REMOTE_USER'] ?></span>
+         &nbsp; * &nbsp;
          Timer: <span id="userTimer"></span> &nbsp; &nbsp; * &nbsp;
            <button id="langChange" class="buttonAsLink">
              <span id="languages"><?php echo $langLabel ?></span>

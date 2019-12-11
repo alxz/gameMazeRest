@@ -183,6 +183,7 @@ function mazeQuestionsArr($mazeInit,$listQuestions) {
           $qObj->validAnswer = $jsonArr[$indexQ]->correctAnswer;
           $qObj->questionURL = $jsonArr[$indexQ]->questionURL;
           $qObj->qTxtFRA = $jsonArr[$indexQ]->questionFRA;
+          $qObj->questionurlFRA = $jsonArr[$indexQ]->questionurlFRA;
           $indexQ++;
           //$listQuestions
         } else {
@@ -195,6 +196,7 @@ function mazeQuestionsArr($mazeInit,$listQuestions) {
           $qObj->listAnswers = null;
           $qObj->validAnswer = -1;
           $qObj->questionURL = "";
+          $qObj->questionurlFRA = "";
           $qObj->qTxtFRA = "";
         }
         // echo 'objId: '.$qObj->qId.'<br>';
@@ -223,7 +225,7 @@ function createConnection($dBHOST, $dBUSER, $dBPASS, $dBNAME) {
 
 function readTable($tableName, $connStr) {
   //$sql = "SELECT qId, qTxt, qIsTaken, qIsAnswered, qTxtFRA FROM tabQuestions";
-  $sql = "SELECT qId, qTxt, qIsTaken, qIsAnswered, qTxtFRA FROM ".$tableName;
+  $sql = "SELECT qId, qTxt, qIsTaken, qIsAnswered, qTxtFRA, questionurlFRA FROM ".$tableName;
   $result = $connStr->query($sql);
     if ($result->num_rows > 0) {
         // output data of each row
@@ -317,7 +319,7 @@ function uuid()
 
 function getAllQuestions($table, $connStr)
 {
-    $sql = "SELECT qId, qTxt, qIsTaken, qIsAnswered, questionurl, qTxtFRA FROM ".$table;
+    $sql = "SELECT qId, qTxt, qIsTaken, qIsAnswered, questionurl, qTxtFRA, questionurlFRA FROM ".$table;
     $result = $connStr->query($sql);
       if ($result->num_rows > 0) {
         $listQuestions = [];
@@ -330,6 +332,7 @@ function getAllQuestions($table, $connStr)
                 $nextQuestion->qIsAnswered = $row["qIsAnswered"];
                 $nextQuestion->questionURL = $row["questionurl"];
                 $nextQuestion->qTxtFRA = $row["qTxtFRA"];
+                $nextQuestion->questionurlFRA = $row["questionurlFRA"]; //questionurlFRA
 
                 //$sql = "SELECT ansId, ansTxt, ansQId, ansIsValid FROM tabanswers WHERE ansQId=".$row["qId"];
                 //echo "Object: ".$nextQuestion->get_qTxt();

@@ -145,7 +145,7 @@ table#tableMiniMap {
 	/*background: #3388aa;*/
 	background-position: center; /* Center the image */
 	background-repeat: no-repeat; /* Do not repeat the image */
-	background-size: cover; /* Resize the background image to cover the entire
+	background-size: cover; /* Resize the background image to cover the entire*/
 }
 .classmainDiv {
 	float: none;

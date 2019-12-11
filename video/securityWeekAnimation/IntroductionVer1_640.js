@@ -10200,12 +10200,12 @@ p.nominalBounds = new cjs.Rectangle(-44.9,72.7,273.6,202.7);
 
 	this.instance_25 = new lib.닥터Rightwithpatient("synched",0);
 	this.instance_25.parent = this;
-	this.instance_25.setTransform(469.9,325,0.2,0.2,0,0,0,43,105.1);
+	this.instance_25.setTransform(458.6,311,0.2,0.2,0,0,0,43,105.1);
 	this.instance_25._off = true;
 
-	this.timeline.addTween(cjs.Tween.get(this.instance_23).wait(203).to({_off:false},0).to({regX:46.8,regY:106,guide:{path:[49.1,38,54.4,38,61.3,37.5,68.1,37,68.6,37,75.1,37,79.4,41,83.7,45,90,51.6,96.4,58.1,103.5,59,110.5,59.8,115.6,61,120.5,62.1,128,60.6,135.5,59.1,143.8,53,175.6,26.6,187.1,29.9,198.7,33,219,49,226.2,54.8,232.2,57.5]},startPosition:8},18).to({_off:true,regX:47,regY:106.2,guide:{path:[232.3,57.6,233.1,57.9,233.8,58.2,240.5,60.9,241,62,241.3,62.6,236.3,68.2]},startPosition:9},1).wait(11).to({_off:false,regX:47.4,regY:106.5,guide:{path:[126.7,138.2,122.1,141.6,121.6,144.9,121,148.6,123.7,152.7]},startPosition:1},1).to({guide:{path:[123.8,152.7,128.5,159.9,143.2,168.4,166.1,181.7,172.5,182,178.8,182.3,185.7,184,192.5,185.7,208.5,190.9,224.7,196,228.7,195.4,232.8,194.8,244.7,196.8,256.5,198.9,259.7,199.8,263,200.8,268.6,200.7,274.2,200.7,281.8,200.9,289.4,201,298.3,198.8,307.1,196.6,317.2,196.5,327.3,196.5,344.2,183,361.2,169.6,369.2,170.1,376.2,170.6,388.4,184.3]},startPosition:7},25).to({_off:true,regX:47.5,regY:106.7,guide:{path:[388.4,184.2,390.2,186.2,392,188.5,392,188.5,392,188.5]},startPosition:8},1).to({_off:false,guide:{path:[392,188.5,389,205.5,388.5,207,388,208.6,369.9,215.6,351.8,222.7,348.7,228.9,347.6,231.1,346,233.8]},startPosition:4},6).to({regX:42.9,regY:104.9,guide:{path:[346,233.8,343.1,238.7,338.6,245,331.7,254.7,344.8,255.2,358,255.7,369.1,265.5,380.2,275.2,394.5,283.4,408.8,291.6,419.9,296.7,430.9,301.9,437.6,304.8,444.1,307.6,464.5,324.2]},startPosition:0},12).to({_off:true},2).wait(502));
+	this.timeline.addTween(cjs.Tween.get(this.instance_23).wait(203).to({_off:false},0).to({regX:46.8,regY:106,guide:{path:[49.1,38,54.4,38,61.3,37.5,68.1,37,68.6,37,75.1,37,79.4,41,83.7,45,90,51.6,96.4,58.1,103.5,59,110.5,59.8,115.6,61,120.5,62.1,128,60.6,135.5,59.1,143.8,53,175.6,26.6,187.1,29.9,198.7,33,219,49,226.2,54.8,232.2,57.5]},startPosition:8},18).to({_off:true,regX:47,regY:106.2,guide:{path:[232.3,57.6,233.1,57.9,233.8,58.2,240.5,60.9,241,62,241.3,62.6,236.3,68.2]},startPosition:9},1).wait(11).to({_off:false,regX:47.4,regY:106.5,guide:{path:[126.7,138.2,122.1,141.6,121.6,144.9,121,148.6,123.7,152.7]},startPosition:1},1).to({guide:{path:[123.8,152.7,128.5,159.9,143.2,168.4,166.1,181.7,172.5,182,178.8,182.3,185.7,184,192.5,185.7,208.5,190.9,224.7,196,228.7,195.4,232.8,194.8,244.7,196.8,256.5,198.9,259.7,199.8,263,200.8,268.6,200.7,274.2,200.7,281.8,200.9,289.4,201,298.3,198.8,307.1,196.6,317.2,196.5,327.3,196.5,344.2,183,361.2,169.6,369.2,170.1,376.2,170.6,388.4,184.3]},startPosition:7},25).to({_off:true,regX:47.5,regY:106.7,guide:{path:[388.4,184.2,390.2,186.2,392,188.5,392,188.5,392,188.5]},startPosition:8},1).to({_off:false,guide:{path:[392,188.5,389,205.5,388.5,207,388,208.6,369.9,215.6,351.8,222.7,348.7,228.9,347.6,231.1,346,233.8]},startPosition:4},6).to({regX:42.9,regY:104.9,x:453.6,y:315,startPosition:0},12).to({_off:true},2).wait(502));
 	this.timeline.addTween(cjs.Tween.get(this.instance_24).wait(221).to({_off:false},1).to({regX:47.1,regY:106.4,guide:{path:[236.2,68.3,230.6,74.6,218.2,87.5,201.3,113.3,162.2,124,136,131.2,126.7,138.2]},startPosition:0},11).to({_off:true,regX:47.4,regY:106.5,guide:{path:[126.7,138.2,122.1,141.6,121.6,144.9,121,148.6,123.7,152.7]},startPosition:1},1).wait(25).to({_off:false,regX:47.5,regY:106.7,guide:{path:[388.4,184.2,390.2,186.2,392,188.5,392,188.5,392,188.5]},startPosition:8},1).to({_off:true,guide:{path:[392,188.5,389,205.5,388.5,207,388,208.6,369.9,215.6,351.8,222.7,348.7,228.9,347.6,231.1,346,233.8]},startPosition:4},6).wait(516));
-	this.timeline.addTween(cjs.Tween.get(this.instance_25).wait(280).to({_off:false},0).wait(15).to({startPosition:0},0).to({regY:105.2,scaleX:0.39,scaleY:0.39,x:780.2,y:496.3,alpha:0},3).to({_off:true},480).wait(4));
+	this.timeline.addTween(cjs.Tween.get(this.instance_25).wait(280).to({_off:false},0).wait(15).to({x:448.8,y:313.1},0).to({regY:105.2,scaleX:0.39,scaleY:0.39,x:780.2,y:496.3,alpha:0},3).to({_off:true},480).wait(4));
 
 	// ㅁㅏㅅㅡㅋㅡ (mask)
 	var mask = new cjs.Shape();
@@ -10323,11 +10323,11 @@ p.nominalBounds = new cjs.Rectangle(-44.9,72.7,273.6,202.7);
 	// paten
 	this.instance_26 = new lib.환자뉴();
 	this.instance_26.parent = this;
-	this.instance_26.setTransform(545.4,350.5,0.6,0.6,0,0,0,50.2,45.2);
+	this.instance_26.setTransform(530.1,337.1,0.6,0.6,0,0,0,50.2,45.2);
 
 	this.instance_27 = new lib.환자뉴스마일();
 	this.instance_27.parent = this;
-	this.instance_27.setTransform(545.4,350.5,0.6,0.6,0,0,0,50.2,45.2);
+	this.instance_27.setTransform(530.1,337.1,0.6,0.6,0,0,0,50.2,45.2);
 	this.instance_27._off = true;
 
 	this.timeline.addTween(cjs.Tween.get({}).to({state:[]}).to({state:[{t:this.instance_26}]},184).to({state:[{t:this.instance_27}]},96).to({state:[{t:this.instance_27}]},15).to({state:[{t:this.instance_27}]},3).to({state:[]},480).wait(4));
@@ -10553,7 +10553,7 @@ lib.properties = {
 	color: "#333333",
 	opacity: 1.00,
 	manifest: [
-		{src:"images/IntroductionVer1_640_atlas_.png?1576010897464", id:"IntroductionVer1_640_atlas_"}
+		{src:"images/IntroductionVer1_640_atlas_.png?1576011783546", id:"IntroductionVer1_640_atlas_"}
 	],
 	preloads: []
 };

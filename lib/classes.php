@@ -12,6 +12,7 @@ class Question {
   public $listAnswers;
   public $validAnswer;
   public $questionURL;
+  public $questionurlFRA;
 
   // Methods
   function set_qId($qId) {
@@ -55,7 +56,7 @@ class Question {
   }
 
   function set_questionURL($questionURL) {
-  $this->questionURL = $questionURL;
+    $this->questionURL = $questionURL;
   }
   function get_questionURL() {
     return $this->questionURL;
@@ -66,6 +67,13 @@ class Question {
   }
   function get_qTxtFRA() {
     return $this->qTxtFRA;
+  }
+
+  function set_questionurlFRA($questionurlFRA) {
+    $this->questionurlFRA = $questionurlFRA;
+  }
+  function get_questionurlFRA() {
+    return $this->questionurlFRA;
   }
 }
 

@@ -19,6 +19,7 @@
       $qId = $question->get_qId();
       $text = base64_encode($question->get_qTxt());
       $questionURL = $question->get_questionURL();
+      $questionurlFRA = $question->get_questionurlFRA(); //questionurlFRA
       $jsonListAllAns = [];
       $jsonListAllAnsFRA = [];
       $answers = $question->get_listAnswers();
@@ -40,7 +41,7 @@
         }
 
         $arr = array ('qId'=>$qId , 'question'=>$text , 'answers'=>$jsonListAllAns, 'correctAnswer'=> $correctAns,
-                        'questionURL' => $questionURL, 'questionFRA'=>$textFRA, 'answersFRA'=>$jsonListAllAnsFRA );
+                        'questionURL' => $questionURL, 'questionFRA'=>$textFRA, 'questionurlFRA'=>$questionurlFRA, 'answersFRA'=>$jsonListAllAnsFRA );
         //echo "<br/>".$arr['questionurl']."<br/>";
         $jsonListAllQ[] = $arr;
     }
@@ -56,8 +57,8 @@
     $mazeQuestionsArr = mazeQuestionsArr($mazeMapArr,$jsonListAllQ); // create questionMAP
     $mazeWithRoomsDoors = mazeRoomsDoors($mazeMapArr); // create DoorsMap
 
-    $megaMAP = array ( 'initMAP' => $mazeMapArr, 'questionMAP' => $mazeQuestionsArr, 'doorsMAP' => $mazeWithRoomsDoors, 'questionList' =>  $jsonListAllQuestions, 'sessionId' => $sessionID);
-
+    //$megaMAP = array ( 'initMAP' => $mazeMapArr, 'questionMAP' => $mazeQuestionsArr, 'doorsMAP' => $mazeWithRoomsDoors, 'questionList' =>  $jsonListAllQuestions, 'sessionId' => $sessionID);
+    $megaMAP = array ( 'initMAP' => $mazeMapArr, 'doorsMAP' => $mazeWithRoomsDoors, 'questionList' =>  $jsonListAllQuestions, 'sessionId' => $sessionID);
     // $arrMazeInit = json_encode($mazeMapArr);
     // $mazeQuestionsArr = json_encode($mazeQuestionsArr);
     // $mazeWithRoomsDoors = json_encode($mazeWithRoomsDoors);

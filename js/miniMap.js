@@ -1,46 +1,36 @@
 // by Alexey Zapromyotov (c) 2019
-  // var arrMazeInit = <?php echo $arrMazeInit ?>;
-  // var mazeQuestionsArr = <?php echo $mazeQuestionsArr ?>; //questions and answers JSON array
-  // var mazeWDrsRms =<?php echo $mazeWithRoomsDoors ?>;
-  //var startTime, endTime;
-
-  //startTimer(); //to start the timer event
-  //showMaze(arrMazeInit, "mazeMap");
-  //showMazeGfx(mazeWDrsRms, "mazeWDrsRmsMap");
-  //showMazeObj(mazeQuestionsArr, "mazeQeustions");
-
-        function showMaze (mazePassed,targetId) {
-          //here we are going to display the maze table/array
-          //const mazeDiv = document.getElementById("mazeMap");
-          const mazeDiv = document.getElementById(targetId);
-          var maze = mazePassed;
-          mazeDiv.innerHTML = "MAP: "+targetId+ "<br>"+makeTableHTML(maze);
-          // document.getElementById(mazePassed).className = "mazeContainerLeft";
-            //mazeDiv.innerHTML = `${numCorrect} out of ${myQuestions.length}`;
-        }
-
-        function makeTableHTML(myArray) {
-            var result = "<table id='table1' class='myTable'>";
-            for(var i=0; i<myArray.length; i++) {
-                result += "<tr>";
-                for(var j=0; j<myArray[i].length; j++){
-                  if ((i == posY) & (j == posX)) {
-                    result += "<td>X</td>";
-                  } else {
-                    result += "<td>"+myArray[i][j]+"&nbsp; </td>";
-                  }
-
-                }
-                result += "</tr>";
-            }
-            result += "</table>";
-            return result;
-        }
+        // function showMaze (mazePassed,targetId) {
+        //   //here we are going to display the maze table/array
+        //   //const mazeDiv = document.getElementById("mazeMap");
+        //   const mazeDiv = document.getElementById(targetId);
+        //   var maze = mazePassed;
+        //   mazeDiv.innerHTML = "MAP: "+targetId+ "<br>"+makeTableHTML(maze);
+        //   // document.getElementById(mazePassed).className = "mazeContainerLeft";
+        //     //mazeDiv.innerHTML = `${numCorrect} out of ${myQuestions.length}`;
+        // }
+        //
+        // function makeTableHTML(myArray) {
+        //     var result = "<table id='table1' class='myTable'>";
+        //     for(var i=0; i<myArray.length; i++) {
+        //         result += "<tr>";
+        //         for(var j=0; j<myArray[i].length; j++){
+        //           if ((i == posY) & (j == posX)) {
+        //             result += "<td>X</td>";
+        //           } else {
+        //             result += "<td>"+myArray[i][j]+"&nbsp; </td>";
+        //           }
+        //
+        //         }
+        //         result += "</tr>";
+        //     }
+        //     result += "</table>";
+        //     return result;
+        // }
 
         function showMazeGfx (mazePassed,targetId,lang) {
           //here we are going to display the maze table/array
           //const mazeDiv = document.getElementById("mazeMap");
-          const mazeDiv = document.getElementById(targetId);
+          var mazeDiv = document.getElementById(targetId);
           var maze = mazePassed;
           // var message = "";
           // if (lang === "FRA") {
@@ -77,14 +67,10 @@
                     //         ' style="background-image: url("""./jpg/minimap/'+ resultStr +'.jpg"""); ">' +
                     //         '</div></td>';
                     // }
-
                     if ((i === (myArray.length -1)) && (j === (myArray[i].length -1))) {
-                        result += '<td class="miniMapTD" style="border: 4px solid #FF0000 " id="' + tabCellXId + '">'+
-                            '<div class="divMinMapTD"><img src="./jpg/minimap/'+ resultStr +'.jpg" alt="[]" height="30" width="40"></div></td>';
+                        result += '<td class="miniMapTD" style="border: 4px solid #FF0000 " id="' + tabCellXId + '"><div class="divMinMapTD"><img src="./jpg/minimap/'+ resultStr +'.jpg" alt="[]" height="30" width="40"></div></td>';
                     } else {
-                        result += '<td class="miniMapTD" id="' + tabCellXId + '">'+
-                            '<div class="divMinMapTD" ' +
-                            ' style="background-image: "><img src="./jpg/minimap/'+ resultStr +'.jpg" alt="[]" height="30" width="40"></div></td>';
+                        result += '<td class="miniMapTD" id="' + tabCellXId + '"><div class="divMinMapTD" style="background-image: "><img src="./jpg/minimap/'+ resultStr +'.jpg" alt="[]" height="30" width="40"></div></td>';
                     }
 
                     resultStr = "";
@@ -122,8 +108,8 @@
                     resultStr = resultStr + 'Qid: ' + obj.qId + '; Text: ' + obj.qTxt + ' <br>';
                     resultStr = resultStr + 'validAnswer: ' + (parseInt(obj.validAnswer)+1)  + ' <br>' + ' listAnswers:<br>';
 
-                    for (let key in obj.listAnswers) {
-                      let value = obj.listAnswers[key];
+                    for (var key in obj.listAnswers) {
+                      var value = obj.listAnswers[key];
                       //console.log(key, value);
                       resultStr = resultStr + 'Answer [' + (value.key) + '] value: ' + value.value + '<br>';
                     }

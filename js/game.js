@@ -1,10 +1,8 @@
 var App = function () {
 };
 // by Alexey Zapromyotov (c) 2019
-let isBrowserIE = false;
-isBrowserIE = msieversion();
 App.prototype.start = function () {
-    let config = {
+    var config = {
         type: Phaser.CANVAS,
         width: 800,
         height: 520,
@@ -21,6 +19,8 @@ App.prototype.start = function () {
         },
         canvas: document.querySelector('canvas')
     };
+    var isBrowserIE = false;
+    isBrowserIE = msieversion();
     var language = '';
     var megaMAP;
     var initMap;
@@ -71,8 +71,23 @@ App.prototype.start = function () {
     const divScoreText = document.getElementById("divScoreText");
 
     const submitMsgContainer = document.getElementById("submitMsg");
-    userIUN = document.getElementById("userIUNBox").innerHTML;
-    let langLabel = document.getElementById("languages").innerHTML; //id="languages"
+
+    var tryUserIUN = document.getElementById("userIUNBox").innerHTML;
+    tryUserIUN = tryUserIUN.trim();
+    if(typeof(tryUserIUN) != 'undefined' && tryUserIUN != null){
+      userIUN = document.getElementById("userIUNBox").innerHTML;
+      console.log('userIUN from userIUNBox: ', userIUN);
+    } else {
+      userIUN = document.getElementById("custId").value;
+      console.log('userIUN from custId: ', userIUN);
+    }
+    if (userIUN === "") {
+      userIUN = document.getElementById("custId").value;
+      document.getElementById("userIUNBox").innerHTML = userIUN;
+      console.log('userIUN from custId: ', userIUN);
+    }
+    //userIUN = document.getElementById("userIUNBox").innerHTML;
+    var langLabel = document.getElementById("languages").innerHTML; //id="languages"
 
     // the language label has inversed logic:
     if (langLabel === 'English') {
@@ -227,7 +242,7 @@ App.prototype.start = function () {
         //
         gameState.isFinished = 1;
         gameState.elapsedTime = secondsElapsed;
-        let d = new Date();
+        var d = new Date();
         gameState.timefinish = getFullDateTime(d);
         userTimer.stop();
         saveState('UPDATE', gameState);
@@ -277,9 +292,9 @@ App.prototype.start = function () {
             door.isOpen = true;
             player.doorKeys--;
             //console.log("The door has been opened!", door);
-            let nextDoor;
-            let thisRoomX = door.roomCoord.roomX;
-            let thisRoomY = door.roomCoord.roomY;
+            var nextDoor;
+            var thisRoomX = door.roomCoord.roomX;
+            var thisRoomY = door.roomCoord.roomY;
 
             switch (door.roomCoord.doorType) {
                 case 'U':
@@ -329,10 +344,11 @@ App.prototype.start = function () {
     function collectKey(player, key) {
 
         if (isPause) return;
-        if (theGameIsStarted === false) {
-          //if the game has started then change the boolean flag:
-          theGameIsStarted = true;
-        }
+        // if (theGameIsStarted === false) {
+        //   //if the game has started then change the boolean flag:
+        //   theGameIsStarted = true;
+        //   console.log("theGameIsStarted: " + theGameIsStarted);
+        // }
         playSound(pickupKey);
         stopPlayer();
         isPause = true;
@@ -349,8 +365,9 @@ App.prototype.start = function () {
             gameState.correctCount = totalQestionsAnswered;
             listofquestions = listofquestions + "qT:" +  key.question.qId + "; ";
             gameState.listofquestions = listofquestions; //+ ":" +  " " + totalQestionsAsked;
-            if (totalQestionsAnswered === 1 && theGameIsStarted === true) {
+            if (totalQestionsAnswered === 1 && (!theGameIsStarted)) {
                 saveState('INSERT', gameState);
+                theGameIsStarted = true;
             } else {
                 saveState('UPDATE', gameState);
             }
@@ -363,17 +380,27 @@ App.prototype.start = function () {
         }
 
         var ifCancelCallback = function (question) {
+            var videoLangURL ="";
             playSound(soundFail);
             gameState.correctCount = totalQestionsAnswered;
             listofquestions = listofquestions + "qF:" +  key.question.qId + "; ";
             gameState.listofquestions = listofquestions; //+ ":" +  " " + totalQestionsAsked;
 
-            if (totalQestionsAnswered === 0 && theGameIsStarted === true) {
+            if (totalQestionsAnswered === 0 && (!theGameIsStarted)) {
                 saveState('INSERT', gameState);
+                theGameIsStarted = true;
             } else {
                 saveState('UPDATE', gameState);
             }
-            showVideo(question.questionURL, onVideoCloseCallback);
+            if (true) {
+
+            }
+            videoLangURL = question.questionURL; //questionurlFRA
+            if (language === 'FRA') {
+              videoLangURL = question.questionurlFRA;
+            }
+            console.log('videoLangURL: ' + videoLangURL);
+            showVideo(videoLangURL, onVideoCloseCallback);
         }
         showQuestion(key.question, ifSuccessCallback, ifCancelCallback);
     }
@@ -871,7 +898,7 @@ App.prototype.start = function () {
         const submitButton = document.getElementById("submit");
         buildQuiz();
         const slides = document.querySelectorAll(".slide");
-        let currentSlide = 0;
+        var currentSlide = 0;
         showSlide(0);
         // on submit, show results
         $("#submit").unbind("click");
@@ -895,7 +922,7 @@ App.prototype.start = function () {
     }
 
     function changeLanguage(flag) {
-      let message="";
+      var message="";
       if (flag) {
         if (language === 'FRA') {
           language = 'ENG';
@@ -926,7 +953,7 @@ App.prototype.start = function () {
     }
 
     function showVideo(qVideoURL, onVideoCloseCallback) {
-      let messageForVideo = "";
+      var messageForVideo = "";
       if (language === 'FRA') {
           // we use FRENCH LANGUAGE
           messageForVideo = "Desole, mauvaise reponse!!!<br> Vous devrez regarder la vidéo pour trouver la bonne réponse:";
@@ -1076,7 +1103,7 @@ window.onload = function () {
 }
 
 
-let today = new Date();
+var today = new Date();
 var startTime = getFullDateTime(today);
 var userTimer;
 userTimer = new easytimer.Timer();
@@ -1135,9 +1162,8 @@ function getFullDateTime(today) {
 
 function msieversion()
 {  //checking if this is IE or something else?
-    var ua = window.navigator.userAgent;
-    //var msie = ua.indexOf("MSIE ");
-
+  var ua = window.navigator.userAgent;
+  try {
     function ieVersion(uaString) {
       uaString = uaString || navigator.userAgent;
       var match = /\b(MSIE |Trident.*?rv:|Edge\/)(\d+)/.exec(uaString);
@@ -1156,6 +1182,12 @@ function msieversion()
     {
         //alert('otherbrowser');
         //Thanks GOD this is NOT IE!!!
+        return false;
     }
+
+  } catch (e) {
+    console.log('Error while identifiing the browser agent! Most likely this is really old IE');
+    return true;
+  }
     return false;
 }
