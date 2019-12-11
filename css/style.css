@@ -141,6 +141,12 @@ table#tableMiniMap {
 	padding: 2px;
 	border-collapse: collapse;
 }
+.divMinMapTD {
+	/*background: #3388aa;*/
+	background-position: center; /* Center the image */
+	background-repeat: no-repeat; /* Do not repeat the image */
+	background-size: cover; /* Resize the background image to cover the entire
+}
 .classmainDiv {
 	float: none;
 	text-align:center;
