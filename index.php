@@ -25,7 +25,7 @@
     } else {
       $userId = 'UNKNOWN';
     }
-    echo '<script type="text/JavaScript">console.log("UserID: '.$userId.'");</script>';
+    //echo '<script type="text/JavaScript">console.log("UserID: '.$userId.'");</script>';
       //languages
     $languages = 'FRA';
     $langLabel = 'English';
@@ -56,15 +56,25 @@
   ?>
   <input type="hidden" id="custId" name="custId" value="<?php echo $userId ?>">
    <div class="divTopLabel">
-       <h1>Salut &nbsp;
+     <table class="headTable">
+      <tr><td class="headTableTD">
+       Salut &nbsp;
          <span id="userIUNBox"><?php echo $_SERVER['REMOTE_USER'] ?></span>
+       </td><td>
          &nbsp; * &nbsp;
-         Timer: <span id="userTimer"></span> &nbsp; &nbsp; * &nbsp;
+       </td><td>
+         Name/Nom: &nbsp;
+         <input type="text" name="customIUN" size="15">
+       </td><td style="width: 280px;">
+         &nbsp; &nbsp;
+         Timer: <span id="userTimer"></span> &nbsp; &nbsp; &nbsp;
+       </td><td>
            <button id="langChange" class="buttonAsLink">
              <span id="languages"><?php echo $langLabel ?></span>
            </button>
-       </h1>
-       <br/>
+         </td>
+     </tr>
+    </table>
    </div>
    <div id="mainDiv" class="classmainDiv">
      <div id="phaserDiv" class="classPhaserDiv">

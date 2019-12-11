@@ -10,10 +10,8 @@ SELECT `uId`, `uIUN`, `uFName`, `uLName`, `uRetryCount`, `uTimer`,
   `comment` FROM `tabusers`
 
 */
-
-
 ?>
-<!DOCTYPE html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
 <html>
 <head>
   <meta charset="UTF-8">

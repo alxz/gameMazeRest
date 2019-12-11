@@ -185,6 +185,7 @@ table#tableMiniMap {
 .divTopLabel {
 	color: white;
 	text-shadow: 2px 2px 4px #000000;
+	background-color: #444;
 }
 
 tr,td {
@@ -295,10 +296,23 @@ tr,td {
   background-repeat: no-repeat; /* Do not repeat the image */
   /* background: red; */
 }
-
-
+.headTable {
+	/* position: absolute;
+	left: 10px;
+	top: 10px; */
+	text-align:center;
+	margin-left:auto;
+	margin-right:auto;
+	background-color: #444;
+	padding: 10px;
+}
+.headTableTD {
+	padding: 5px;
+	text-align:center;
+}
 		/* DivTable.com */
 		.divTable{
+
 			display: table;
 			width: 100%;
 			/* margin-left: auto;

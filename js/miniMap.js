@@ -1,31 +1,4 @@
 // by Alexey Zapromyotov (c) 2019
-        // function showMaze (mazePassed,targetId) {
-        //   //here we are going to display the maze table/array
-        //   //const mazeDiv = document.getElementById("mazeMap");
-        //   const mazeDiv = document.getElementById(targetId);
-        //   var maze = mazePassed;
-        //   mazeDiv.innerHTML = "MAP: "+targetId+ "<br>"+makeTableHTML(maze);
-        //   // document.getElementById(mazePassed).className = "mazeContainerLeft";
-        //     //mazeDiv.innerHTML = `${numCorrect} out of ${myQuestions.length}`;
-        // }
-        //
-        // function makeTableHTML(myArray) {
-        //     var result = "<table id='table1' class='myTable'>";
-        //     for(var i=0; i<myArray.length; i++) {
-        //         result += "<tr>";
-        //         for(var j=0; j<myArray[i].length; j++){
-        //           if ((i == posY) & (j == posX)) {
-        //             result += "<td>X</td>";
-        //           } else {
-        //             result += "<td>"+myArray[i][j]+"&nbsp; </td>";
-        //           }
-        //
-        //         }
-        //         result += "</tr>";
-        //     }
-        //     result += "</table>";
-        //     return result;
-        // }
 
         function showMazeGfx (mazePassed,targetId,lang) {
           //here we are going to display the maze table/array
