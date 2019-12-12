@@ -43,7 +43,7 @@
     try {
       if (!empty($_SERVER['REMOTE_USER'])) {
          $userId = $_SERVER['REMOTE_USER'];
-         chop($userId,"@MUHCAD.MUHCFRD.CA");//$_SERVER['REMOTE_USER']
+         $userId = chop($userId,"@MUHCAD.MUHCFRD.CA");//$_SERVER['REMOTE_USER']
       }
       // echo '<script type="text/JavaScript">console.log("UserID: '.$userId.'");</script>';
     } catch (\Exception $e) {
