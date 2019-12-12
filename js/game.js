@@ -1,6 +1,7 @@
 var App = function () {
 };
 // by Alexey Zapromyotov (c) 2019
+var customIUN="";
 App.prototype.start = function () {
     var config = {
         type: Phaser.CANVAS,
@@ -87,6 +88,15 @@ App.prototype.start = function () {
       console.log('userIUN from custId: ', userIUN);
     }
     //userIUN = document.getElementById("userIUNBox").innerHTML;
+
+    // var element = document.getElementById("customIUN");
+    // if (element != null) {
+    //     customIUN = document.getElementById("customIUN").value;
+    // }  else {
+    //     customIUN = userIUN;
+    // }
+
+
     var langLabel = document.getElementById("languages").innerHTML; //id="languages"
 
     // the language label has inversed logic:
@@ -155,9 +165,11 @@ App.prototype.start = function () {
     }
 
     function buildGameState(userName, sessionId) {
+
         return {
             correctCount: 0,
             user: userName,
+            customIUN: customIUN,
             isFinished: 0,
             elapsedTime: 0,
             timestart: startTime,
@@ -180,6 +192,7 @@ App.prototype.start = function () {
         this.cameras.main.setBackgroundColor('#333');
         gameState = buildGameState(userIUN, megaMAP.sessionId);
         gameState.user = userIUN;
+        gameState.customIUN = customIUN;
         initMap = megaMAP.initMAP;
         maxRoomCountX = initMap[0].length;
         maxRoomCountY = initMap.length;
@@ -240,6 +253,13 @@ App.prototype.start = function () {
         }
 
         //
+        // var element = document.getElementById("customIUN");
+        // if (element != null) {
+        //     customIUN = document.getElementById("customIUN").value;
+        // }  else {
+        //     customIUN = userIUN;
+        // }
+        gameState.customIUN = customIUN;
         gameState.isFinished = 1;
         gameState.elapsedTime = secondsElapsed;
         var d = new Date();
@@ -983,6 +1003,13 @@ App.prototype.start = function () {
 
     function showFinalScreen() {
         gameState.elapsedTime = secondsElapsed;
+        // var element = document.getElementById("customIUN");
+        // if (element != null) {
+        //     customIUN = document.getElementById("customIUN").value;
+        // }  else {
+        //     customIUN = userIUN;
+        // }
+        gameState.customIUN = customIUN;
         playSound(soundFinal);
         var minSpent = Math.floor(gameState.elapsedTime / 60);
         var secSpent = (gameState.elapsedTime % 60);
@@ -1027,7 +1054,7 @@ App.prototype.start = function () {
     }
 
     function submitFinalAnswer() {
-
+        gameState.customIUN = customIUN;
         //starsCount is global
         var respQ2 = document.getElementById("finQ2").value;
         var respQ2strWithOutQuotes= respQ2.replace(/['"]+/g, '')
@@ -1159,7 +1186,15 @@ function getFullDateTime(today) {
 }
 
 
-
+function updateCustomIUN(val) {
+    //event
+    customIUN = val;
+    var element = document.getElementById("customIUN");
+    if (element != null) {
+        customIUN = document.getElementById("customIUN").value;
+    }
+    console.log('updateCustomIUN is updated! Now: ' + customIUN);
+}
 function msieversion()
 {  //checking if this is IE or something else?
   var ua = window.navigator.userAgent;

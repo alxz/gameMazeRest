@@ -43,7 +43,7 @@
     try {
       if (!empty($_SERVER['REMOTE_USER'])) {
          $userId = $_SERVER['REMOTE_USER'];
-         chop($userId,"@MUHCAD.MUHCFRD.CA");
+         chop($userId,"@MUHCAD.MUHCFRD.CA");//$_SERVER['REMOTE_USER']
       }
       // echo '<script type="text/JavaScript">console.log("UserID: '.$userId.'");</script>';
     } catch (\Exception $e) {
@@ -59,12 +59,12 @@
      <table class="headTable">
       <tr><td class="headTableTD">
        Salut &nbsp;
-         <span id="userIUNBox"><?php echo $_SERVER['REMOTE_USER'] ?></span>
+         <span id="userIUNBox"><?php echo $userId ?></span>
        </td><td>
          &nbsp; * &nbsp;
        </td><td>
          Name/Nom: &nbsp;
-         <input type="text" name="customIUN" size="15">
+         <input type="text" name="customIUN" onchange="updateCustomIUN(this.value)" value="" size="15">
        </td><td style="width: 280px;">
          &nbsp; &nbsp;
          Timer: <span id="userTimer"></span> &nbsp; &nbsp; &nbsp;

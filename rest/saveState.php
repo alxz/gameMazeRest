@@ -18,8 +18,8 @@ if ( $opCode == 'INSERT') {
 	//echo "INSERT!";
 	$isFinished = $data['isFinished']; //if the game is finished
 	$userIUN = $data['user']; //uIUN,
-	$userFName = $data['user'];//uFName,
-	$userLName = $data['user']; //uLName,
+	$userFName = $data['customIUN'];//uFName,
+	$userLName = $data['customIUN']; //uLName,
 
 	$timeElapsed = $data['elapsedTime']; // uTimer,
 	$scoreTotal = $data['correctCount']; //uTotalScore,
@@ -58,6 +58,8 @@ if ( $opCode == 'INSERT') {
 } else if ( $opCode == 'UPDATE'){
 	// update data in the table
 	//echo "INSERT!";
+	$userFName = $data['customIUN'];//uFName,
+	$userLName = $data['customIUN']; //uLName,
 	$timeElapsed = $data['elapsedTime']; // uTimer,
 	$scoreTotal = $data['correctCount']; //uTotalScore,
 	$isFinished = $data['isFinished']; //if the game is finished
@@ -74,7 +76,9 @@ if ( $opCode == 'INSERT') {
 	    die("Connection failed: " . mysqli_connect_error());
 	}
 
-	$sql = "Update tabusers SET uTimer='$timeElapsed',".
+	$sql = "Update tabusers SET uFName='$userFName',".
+								"uLName='$userLName',".
+							   "uTimer='$timeElapsed',".
 	                           " uTotalScore=$scoreTotal,".
 	                           " uIsFinished=$isFinished,".
 	                           " timefinish='$timeFinish',".
