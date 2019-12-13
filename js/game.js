@@ -827,10 +827,10 @@ App.prototype.start = function () {
               // and for each available answer...
               for (ind in currentQuestion.answers) {
                   // ...add an HTML radio button
-                  var questMsg = atob(currentQuestion.answers[ind].value);
+                  var questMsg = Base64Decode(currentQuestion.answers[ind].value);
                   if (language === 'FRA') {
                       // we use FRENCH LANGUAGE
-                      questMsg = atob(currentQuestion.answersFRA[ind].value);
+                      questMsg = Base64Decode(currentQuestion.answersFRA[ind].value);
                   }
                   var ansStr = '<label><input type="radio" name="question' + questionNumber + '" value="' + ind + '"> ' + currentQuestion.answers[ind].key + ' : ' + questMsg + '</label>';
                   answers.push (ansStr);
@@ -843,9 +843,9 @@ App.prototype.start = function () {
 
               }
               // add this question and its answers to the output
-              var answerMsg = atob(currentQuestion.question);
+              var answerMsg = Base64Decode(currentQuestion.question);
               if (language === 'FRA') {
-                answerMsg = atob(currentQuestion.questionFRA);
+                answerMsg = Base64Decode(currentQuestion.questionFRA);
               }
               var ansOutStr = '<div class="slide"><div class="question">' + answerMsg + '</div> <div class="answers">' + answers.join("") + '</div></div>';
               output.push(ansOutStr);
@@ -1230,4 +1230,14 @@ function msieversion()
     return true;
   }
     return false;
+}
+
+function Base64Encode(str, encoding = 'utf-8') {
+    var bytes = new (typeof TextEncoder === "undefined" ? TextEncoderLite : TextEncoder)(encoding).encode(str);
+    return base64js.fromByteArray(bytes);
+}
+
+function Base64Decode(str, encoding = 'utf-8') {
+    var bytes = base64js.toByteArray(str);
+    return new (typeof TextDecoder === "undefined" ? TextDecoderLite : TextDecoder)(encoding).decode(bytes);
 }
