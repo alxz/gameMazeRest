@@ -61,8 +61,8 @@ th, td {
 </style>
 <body>
 <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
-<h1>Display user/scrore statistics: &nbsp; &nbsp; &nbsp; &nbsp;
-<a href="../start.html" id="link" style="color: #FFFF00">... back to HOME</a></h1>
+<h1>Display user and score statistics: &nbsp; &nbsp; &nbsp; &nbsp;
+<a href="../index.php" id="link" style="color: #FFFF00">... back to game</a></h1>
 <div>
   <div>
     <table class="data-table">
@@ -84,7 +84,7 @@ th, td {
           <button type="submit" value="Submit Request" name="submit">Display</button>
         </td>
         <td class="tdLeft">
-          <button onclick="history.go(-1);">Back </button>
+          <button onclick="history.go(-1);">Back</button>
         </td>
       </tr>
   </table>
@@ -93,30 +93,29 @@ th, td {
   </div>
 </div>
 <hr/><br>
-<button type="submit" value="filterShow" name="filterShow">Show Filters</button>
+<button type="submit" value="filterShow" name="filterShow">Select Filters</button>
 &nbsp; &nbsp; &nbsp;
-<button type="submit" value="detailsShow" name="detailsShow">User Details</button>
+<button type="submit" value="detailsShow" name="detailsShow">A User Details</button>
 &nbsp; &nbsp;
 <div id="divFilters" class="filters-hidden" style="display: none;">
   <div id="divButton">
-    <input type="checkbox" value="getAll" name="allStat" > Get Statistics </input>
+    <input type="checkbox" value="getAll" name="allStat" >All Statistics</input>
      &nbsp; &nbsp;
-    <input type="checkbox" value="getFinished" name="allFinished" >All Finished </input>
+    <input type="checkbox" value="getFinished" name="allFinished" >All Finished</input>
      &nbsp; &nbsp;
     <input type="checkbox" value="sortBestTime" name="sortBestTime" >Sort By Best time </input>
     <br/><hr/><br/><br/>
-    <button type="submit" value="getStat" name="getFilteredData" >Show Statistics</button>
+    <button type="submit" value="getStat" name="getFilteredData" >Show Filetered Stats</button>
   </div>
 </div>
 <div id="divDetails" class="details-hidden" style="display: none;">
   <div id="dvInput" class="input-info">
-    <p>UIN: &nbsp;<input type="text" id="userIUNVar" name="userIUNVar" /> &nbsp; Use % to show all records</p>
+    <p>IUN: &nbsp;<input type="text" id="userIUNVar" name="userIUNVar" /> &nbsp; Use % to show all records</p>
   </div>
   <div id="divButton">
-    <button type="submit" value="getStat" name="getStat" > Get Statistics </button>
+    <button type="submit" value="getStat" name="getStat" > Get User Stats </button>
   </div>
 </div>
-
 </form>
 </body>
 </html>
@@ -129,12 +128,10 @@ th, td {
 </script>
 <?php
 //echo displayAllTAbles(); //displayAllTAbles - to place a selection of tables
-function display()
-{
+function display() {
   $outVar = "<br>";
     $tabName = $_POST['tabName'];
     $connection = createConnection (DBHOST, DBUSER, DBPASS, DBNAME);
-
     //test if connection failed
     if(mysqli_connect_errno()){
         die("connection failed: "
@@ -150,7 +147,7 @@ function display()
     $all_property = array();  //declare an array for saving property
     //echo '<br> ... still alive<br>';
     //showing property
-    echo '<br><table class="data-table"><tr class="data-heading">';  //initialize table tag
+    echo '<br><table class="data-table" style="table-layout: auto;"><tr class="data-heading">';  //initialize table tag
     while ($property = mysqli_fetch_field($result)) {
         echo '<td>' . $property->name . '</td>';  //get field name for header
         array_push($all_property, $property->name);  //save those to array
@@ -178,7 +175,6 @@ function display()
           resultsContainer = document.getElementById('tabName');
           resultsContainer.value = `${selectedValue}`;
         </script>
-
 <?php
 }
 
@@ -201,7 +197,6 @@ function getUserDataPHP() {
   $result = mysqli_query($connection,$query);
   $run = $connection->query($query) or die("Last error: {$connection->error}\n");
   $all_property = array();  //declare an array for saving property
-  //echo '<br> ... still alive<br>';
   //showing property
   echo '<br><table class="data-table" style="table-layout: auto;" ><tr class="data-heading">';  //initialize table tag
   while ($property = mysqli_fetch_field($result)) {
@@ -209,7 +204,6 @@ function getUserDataPHP() {
       array_push($all_property, $property->name);  //save those to array
   }
   echo '</tr>'; //end tr tag
-
   //showing all data
   while ($row = mysqli_fetch_array($result)) {
       echo "<tr>";
@@ -242,7 +236,7 @@ function getFilteredUserData() {
     $query = "SELECT * FROM ".$tabName." WHERE uIsFinished=1 ";
     echo "Show only finished users results not sorted: <".$_POST['allFinished']."><br>";
 
-  } elseif  (!empty($_POST['allStat']) && ($_POST['allStat'] == "getAll") && empty($_POST['sortBestTime'])) {
+  } elseif  (!empty($_POST['allStat']) && !empty($_POST['sortBestTime'])) {
     $query = "SELECT * FROM ".$tabName." ORDER BY uTimer,uRetryCount,uTotalScore ASC";
     echo "ORDER BY uTimer,uRetryCount,uTotalScore ASC: <".$_POST['allStat']."><br>";
 
