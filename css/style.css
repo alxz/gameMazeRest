@@ -59,7 +59,7 @@ button:hover{
 	margin-bottom: 0px;
 }
 .submitAnswerButton-container {
-	display: inherit;
+	display: block;
 	margin: 10px;
 }
 

@@ -365,7 +365,7 @@ App.prototype.start = function () {
 
         totalQestionsAsked++;
         var ifSuccessCallback = function () {
-            //submitAnswerButton.style.display = none;
+            //submitAnswerButton.style.display = 'none';
             playSound(soundOk);
             key.disableBody(true, true);
             isPause = false;
@@ -393,7 +393,7 @@ App.prototype.start = function () {
         }
 
         var ifCancelCallback = function (question) {
-            //submitAnswerButton.style.display = none;
+            //submitAnswerButton.style.display = 'none';
             var videoLangURL ="";
             playSound(soundFail);
             gameState.customIUN = customIUN;
