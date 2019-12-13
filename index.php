@@ -52,6 +52,7 @@
          $userId = $_POST['userId'];
       }
     }
+  $userId = chop($userId,"@MUHCAD.MUHCFRD.CA");
     echo '<script type="text/JavaScript">console.log("UserID at load: '.$userId.'");</script>';
   ?>
   <input type="hidden" id="custId" name="custId" value="<?php echo $userId ?>">
@@ -63,7 +64,7 @@
        </td><td>
          &nbsp; * &nbsp;
        </td><td>
-         Name/Nom: &nbsp;
+         IUN: &nbsp;
          <input type="text" name="customIUN" onchange="updateCustomIUN(this.value)" value="" size="15">
        </td><td style="width: 280px;">
          &nbsp; &nbsp;

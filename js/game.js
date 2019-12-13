@@ -73,31 +73,49 @@ App.prototype.start = function () {
 
     const submitMsgContainer = document.getElementById("submitMsg");
 
-    var tryUserIUN = document.getElementById("userIUNBox").innerHTML;
-    tryUserIUN = tryUserIUN.trim();
-    if(typeof(tryUserIUN) != 'undefined' && tryUserIUN != null){
-      userIUN = document.getElementById("userIUNBox").innerHTML;
-      console.log('userIUN from userIUNBox: ', userIUN);
-    } else {
-      userIUN = document.getElementById("custId").value;
-      console.log('userIUN from custId: ', userIUN);
-    }
-    if (userIUN === "") {
-      userIUN = document.getElementById("custId").value;
-      document.getElementById("userIUNBox").innerHTML = userIUN;
-      console.log('userIUN from custId: ', userIUN);
-    }
-    //userIUN = document.getElementById("userIUNBox").innerHTML;
-
-    // var element = document.getElementById("customIUN");
-    // if (element != null) {
-    //     customIUN = document.getElementById("customIUN").value;
-    // }  else {
-    //     customIUN = userIUN;
+    // var tryUserIUN ="";
+    // try {
+    //     tryUserIUN = document.getElementById("userIUNBox").innerHTML;
+    // } catch {
+    //     console.log('variable tryUserIUN seems to be empty!');
     // }
 
+    var tryUserIUN = document.getElementById("userIUNBox");
+    if (tryUserIUN != null) {
+        tryUserIUN = document.getElementById("userIUNBox").innerHTML;
+    }
 
-    var langLabel = document.getElementById("languages").innerHTML; //id="languages"
+    if(typeof(tryUserIUN) != 'undefined' && tryUserIUN != null){
+        try {
+            userIUN = document.getElementById("userIUNBox").innerHTML;
+        } catch {
+            userIUN = 'UNKNOWN';
+            console.log('element userIUNBox seems to be empty!');
+        }
+      console.log('userIUN from userIUNBox: ', userIUN);
+    } else {
+        tryUserIUN = document.getElementById("custId");
+        if (tryUserIUN != null) {
+            userIUN = document.getElementById("custId").value;
+            document.getElementById("userIUNBox").innerHTML = userIUN;
+        } else {
+            userIUN = 'UNKNOWN';
+        }
+      console.log('userIUN from custId: ', userIUN);
+    }
+
+    var langLabel = '';
+    langLabel = document.getElementById("languages");
+    if (langLabel != null) {
+        langLabel = document.getElementById("languages").innerHTML; //id="languages"
+    } else {
+        langLabel = 'English';
+    }
+    // try {
+    //     langLabel = document.getElementById("languages").innerHTML; //id="languages"
+    // } catch {
+    //     langLabel = 'English';
+    // }
 
     // the language label has inversed logic:
     if (langLabel === 'English') {
