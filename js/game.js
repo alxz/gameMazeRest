@@ -70,7 +70,7 @@ App.prototype.start = function () {
     const video = document.getElementById("video");
     const finScr = document.getElementById("finScr");
     const divScoreText = document.getElementById("divScoreText");
-
+    const submitAnswerButton = document.getElementById("submitAnswerButton");
     const submitMsgContainer = document.getElementById("submitMsg");
 
     // var tryUserIUN ="";
@@ -376,6 +376,7 @@ App.prototype.start = function () {
 
         totalQestionsAsked++;
         var ifSuccessCallback = function () {
+            //submitAnswerButton.style.display = none;
             playSound(soundOk);
             key.disableBody(true, true);
             isPause = false;
@@ -393,6 +394,7 @@ App.prototype.start = function () {
             } else {
                 saveState('UPDATE', gameState);
             }
+            //submitAnswerButton.style.display = "";
         };
 
         var onVideoCloseCallback = function () {
@@ -402,6 +404,7 @@ App.prototype.start = function () {
         }
 
         var ifCancelCallback = function (question) {
+            //submitAnswerButton.style.display = none;
             var videoLangURL ="";
             playSound(soundFail);
             gameState.customIUN = customIUN;
@@ -415,13 +418,14 @@ App.prototype.start = function () {
             } else {
                 saveState('UPDATE', gameState);
             }
-            
+
             videoLangURL = question.questionURL; //questionurlFRA
             if (language === 'FRA') {
               videoLangURL = question.questionurlFRA;
             }
             console.log('videoLangURL: ' + videoLangURL);
             showVideo(videoLangURL, onVideoCloseCallback);
+            //submitAnswerButton.style.display = "";
         }
         showQuestion(key.question, ifSuccessCallback, ifCancelCallback);
     }

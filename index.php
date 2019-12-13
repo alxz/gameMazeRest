@@ -22,6 +22,7 @@
   <?php
     if (!empty($_POST['userId'])) {
          $userId = $_POST['userId'];
+        $userId = chop($userId,"@MUHCAD.MUHCFRD.CA");
     } else {
       $userId = 'UNKNOWN';
     }
@@ -52,7 +53,7 @@
          $userId = $_POST['userId'];
       }
     }
-  $userId = chop($userId,"@MUHCAD.MUHCFRD.CA");
+
     echo '<script type="text/JavaScript">console.log("UserID at load: '.$userId.'");</script>';
   ?>
   <input type="hidden" id="custId" name="custId" value="<?php echo $userId ?>">
@@ -105,7 +106,10 @@
                 <div id="submitMsg">
                 </div>
             </div>
-            <button id="submit">Submit</button>
+            <div id="submitAnswerButton" class="submitAnswerButton-container">
+                <button id="submit">Submit</button>
+            </div>
+
         </div>
     </div>
 
