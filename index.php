@@ -12,6 +12,7 @@
    <link rel="stylesheet" href="css/style.css">
    <script src="js/jquery-3.4.1.min.js"></script>
    <script src="lib/base64js.min.js"></script>
+   <script src="lib/text-encoder-lite.min.js"></script>
    <script src="lib/easytimer.min.js" type="text/javascript"></script>
    <style type="text/css">
        body {

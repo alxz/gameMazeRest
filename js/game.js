@@ -70,7 +70,7 @@ App.prototype.start = function () {
     const video = document.getElementById("video");
     const finScr = document.getElementById("finScr");
     const divScoreText = document.getElementById("divScoreText");
-    const submitAnswerButton = document.getElementById("submitAnswerButton");
+    // const submitAnswerButton = document.getElementById("submitAnswerButton");
     const submitMsgContainer = document.getElementById("submitMsg");
 
     // var tryUserIUN ="";
@@ -83,26 +83,15 @@ App.prototype.start = function () {
     var tryUserIUN = document.getElementById("userIUNBox");
     if (tryUserIUN != null) {
         tryUserIUN = document.getElementById("userIUNBox").innerHTML;
-    }
-
-    if(typeof(tryUserIUN) != 'undefined' && tryUserIUN != null){
-        try {
-            userIUN = document.getElementById("userIUNBox").innerHTML;
-        } catch {
+        userIUN = tryUserIUN;
+    } else {
             userIUN = 'UNKNOWN';
             console.log('element userIUNBox seems to be empty!');
-        }
-      console.log('userIUN from userIUNBox: ', userIUN);
-    } else {
-        tryUserIUN = document.getElementById("custId");
-        if (tryUserIUN != null) {
-            userIUN = document.getElementById("custId").value;
-            document.getElementById("userIUNBox").innerHTML = userIUN;
-        } else {
-            userIUN = 'UNKNOWN';
-        }
-      console.log('userIUN from custId: ', userIUN);
     }
+
+    console.log('userIUN from userIUNBox: ', userIUN);
+
+
 
     langLabel = document.getElementById("languages");
     if (langLabel != null) {
@@ -299,7 +288,7 @@ App.prototype.start = function () {
         scoreText.x = 50 + player.x - 400;
         scoreText.y = 50 + player.y - 300;
         if (language === 'FRA') {
-          divScoreText.innerHTML = "Vous avez des clefs:  " + player.doorKeys + "<br><hr/><br>";
+          divScoreText.innerHTML = "Vous avez des clés:  " + player.doorKeys + "<br><hr/><br>";
         } else {
           divScoreText.innerHTML = "You have keys:  " + player.doorKeys + "<br><hr/><br>";
         }
@@ -827,10 +816,12 @@ App.prototype.start = function () {
               // and for each available answer...
               for (ind in currentQuestion.answers) {
                   // ...add an HTML radio button
-                  var questMsg = Base64Decode(currentQuestion.answers[ind].value);
+                  //var questMsg = Base64Decode(currentQuestion.answers[ind].value);
+                  var questMsg = atob(currentQuestion.answers[ind].value);
                   if (language === 'FRA') {
                       // we use FRENCH LANGUAGE
-                      questMsg = Base64Decode(currentQuestion.answersFRA[ind].value);
+                      //questMsg = Base64Decode(currentQuestion.answersFRA[ind].value);
+                      questMsg = atob(currentQuestion.answersFRA[ind].value);
                   }
                   var ansStr = '<label><input type="radio" name="question' + questionNumber + '" value="' + ind + '"> ' + currentQuestion.answers[ind].key + ' : ' + questMsg + '</label>';
                   answers.push (ansStr);
@@ -843,9 +834,11 @@ App.prototype.start = function () {
 
               }
               // add this question and its answers to the output
-              var answerMsg = Base64Decode(currentQuestion.question);
+              //var answerMsg = Base64Decode(currentQuestion.question);
+              var answerMsg = atob(currentQuestion.question);
               if (language === 'FRA') {
-                answerMsg = Base64Decode(currentQuestion.questionFRA);
+                //answerMsg = Base64Decode(currentQuestion.questionFRA);
+                answerMsg = atob(currentQuestion.questionFRA);
               }
               var ansOutStr = '<div class="slide"><div class="question">' + answerMsg + '</div> <div class="answers">' + answers.join("") + '</div></div>';
               output.push(ansOutStr);
@@ -1232,12 +1225,14 @@ function msieversion()
     return false;
 }
 
-function Base64Encode(str, encoding = 'utf-8') {
-    var bytes = new (typeof TextEncoder === "undefined" ? TextEncoderLite : TextEncoder)(encoding).encode(str);
-    return base64js.fromByteArray(bytes);
-}
+// function Base64Encode(str, encoding) {
+//     encoding = 'utf-8';
+//     var bytes = new (typeof TextEncoder === "undefined" ? TextEncoderLite : TextEncoder)(encoding).encode(str);
+//     return base64js.fromByteArray(bytes);
+// }
 
-function Base64Decode(str, encoding = 'utf-8') {
-    var bytes = base64js.toByteArray(str);
-    return new (typeof TextDecoder === "undefined" ? TextDecoderLite : TextDecoder)(encoding).decode(bytes);
-}
+// function Base64Decode(str, encoding) {
+//     encoding = 'utf-8';
+//     var bytes = base64js.toByteArray(str);
+//     return new (typeof TextDecoder === "undefined" ? TextDecoderLite : TextDecoder)(encoding).decode(bytes);
+// }
