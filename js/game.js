@@ -63,7 +63,7 @@ App.prototype.start = function () {
     var soundFinal;
     var gameState;
     var isSurveySent = false;
-    //userIUN = "JohnDoe";
+    var langLabel = '';
 
     var doorsArray = [];
     const questionWindow = document.getElementById("questionWindow");
@@ -104,18 +104,12 @@ App.prototype.start = function () {
       console.log('userIUN from custId: ', userIUN);
     }
 
-    var langLabel = '';
     langLabel = document.getElementById("languages");
     if (langLabel != null) {
         langLabel = document.getElementById("languages").innerHTML; //id="languages"
     } else {
         langLabel = 'English';
     }
-    // try {
-    //     langLabel = document.getElementById("languages").innerHTML; //id="languages"
-    // } catch {
-    //     langLabel = 'English';
-    // }
 
     // the language label has inversed logic:
     if (langLabel === 'English') {
@@ -256,10 +250,6 @@ App.prototype.start = function () {
         soundOk = this.sound.add('soundOk');
         soundFail = this.sound.add('soundFail');
         soundFinal = this.sound.add('soundFinal');
-      // // SOUND MUSIC disabling to debug IE11 issues:
-      // if (!isBrowserIE) {
-      //   //SOUND MUSIC STOPPED To Debug IE11 issues
-      // }
     }
 
     function breakingBad() {
@@ -270,13 +260,6 @@ App.prototype.start = function () {
           music.pause();
         }
 
-        //
-        // var element = document.getElementById("customIUN");
-        // if (element != null) {
-        //     customIUN = document.getElementById("customIUN").value;
-        // }  else {
-        //     customIUN = userIUN;
-        // }
         gameState.customIUN = customIUN;
         gameState.isFinished = 1;
         gameState.elapsedTime = secondsElapsed;
@@ -400,6 +383,7 @@ App.prototype.start = function () {
             totalQestionsAnswered++;
 
             //save the state to the table:
+            gameState.customIUN = customIUN;
             gameState.correctCount = totalQestionsAnswered;
             listofquestions = listofquestions + "qT:" +  key.question.qId + "; ";
             gameState.listofquestions = listofquestions; //+ ":" +  " " + totalQestionsAsked;
@@ -420,6 +404,7 @@ App.prototype.start = function () {
         var ifCancelCallback = function (question) {
             var videoLangURL ="";
             playSound(soundFail);
+            gameState.customIUN = customIUN;
             gameState.correctCount = totalQestionsAnswered;
             listofquestions = listofquestions + "qF:" +  key.question.qId + "; ";
             gameState.listofquestions = listofquestions; //+ ":" +  " " + totalQestionsAsked;
@@ -430,9 +415,7 @@ App.prototype.start = function () {
             } else {
                 saveState('UPDATE', gameState);
             }
-            if (true) {
-
-            }
+            
             videoLangURL = question.questionURL; //questionurlFRA
             if (language === 'FRA') {
               videoLangURL = question.questionurlFRA;
