@@ -273,7 +273,7 @@ function getFilteredUserData() {
   }
   echo '</tr>'; //end tr tag
   // echo 'Var countCol: '.$countCol.'<br>';
-  $tabWidth = intdiv(100,$countCol);
+  $tabWidth = (int)(100 / $countCol);
   //showing all data
   while ($row = mysqli_fetch_array($result)) {
       echo "<tr>";

@@ -972,7 +972,7 @@ App.prototype.start = function () {
     }
 
     function showVideo(qVideoURL, onVideoCloseCallback) {
-      var messageForVideo = "";
+      var messageForVideo;
       if (language === 'FRA') {
           // we use FRENCH LANGUAGE
           messageForVideo = "Desole, mauvaise reponse!!!<br> Vous devrez regarder la vidéo pour trouver la bonne réponse:";
@@ -1018,6 +1018,7 @@ App.prototype.start = function () {
         _this.scene.pause();
         // game.scene.pause("default");
         _this.input.keyboard.enabled = false;
+        _this.input.keyboard.clearCaptures(); //Stop capturing the keyboard
         const finScrTxtLine1 = document.getElementById('finScrTxtLine1');
         const finScrTxtLine2 = document.getElementById('finScrTxtLine2');
         const finScrTxtLine3 = document.getElementById('finScrTxtLine3');
@@ -1028,27 +1029,23 @@ App.prototype.start = function () {
           finScrTxtLine2Msg = "Repondu aux questions: " + correctAnswers + " questions!";
           finScrTxtLine3Msg = "Temps: " + minSpent + " m " + secSpent + " s.";
         }
-        //else {
-        //   finScrTxtLine2Msg = "Answered: " + gameState.correctCount + " questions!";
-        //   finScrTxtLine3Msg = "Time: " + minSpent + " m " + secSpent + " s.";
-        // }
         finScrTxtLine2.innerHTML = finScrTxtLine2Msg;
         finScrTxtLine3.innerHTML = finScrTxtLine3Msg;//gameState.elapsedTime;
         //finScrTxtLine4.innerHTML = "";
         //  the following to prevent cutting space charactes in the textarea field:
           {
-              $("#finQ2").keyup(function(e){
-               if(e.keyCode == 32){
-                   // user has pressed backspace
-                   document.getElementById("finQ2").value += " " ;
-               }
-             });
-             $("#finQ3").keyup(function(e){
-              if(e.keyCode == 32){
-                  // user has pressed backspace
-                  document.getElementById("finQ3").value += " " ;
-              }
-            });
+            //   $("#finQ2").keyup(function(e){
+            //    if(e.keyCode == 32){
+            //        // user has pressed backspace
+            //        document.getElementById("finQ2").value += " " ;
+            //    }
+            //  });
+            //  $("#finQ3").keyup(function(e){
+            //   if(e.keyCode == 32){
+            //       // user has pressed backspace
+            //       document.getElementById("finQ3").value += " " ;
+            //   }
+            // });
           }
     }
 
