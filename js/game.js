@@ -70,7 +70,7 @@ App.prototype.start = function () {
     const video = document.getElementById("video");
     const finScr = document.getElementById("finScr");
     const divScoreText = document.getElementById("divScoreText");
-    // const submitAnswerButton = document.getElementById("submitAnswerButton");
+    const submitAnswerButton = document.getElementById("submitAnswerButton");
     const submitMsgContainer = document.getElementById("submitMsg");
 
     // var tryUserIUN ="";
@@ -90,8 +90,6 @@ App.prototype.start = function () {
     }
 
     console.log('userIUN from userIUNBox: ', userIUN);
-
-
 
     langLabel = document.getElementById("languages");
     if (langLabel != null) {
@@ -699,7 +697,7 @@ App.prototype.start = function () {
         var deltaX = Math.floor(thisX / 800);
         var deltaY = Math.floor(thisY / 520);
         player.mazeNewCoord = { mazeX: deltaX, mazeY: deltaY };
-        //required to id miniMap lcoation
+        //required to id miniMap location
         if ((player.mazePrevCoord.mazeX != player.mazeNewCoord.mazeX)
              || (player.mazePrevCoord.mazeY != player.mazeNewCoord.mazeY)) {
                highlighMapPos(player.mazePrevCoord.mazeY,player.mazePrevCoord.mazeX,player.mazeNewCoord.mazeY,player.mazeNewCoord.mazeX,"magenta");
@@ -814,7 +812,7 @@ App.prototype.start = function () {
               const answers = [];
 
               // and for each available answer...
-              for (ind in currentQuestion.answers) {
+              for (var ind in currentQuestion.answers) {
                   // ...add an HTML radio button
                   //var questMsg = Base64Decode(currentQuestion.answers[ind].value);
                   var questMsg = atob(currentQuestion.answers[ind].value);
@@ -852,11 +850,14 @@ App.prototype.start = function () {
 
             // finally combine our output list into one string of HTML and put it on the page
             quizContainer.innerHTML = output.join("");
+            submitAnswerButton.style.display = '';
         }
 
         function showResults() {
+            submitAnswerButton.style.display = 'none';
             // gather answer containers from our quiz
             const answerContainers = quizContainer.querySelectorAll(".answers");
+
             // keep track of user's answers
             // for each question...
             for (var questionNumber = 0; questionNumber < myQuestions.length; questionNumber++) {
@@ -903,7 +904,7 @@ App.prototype.start = function () {
                   }, 1200);
               }
             }
-
+            //submitAnswerButton.style.display = '';
         }
 
         function showSlide(n) {
