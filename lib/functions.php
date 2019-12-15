@@ -141,7 +141,8 @@ function mazeQuestionsArr($mazeInit,$listQuestions) {
     $resultMaze = array();
     $roomsCount = 0;
     $jsonArr = json_decode($listQuestions);
-    $maxQuestionsCount = count($listQuestions);
+    //$maxQuestionsCount = count($listQuestions);
+    $maxQuestionsCount = is_array($listQuestions) || $listQuestions instanceof Countable ? count($listQuestions) : 0;
     //print_r($listQuestions);
     //echo $jsonArr[0]->question;
     // echo '<br>';
