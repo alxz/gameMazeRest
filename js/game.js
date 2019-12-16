@@ -825,11 +825,11 @@ App.prototype.start = function () {
               for (var ind in currentQuestion.answers) {
                   // ...add an HTML radio button
                   //var questMsg = Base64Decode(currentQuestion.answers[ind].value);
-                  var questMsg = atob(currentQuestion.answers[ind].value);
+                  var questMsg = currentQuestion.answers[ind].value;
                   if (language === 'FRA') {
                       // we use FRENCH LANGUAGE
                       //questMsg = Base64Decode(currentQuestion.answersFRA[ind].value);
-                      questMsg = atob(currentQuestion.answersFRA[ind].value);
+                      questMsg = currentQuestion.answersFRA[ind].value;
                   }
                   var ansStr = '<label><input type="radio" name="question' + questionNumber + '" value="' + ind + '"> ' + currentQuestion.answers[ind].key + ' : ' + questMsg + '</label>';
                   answers.push (ansStr);
@@ -843,10 +843,10 @@ App.prototype.start = function () {
               }
               // add this question and its answers to the output
               //var answerMsg = Base64Decode(currentQuestion.question);
-              var answerMsg = atob(currentQuestion.question);
+              var answerMsg = currentQuestion.question;
               if (language === 'FRA') {
                 //answerMsg = Base64Decode(currentQuestion.questionFRA);
-                answerMsg = atob(currentQuestion.questionFRA);
+                answerMsg = currentQuestion.questionFRA;
               }
               var ansOutStr = '<div class="slide"><div class="question">' + answerMsg + '<hr/></div> <div class="answers">' + answers.join("") + '</div></div>';
               output.push(ansOutStr);
