@@ -20,9 +20,18 @@ require_once('../lib/config.php');
           //tabName
           var resultsContainer = document.getElementById('tabName');
           var selectedValue = document.getElementById('tabsFromDB').value;
-          resultsContainer.value = `${selectedValue}`;
+          //resultsContainer.value = `${selectedValue}`;
+          resultsContainer.value = '' + selectedValue + '';
+      }
+      function updateRowsCount(formId) {
+        var selectedValue = document.getElementById('pCount').value;
+        var pCountLabel = document.getElementById('pCountLabel');
+        pCountLabel.innerHTML = selectedValue;
+        console.log('pCount = ' + selectedValue);
+        //resultsContainer.value = '' + selectedValue + '';
       }
   </script>
+  <!-- /updateRowsCount -->
 </head>
 <style>
 .data-table{
@@ -49,14 +58,19 @@ th, td {
   align: left;
   margin-left: 20px;
   padding-left: 20px;
-  width: 48%;
+  width: 45%;
 }
 .tdRight {
   text-align: right;
   align: right;
   margin-right: 20px;
   padding-right: 20px;
-  width: 48%;
+  width: 45%;
+}
+.tdCenter {
+  text-align: center;
+  align: cite;
+  width: 30px;
 }
 </style>
 <body>
@@ -65,14 +79,24 @@ th, td {
 <a href="../index.php" id="link" style="color: #FFFF00">... back to game</a></h1>
 <div>
   <div>
+    <br>
     <table class="data-table">
       <tr class="trCentered">
         <th class="tdRight">Here are the tables we have:</th>
+        <th class="tdCenter">Number of rows:</th>
         <th class="tdLeft">Table to display:</th>
       <tr>
       <tr class="trCentered">
         <td class="tdRight">
           <select name="tabsFromDB" id="tabsFromDB" onchange="SubmitForm('');"><?php echo displayDBTAblesInAList(); ?>
+          </select>
+        </td>
+        <td class="trCentered">
+          <?php $pageno = isset($_GET['pCount'])?$_GET['pCount']:''; ?>
+          <select name='pCount' id='pCount' onchange="updateRowsCount('');">
+          <?php for($i=50;$i<=200; $i+=50):?>
+              <option value="<?php echo $i;?>" <?php echo $i==$pageno? 'selected':'';?> ><?php echo $i;?></option>
+          <?php endfor;?>
           </select>
         </td>
         <td class="tdLeft">
@@ -82,6 +106,9 @@ th, td {
       <tr class="trCentered">
         <td class="tdRight">
           <button type="submit" value="Submit Request" name="submit">Display</button>
+        </td>
+        <td class="trCentered">
+          <span id="pCountLabel"></span>
         </td>
         <td class="tdLeft">
           <button onclick="history.go(-1);">Back</button>
@@ -129,6 +156,12 @@ th, td {
 <?php
 //echo displayAllTAbles(); //displayAllTAbles - to place a selection of tables
 function display() {
+  // if (isset($_GET['page'])) {
+  //   echo 'Pages Count: '.$_GET['page'];
+  // }
+  //$pagesCount = isset($_GET['pCount'])? $_GET['pCount']:'';
+  $pagesCount = $_GET['pCount'];
+  echo 'Showing first '. $pagesCount.' records';
   $outVar = "<br>";
     $tabName = $_POST['tabName'];
     $connection = createConnection (DBHOST, DBUSER, DBPASS, DBNAME);
@@ -238,11 +271,11 @@ function getFilteredUserData() {
 
   } elseif  (!empty($_POST['allStat']) && !empty($_POST['sortBestTime'])) {
     $query = "SELECT * FROM ".$tabName." ORDER BY uTimer,uRetryCount,uTotalScore ASC";
-    echo "ORDER BY uTimer,uRetryCount,uTotalScore ASC: <".$_POST['allStat']."><br>";
+    echo "Show all but sort by uTimer,uRetryCount,uTotalScore ASC: <".$_POST['allStat']."><br>";
 
   } elseif (!empty($_POST['allFinished']) && ($_POST['allFinished'] == "getFinished") && empty($_POST['sortBestTime'])) {
     $query = "SELECT * FROM ".$tabName." WHERE uIsFinished=1 ORDER BY uId ASC";
-    echo "Show only finished users results: <".$_POST['allFinished']."><br>";
+    echo "Show only finished users results sorted by user IUN: <".$_POST['allFinished']."><br>";
 
   } elseif (!empty($_POST['sortBestTime']) && !empty($_POST['allFinished'])) {
     $query = "SELECT * FROM ".$tabName." WHERE uIsFinished=1 ORDER BY uTimer ASC";
@@ -250,11 +283,11 @@ function getFilteredUserData() {
 
   } elseif (!empty($_POST['sortBestTime']) && empty($_POST['allFinished'])) {
     $query = "SELECT * FROM ".$tabName." ORDER BY uTimer,uId,uRetryCount ASC";
-    echo "Show best time for Finished ONLY: <".$_POST['sortBestTime']."><br>";
+    echo "Show best time for Finished ONLY sorted by Best Time, IUN and retries count: <".$_POST['sortBestTime']."><br>";
 
   } else {
     $query = "SELECT * FROM ".$tabName." ORDER BY uId ASC";
-    echo "ORDER BY userId show all results: <".$_POST['allStat']."> and <".$_POST['allFinished']."><br>";
+    echo "Sorted by userIUN show all results: <".$_POST['allStat']."> and <".$_POST['allFinished']."><br>";
 
   }
 
@@ -287,6 +320,12 @@ function getFilteredUserData() {
 
 
 if(isset($_POST['submit'])) {
+  $doc = new DomDocument;
+  // We need to validate our document before refering to the id
+  $doc->validateOnParse = true;
+  //$doc->Load('book.xml');
+  //$dom->loadHTMLFile('getUSER.php');
+  //echo "The element whose id is pCount is: " . $doc->getElementById('pCount')->value . "\n<br>";
   display();
 } elseif (isset($_POST['detailsShow'])) {
   //echo 'HellO!';
