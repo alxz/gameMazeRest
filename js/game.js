@@ -1087,7 +1087,7 @@ App.prototype.start = function () {
             finScr.innerHTML = '<br><br><br><hr/><p><h3><span id="finScrTxtLine1" class="finMessage">Merci Beaucoup! Thank you!</span></h3></p><hr/><br>'
             setTimeout(function () {
                 finScr.innerHTML = '<br><br><br><hr/><p><h3><span id="finScrTxtLine1" class="finMessage">Merci Beaucoup! Thank you!</span></h3></p><hr/><br>'
-            }, 1200);
+            }, 2200);
 
         } else {
             alert ('This survey has already been submitted! Going backwards!');
