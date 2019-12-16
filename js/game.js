@@ -287,9 +287,9 @@ App.prototype.start = function () {
         scoreText.x = 50 + player.x - 400;
         scoreText.y = 50 + player.y - 300;
         if (language === 'FRA') {
-          divScoreText.innerHTML = "Vous avez des clés:  " + player.doorKeys + "<br><hr/><br>";
+          divScoreText.innerHTML = "Vous avez " + player.doorKeys + " clé(s) <br><hr/><br>";
         } else {
-          divScoreText.innerHTML = "You have keys:  " + player.doorKeys + "<br><hr/><br>";
+          divScoreText.innerHTML = "You have " + player.doorKeys + " key(s) <br><hr/><br>";
         }
     }
 
@@ -960,13 +960,13 @@ App.prototype.start = function () {
         } else {
           language = 'FRA';
           langLabel = 'English';
-          message = "Vous etes ici:";
+          message = "Vous êtes ici:";
         }
       } else {
         if (language === 'ENG') {
           message = "You are here:";
         } else {
-          message = "Vous etes ici:";
+          message = "Vous êtes ici:";
         }
       }
       document.getElementById("languages").innerHTML = langLabel;
@@ -1064,10 +1064,10 @@ App.prototype.start = function () {
         //starsCount is global
         var respQ2 = document.getElementById("finQ2").value;
         var respQ2strWithOutQuotes= respQ2.replace(/['"]+/g, '')
-        console.log('respQ2: ',respQ2strWithOutQuotes);
+        //console.log('respQ2: ',respQ2strWithOutQuotes);
         var respQ3 = document.getElementById("finQ3").value;
         var respQ3strWithOutQuotes= respQ3.replace(/['"]+/g, '')
-        console.log('respQ3: ',respQ3strWithOutQuotes);
+        //console.log('respQ3: ',respQ3strWithOutQuotes);
         gameState.comments = "1)Stars: " + starsCount
                           + " 2)Likes: " + respQ2strWithOutQuotes
                           + " 3)Suggest: " + respQ3strWithOutQuotes;
@@ -1082,6 +1082,13 @@ App.prototype.start = function () {
             isSurveySent = true;
             //alert ('The survey has been submitted! Thanks for your opinion!');
             // "Some words are better left unsaid."
+            // /<p><h3><span id="finScrTxtLine1" class="finMessage">Félicitations! Congratulations!</span></h3></p>
+            finScr.innerHTML = "";
+            finScr.innerHTML = '<br><br><br><hr/><p><h3><span id="finScrTxtLine1" class="finMessage">Merci Beaucoup! Thank you!</span></h3></p><hr/><br>'
+            setTimeout(function () {
+                finScr.innerHTML = '<br><br><br><hr/><p><h3><span id="finScrTxtLine1" class="finMessage">Merci Beaucoup! Thank you!</span></h3></p><hr/><br>'
+            }, 1200);
+
         } else {
             alert ('This survey has already been submitted! Going backwards!');
         }
