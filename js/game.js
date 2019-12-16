@@ -1033,10 +1033,10 @@ App.prototype.start = function () {
         const finScrTxtLine2 = document.getElementById('finScrTxtLine2');
         const finScrTxtLine3 = document.getElementById('finScrTxtLine3');
         //const finScrTxtLine4 = document.getElementById('finScrTxtLine4');
-        var finScrTxtLine2Msg = "You have responded to : " + correctAnswers + " questions!";
+        var finScrTxtLine2Msg = "You have responded to : " + correctAnswers + " questions";
         var finScrTxtLine3Msg = "in " + minSpent + " minutes " + secSpent + " seconds";
         if (language === 'FRA') {
-          finScrTxtLine2Msg = "Vous avez répondu à : " + correctAnswers + " questions!";
+          finScrTxtLine2Msg = "Vous avez répondu à : " + correctAnswers + " questions";
           finScrTxtLine3Msg = "en  : " + minSpent + " minutes  " + secSpent + " secondes";
         }
         finScrTxtLine2.innerHTML = finScrTxtLine2Msg;
