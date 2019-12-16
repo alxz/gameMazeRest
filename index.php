@@ -134,7 +134,7 @@
          <br>
          <span class="finQuestions">
             1. Avez-vous apprécié ce jeu éducatif comme outil d'apprentissage?<br>
-            &nbsp;	Did you enjoy playing an educational game as a tool for learning?  <br>
+            &nbsp;	Did you enjoy playing an educational game as a tool for learning? <br>
           </span>
           <div class="divStars">
               <span class="starStyle" id="star1" onclick="star(1);">&#9733;</span>
@@ -150,7 +150,7 @@
          <textarea id="finQ2" name="finQ2" rows="3" cols="65" wrap="hard" maxlength="250" placeholder="Please say a few words..."></textarea><br><br>
 
          <span class="finQuestions">
-            3. Que suggéreriez-vous comme amélioration pour les année à venir? <br>
+            3. Que suggéreriez-vous comme amélioration pour les années à venir? <br>
             &nbsp; 	What would you suggest as an improvement for the future?
           </span><br><br>
          <textarea id="finQ3" name="finQ3" rows="3" cols="65" wrap="hard" maxlength="250" placeholder="Please say a few words..."></textarea><br><br>
