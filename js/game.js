@@ -42,7 +42,7 @@ App.prototype.start = function () {
     var scoreImgs;
     var isPause = false;
     var keyIndex = 0;
-
+    var mapLocContent;
     var game = new Phaser.Game(config);
     var _this;
     var position = {x: 0, y: 0};
@@ -83,26 +83,13 @@ App.prototype.start = function () {
     var tryUserIUN = document.getElementById("userIUNBox");
     if (tryUserIUN != null) {
         tryUserIUN = document.getElementById("userIUNBox").innerHTML;
-    }
-
-    if(typeof(tryUserIUN) != 'undefined' && tryUserIUN != null){
-        try {
-            userIUN = document.getElementById("userIUNBox").innerHTML;
-        } catch {
+        userIUN = tryUserIUN;
+    } else {
             userIUN = 'UNKNOWN';
             console.log('element userIUNBox seems to be empty!');
-        }
-      console.log('userIUN from userIUNBox: ', userIUN);
-    } else {
-        tryUserIUN = document.getElementById("custId");
-        if (tryUserIUN != null) {
-            userIUN = document.getElementById("custId").value;
-            document.getElementById("userIUNBox").innerHTML = userIUN;
-        } else {
-            userIUN = 'UNKNOWN';
-        }
-      console.log('userIUN from custId: ', userIUN);
     }
+
+    console.log('userIUN from userIUNBox: ', userIUN);
 
     langLabel = document.getElementById("languages");
     if (langLabel != null) {
@@ -217,7 +204,7 @@ App.prototype.start = function () {
         //  });
 
         showMazeGfx(megaMAP.doorsMAP, "divMiniMap",language);
-
+        mapLocContent = document.getElementById("y0x0").innerHTML;
         cursors = this.input.keyboard.createCursorKeys();
         // walls = this.physics.add.staticGroup();
         // walls.create(160, 450, 'wall400x230').setScale(0.8).refreshBody();
@@ -250,6 +237,7 @@ App.prototype.start = function () {
         soundOk = this.sound.add('soundOk');
         soundFail = this.sound.add('soundFail');
         soundFinal = this.sound.add('soundFinal');
+
     }
 
     function breakingBad() {
@@ -299,9 +287,9 @@ App.prototype.start = function () {
         scoreText.x = 50 + player.x - 400;
         scoreText.y = 50 + player.y - 300;
         if (language === 'FRA') {
-          divScoreText.innerHTML = "Vous avez des clefs:  " + player.doorKeys + "<br><hr/><br>";
+          divScoreText.innerHTML = "Vous avez " + player.doorKeys + " clé(s) <br><hr/><br>";
         } else {
-          divScoreText.innerHTML = "You have keys:  " + player.doorKeys + "<br><hr/><br>";
+          divScoreText.innerHTML = "You have " + player.doorKeys + " key(s) <br><hr/><br>";
         }
     }
 
@@ -376,7 +364,7 @@ App.prototype.start = function () {
 
         totalQestionsAsked++;
         var ifSuccessCallback = function () {
-            //submitAnswerButton.style.display = none;
+            //submitAnswerButton.style.display = 'none';
             playSound(soundOk);
             key.disableBody(true, true);
             isPause = false;
@@ -404,7 +392,7 @@ App.prototype.start = function () {
         }
 
         var ifCancelCallback = function (question) {
-            //submitAnswerButton.style.display = none;
+            //submitAnswerButton.style.display = 'none';
             var videoLangURL ="";
             playSound(soundFail);
             gameState.customIUN = customIUN;
@@ -710,7 +698,7 @@ App.prototype.start = function () {
         var deltaX = Math.floor(thisX / 800);
         var deltaY = Math.floor(thisY / 520);
         player.mazeNewCoord = { mazeX: deltaX, mazeY: deltaY };
-        //required to id miniMap lcoation
+        //required to id miniMap location
         if ((player.mazePrevCoord.mazeX != player.mazeNewCoord.mazeX)
              || (player.mazePrevCoord.mazeY != player.mazeNewCoord.mazeY)) {
                highlighMapPos(player.mazePrevCoord.mazeY,player.mazePrevCoord.mazeX,player.mazeNewCoord.mazeY,player.mazeNewCoord.mazeX,"magenta");
@@ -792,8 +780,17 @@ App.prototype.start = function () {
     }
 
     function highlighMapPos(oldY,oldX,pY,pX,colorCode) {
+        var oldMapLocation = document.getElementById('y' + oldY + 'x' + oldX);
+        //var oldMapLocationContent = oldMapLocation.innerHTML;
+        var newMapLocation = document.getElementById('y' + pY + 'x' + pX);
+
         document.getElementById('y' + oldY + 'x' + oldX).style.border = "";
         document.getElementById('y' + pY + 'x' + pX).style.border = "3px solid " + colorCode;
+        oldMapLocation.innerHTML = mapLocContent;
+        mapLocContent = newMapLocation.innerHTML;
+        newMapLocation.innerHTML = '<div class="divMinMapTD"> ' +
+                                '<img class="imgMapDude" src="./png/docOne.png" alt="}{" height="22" width="20">' +
+                                '</div>';
     }
 
 /////////questions functionality
@@ -825,12 +822,14 @@ App.prototype.start = function () {
               const answers = [];
 
               // and for each available answer...
-              for (ind in currentQuestion.answers) {
+              for (var ind in currentQuestion.answers) {
                   // ...add an HTML radio button
-                  var questMsg = Base64Decode(currentQuestion.answers[ind].value);
+                  //var questMsg = Base64Decode(currentQuestion.answers[ind].value);
+                  var questMsg = atob(currentQuestion.answers[ind].value);
                   if (language === 'FRA') {
                       // we use FRENCH LANGUAGE
-                      questMsg = Base64Decode(currentQuestion.answersFRA[ind].value);
+                      //questMsg = Base64Decode(currentQuestion.answersFRA[ind].value);
+                      questMsg = atob(currentQuestion.answersFRA[ind].value);
                   }
                   var ansStr = '<label><input type="radio" name="question' + questionNumber + '" value="' + ind + '"> ' + currentQuestion.answers[ind].key + ' : ' + questMsg + '</label>';
                   answers.push (ansStr);
@@ -843,11 +842,13 @@ App.prototype.start = function () {
 
               }
               // add this question and its answers to the output
-              var answerMsg = Base64Decode(currentQuestion.question);
+              //var answerMsg = Base64Decode(currentQuestion.question);
+              var answerMsg = atob(currentQuestion.question);
               if (language === 'FRA') {
-                answerMsg = Base64Decode(currentQuestion.questionFRA);
+                //answerMsg = Base64Decode(currentQuestion.questionFRA);
+                answerMsg = atob(currentQuestion.questionFRA);
               }
-              var ansOutStr = '<div class="slide"><div class="question">' + answerMsg + '</div> <div class="answers">' + answers.join("") + '</div></div>';
+              var ansOutStr = '<div class="slide"><div class="question">' + answerMsg + '<hr/></div> <div class="answers">' + answers.join("") + '</div></div>';
               output.push(ansOutStr);
               // output.push(
               //       `<div class="slide">
@@ -859,11 +860,14 @@ App.prototype.start = function () {
 
             // finally combine our output list into one string of HTML and put it on the page
             quizContainer.innerHTML = output.join("");
+            submitAnswerButton.style.display = '';
         }
 
         function showResults() {
+            submitAnswerButton.style.display = 'none';
             // gather answer containers from our quiz
             const answerContainers = quizContainer.querySelectorAll(".answers");
+
             // keep track of user's answers
             // for each question...
             for (var questionNumber = 0; questionNumber < myQuestions.length; questionNumber++) {
@@ -910,7 +914,7 @@ App.prototype.start = function () {
                   }, 1200);
               }
             }
-
+            //submitAnswerButton.style.display = '';
         }
 
         function showSlide(n) {
@@ -956,13 +960,13 @@ App.prototype.start = function () {
         } else {
           language = 'FRA';
           langLabel = 'English';
-          message = "Vous etes ici:";
+          message = "Vous êtes ici:";
         }
       } else {
         if (language === 'ENG') {
           message = "You are here:";
         } else {
-          message = "Vous etes ici:";
+          message = "Vous êtes ici:";
         }
       }
       document.getElementById("languages").innerHTML = langLabel;
@@ -978,7 +982,7 @@ App.prototype.start = function () {
     }
 
     function showVideo(qVideoURL, onVideoCloseCallback) {
-      var messageForVideo = "";
+      var messageForVideo;
       if (language === 'FRA') {
           // we use FRENCH LANGUAGE
           messageForVideo = "Desole, mauvaise reponse!!!<br> Vous devrez regarder la vidéo pour trouver la bonne réponse:";
@@ -1024,6 +1028,7 @@ App.prototype.start = function () {
         _this.scene.pause();
         // game.scene.pause("default");
         _this.input.keyboard.enabled = false;
+        _this.input.keyboard.clearCaptures(); //Stop capturing the keyboard
         const finScrTxtLine1 = document.getElementById('finScrTxtLine1');
         const finScrTxtLine2 = document.getElementById('finScrTxtLine2');
         const finScrTxtLine3 = document.getElementById('finScrTxtLine3');
@@ -1034,27 +1039,23 @@ App.prototype.start = function () {
           finScrTxtLine2Msg = "Repondu aux questions: " + correctAnswers + " questions!";
           finScrTxtLine3Msg = "Temps: " + minSpent + " m " + secSpent + " s.";
         }
-        //else {
-        //   finScrTxtLine2Msg = "Answered: " + gameState.correctCount + " questions!";
-        //   finScrTxtLine3Msg = "Time: " + minSpent + " m " + secSpent + " s.";
-        // }
         finScrTxtLine2.innerHTML = finScrTxtLine2Msg;
         finScrTxtLine3.innerHTML = finScrTxtLine3Msg;//gameState.elapsedTime;
         //finScrTxtLine4.innerHTML = "";
         //  the following to prevent cutting space charactes in the textarea field:
           {
-              $("#finQ2").keyup(function(e){
-               if(e.keyCode == 32){
-                   // user has pressed backspace
-                   document.getElementById("finQ2").value += " " ;
-               }
-             });
-             $("#finQ3").keyup(function(e){
-              if(e.keyCode == 32){
-                  // user has pressed backspace
-                  document.getElementById("finQ3").value += " " ;
-              }
-            });
+            //   $("#finQ2").keyup(function(e){
+            //    if(e.keyCode == 32){
+            //        // user has pressed backspace
+            //        document.getElementById("finQ2").value += " " ;
+            //    }
+            //  });
+            //  $("#finQ3").keyup(function(e){
+            //   if(e.keyCode == 32){
+            //       // user has pressed backspace
+            //       document.getElementById("finQ3").value += " " ;
+            //   }
+            // });
           }
     }
 
@@ -1063,10 +1064,10 @@ App.prototype.start = function () {
         //starsCount is global
         var respQ2 = document.getElementById("finQ2").value;
         var respQ2strWithOutQuotes= respQ2.replace(/['"]+/g, '')
-        console.log('respQ2: ',respQ2strWithOutQuotes);
+        //console.log('respQ2: ',respQ2strWithOutQuotes);
         var respQ3 = document.getElementById("finQ3").value;
         var respQ3strWithOutQuotes= respQ3.replace(/['"]+/g, '')
-        console.log('respQ3: ',respQ3strWithOutQuotes);
+        //console.log('respQ3: ',respQ3strWithOutQuotes);
         gameState.comments = "1)Stars: " + starsCount
                           + " 2)Likes: " + respQ2strWithOutQuotes
                           + " 3)Suggest: " + respQ3strWithOutQuotes;
@@ -1081,6 +1082,13 @@ App.prototype.start = function () {
             isSurveySent = true;
             //alert ('The survey has been submitted! Thanks for your opinion!');
             // "Some words are better left unsaid."
+            // /<p><h3><span id="finScrTxtLine1" class="finMessage">Félicitations! Congratulations!</span></h3></p>
+            finScr.innerHTML = "";
+            finScr.innerHTML = '<br><br><br><hr/><p><h3><span id="finScrTxtLine1" class="finMessage">Merci Beaucoup! Thank you!</span></h3></p><hr/><br>'
+            setTimeout(function () {
+                finScr.innerHTML = '<br><br><br><hr/><p><h3><span id="finScrTxtLine1" class="finMessage">Merci Beaucoup! Thank you!</span></h3></p><hr/><br>'
+            }, 1200);
+
         } else {
             alert ('This survey has already been submitted! Going backwards!');
         }
@@ -1232,12 +1240,14 @@ function msieversion()
     return false;
 }
 
-function Base64Encode(str, encoding = 'utf-8') {
-    var bytes = new (typeof TextEncoder === "undefined" ? TextEncoderLite : TextEncoder)(encoding).encode(str);
-    return base64js.fromByteArray(bytes);
-}
+// function Base64Encode(str, encoding) {
+//     encoding = 'utf-8';
+//     var bytes = new (typeof TextEncoder === "undefined" ? TextEncoderLite : TextEncoder)(encoding).encode(str);
+//     return base64js.fromByteArray(bytes);
+// }
 
-function Base64Decode(str, encoding = 'utf-8') {
-    var bytes = base64js.toByteArray(str);
-    return new (typeof TextDecoder === "undefined" ? TextDecoderLite : TextDecoder)(encoding).decode(bytes);
-}
+// function Base64Decode(str, encoding) {
+//     encoding = 'utf-8';
+//     var bytes = base64js.toByteArray(str);
+//     return new (typeof TextDecoder === "undefined" ? TextDecoderLite : TextDecoder)(encoding).decode(bytes);
+// }

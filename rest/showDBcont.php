@@ -77,7 +77,7 @@ th, td {
     <p>UIN: &nbsp;<input type="text" id="userIUNVar" name="userIUNVar" /> &nbsp; Use % symbol to display all</p>
   </div>
   <div id="divButton">
-    <button type="submit" value="getStat" name="getStat" "> Get Statistics </button>
+    <button type="submit" value="getStat" name="getStat"> Get Statistics </button>
   </div>
 </div>
 </form>

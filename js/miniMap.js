@@ -40,12 +40,13 @@
                     //         ' style="background-image: url("""./jpg/minimap/'+ resultStr +'.jpg"""); ">' +
                     //         '</div></td>';
                     // }
+
                     if ((i === (myArray.length -1)) && (j === (myArray[i].length -1))) {
                         result += '<td class="miniMapTD" style="border: 4px solid #FF0000 " id="' + tabCellXId + '"><div class="divMinMapTD"><img src="./jpg/minimap/'+ resultStr +'.jpg" alt="[]" height="30" width="40"></div></td>';
                     } else {
-                        result += '<td class="miniMapTD" id="' + tabCellXId + '"><div class="divMinMapTD" style="background-image: "><img src="./jpg/minimap/'+ resultStr +'.jpg" alt="[]" height="30" width="40"></div></td>';
+                        result += '<td class="miniMapTD" id="' + tabCellXId + '"><div class="divMinMapTD" ><img src="./jpg/minimap/'+ resultStr +'.jpg" alt="[]" height="30" width="40"></div></td>';
+                        //document.getElementById(tabCellXId).style.background = 'background-image: url("./jpg/minimap/' + resultStr + '.jpg");';
                     }
-
                     resultStr = "";
                 }
                 result += '';
