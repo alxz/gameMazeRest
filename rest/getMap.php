@@ -17,20 +17,20 @@
       // code...
       //going over a llist of questions to create a JSON array:
       $qId = $question->get_qId();
-      $text = base64_encode($question->get_qTxt());
+      $text = htmlentities($question->get_qTxt());
       $questionURL = $question->get_questionURL();
       $questionurlFRA = $question->get_questionurlFRA(); //questionurlFRA
       $jsonListAllAns = [];
       $jsonListAllAnsFRA = [];
       $answers = $question->get_listAnswers();
-      $textFRA = base64_encode($question->get_qTxtFRA()); //qTxtFRA
+      $textFRA = htmlentities($question->get_qTxtFRA()); //qTxtFRA
       $ansIndex = 0;
       $correctAns = 0;
         shuffle($answers);
         foreach ($answers as $answer) {
           // code...
-          $arrAnswers = array('key'=>$ansIndex+1,'value'=>(base64_encode($answer->get_ansTxt())));
-          $arrAnswersFRA = array('key'=>$ansIndex+1,'value'=>(base64_encode($answer->get_ansTxtFRA())));
+          $arrAnswers = array('key'=>$ansIndex+1,'value'=>(htmlentities($answer->get_ansTxt())));
+          $arrAnswersFRA = array('key'=>$ansIndex+1,'value'=>(htmlentities($answer->get_ansTxtFRA())));
           $jsonListAllAns[] = $arrAnswers;
           $jsonListAllAnsFRA[] = $arrAnswersFRA;
           if ($answer->get_ansIsValid() == 1) {
