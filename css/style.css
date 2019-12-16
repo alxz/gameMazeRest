@@ -150,10 +150,14 @@ table#tableMiniMap {
 }
 .divMinMapTD {
 	/*background: #3388aa;*/
-	background-position: center; /* Center the image */
-	background-repeat: no-repeat; /* Do not repeat the image */
-	background-size: cover; /* Resize the background image to cover the entire*/
+	/*background-position: center; !* Center the image *!*/
+	/*background-repeat: no-repeat; !* Do not repeat the image *!*/
+	/*background-size: cover; !* Resize the background image to cover the entire*!*/
+	position: relative;
+	display: inline;
+	z-index:0;
 }
+
 .classmainDiv {
 	float: none;
 	text-align:center;
@@ -424,7 +428,16 @@ tr,td {
 	/* width: 80%;
 	height: 80%; */
 }
+imgMapDude {
+	z-index:1;
+	opacity: 0.2;
+	filter: alpha(opacity=20); /* For IE8 and earlier */
+	position: absolute;
+	bottom: 5px;
+	right: 5px;
+}
 
-/* ====
-from coolgame
-*/
+imgMapDude:hover {
+	opacity: 1.0;
+	filter: alpha(opacity=100); /* For IE8 and earlier */
+}

@@ -42,7 +42,7 @@ App.prototype.start = function () {
     var scoreImgs;
     var isPause = false;
     var keyIndex = 0;
-
+    var mapLocContent;
     var game = new Phaser.Game(config);
     var _this;
     var position = {x: 0, y: 0};
@@ -204,7 +204,7 @@ App.prototype.start = function () {
         //  });
 
         showMazeGfx(megaMAP.doorsMAP, "divMiniMap",language);
-
+        mapLocContent = document.getElementById("y0x0").innerHTML;
         cursors = this.input.keyboard.createCursorKeys();
         // walls = this.physics.add.staticGroup();
         // walls.create(160, 450, 'wall400x230').setScale(0.8).refreshBody();
@@ -237,6 +237,7 @@ App.prototype.start = function () {
         soundOk = this.sound.add('soundOk');
         soundFail = this.sound.add('soundFail');
         soundFinal = this.sound.add('soundFinal');
+
     }
 
     function breakingBad() {
@@ -779,8 +780,17 @@ App.prototype.start = function () {
     }
 
     function highlighMapPos(oldY,oldX,pY,pX,colorCode) {
+        var oldMapLocation = document.getElementById('y' + oldY + 'x' + oldX);
+        //var oldMapLocationContent = oldMapLocation.innerHTML;
+        var newMapLocation = document.getElementById('y' + pY + 'x' + pX);
+
         document.getElementById('y' + oldY + 'x' + oldX).style.border = "";
         document.getElementById('y' + pY + 'x' + pX).style.border = "3px solid " + colorCode;
+        oldMapLocation.innerHTML = mapLocContent;
+        mapLocContent = newMapLocation.innerHTML;
+        newMapLocation.innerHTML = '<div class="divMinMapTD"> ' +
+                                '<img class="imgMapDude" src="./png/docOne.png" alt="}{" height="22" width="20">' +
+                                '</div>';
     }
 
 /////////questions functionality
@@ -838,7 +848,7 @@ App.prototype.start = function () {
                 //answerMsg = Base64Decode(currentQuestion.questionFRA);
                 answerMsg = atob(currentQuestion.questionFRA);
               }
-              var ansOutStr = '<div class="slide"><div class="question">' + answerMsg + '</div> <div class="answers">' + answers.join("") + '</div></div>';
+              var ansOutStr = '<div class="slide"><div class="question">' + answerMsg + '<hr/></div> <div class="answers">' + answers.join("") + '</div></div>';
               output.push(ansOutStr);
               // output.push(
               //       `<div class="slide">
