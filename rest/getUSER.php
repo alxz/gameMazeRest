@@ -92,9 +92,9 @@ th, td {
           </select>
         </td>
         <td class="trCentered">
-          <?php $pageno = isset($_GET['pCount'])?$_GET['pCount']:''; ?>
+          <?php $pageno = isset($_POST['pCount'])?$_POST['pCount']:''; ?>
           <select name='pCount' id='pCount' onchange="updateRowsCount('');">
-          <?php for($i=50;$i<=200; $i+=50):?>
+          <?php for($i=25;$i<=200; $i+=25):?>
               <option value="<?php echo $i;?>" <?php echo $i==$pageno? 'selected':'';?> ><?php echo $i;?></option>
           <?php endfor;?>
           </select>
@@ -105,7 +105,9 @@ th, td {
       </tr>
       <tr class="trCentered">
         <td class="tdRight">
+            <button type="submit" value="GetPrevious" name="submitPrev"> << </button>
           <button type="submit" value="Submit Request" name="submit">Display</button>
+            <button type="submit" value="GetNext" name="submitNext"> >> </button>
         </td>
         <td class="trCentered">
           <span id="pCountLabel"></span>
@@ -159,9 +161,11 @@ function display() {
   // if (isset($_GET['page'])) {
   //   echo 'Pages Count: '.$_GET['page'];
   // }
-  //$pagesCount = isset($_GET['pCount'])? $_GET['pCount']:'';
-  $pagesCount = $_GET['pCount'];
+  $pagesCount = isset($_POST['pCount'])? $_POST['pCount']:'';
+  //$pagesCount = $_GET['pCount'];
   echo 'Showing first '. $pagesCount.' records';
+  //$sql = "SELECT * FROM Orders LIMIT 30";
+
   $outVar = "<br>";
     $tabName = $_POST['tabName'];
     $connection = createConnection (DBHOST, DBUSER, DBPASS, DBNAME);
@@ -174,7 +178,7 @@ function display() {
     }
     //echo '<br> ... still alive<br>';
     //get results from database
-    $query = "SELECT * FROM ".$tabName;
+    $query = "SELECT * FROM ".$tabName." LIMIT ".$pagesCount;
     $result = mysqli_query($connection,$query);
     $run = $connection->query($query) or die("Last error: {$connection->error}\n");
     $all_property = array();  //declare an array for saving property
