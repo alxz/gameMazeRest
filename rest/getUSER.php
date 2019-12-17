@@ -5,6 +5,10 @@ require_once('../lib/config.php');
 //this is used to retrieve userID
 // $service_url = 'https://www.mymuhc.muhc.mcgill.ca/a/a.php';
 // <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+session_start();
+if (!isset($_SESSION['time'])) {
+    $_SESSION['time'] = date("H:i:s");
+}
 ?>
 <!DOCTYPE HTML>
 <html>
@@ -24,10 +28,16 @@ require_once('../lib/config.php');
           resultsContainer.value = '' + selectedValue + '';
       }
       function updateRowsCount(formId) {
-        var selectedValue = document.getElementById('pCount').value;
-        var pCountLabel = document.getElementById('pCountLabel');
+        const selectedValue = document.getElementById('pCount').value;
+        const pCountLabel = document.getElementById('pCountLabel');
+        const hiddenRecCount = document.getElementById('hiddenRecCount');
         pCountLabel.innerHTML = selectedValue;
+        document.getElementById('hiddenRecCount').value = selectedValue;
         console.log('pCount = ' + selectedValue);
+        console.log('hiddenRecCount.value = ' + hiddenRecCount.value);
+        // <?php
+        //   $_SESSION['nextRecsCount'] = 0;
+        // ?>
         //resultsContainer.value = '' + selectedValue + '';
       }
   </script>
@@ -82,8 +92,8 @@ th, td {
     <br>
     <table class="data-table">
       <tr class="trCentered">
-        <th class="tdRight">Here are the tables we have:</th>
-        <th class="tdCenter">Number of rows:</th>
+        <th class="tdRight">Tables list:</th>
+        <th class="tdCenter">Row start: <span id="rowsNum"></span> <br>Number of rows:</th>
         <th class="tdLeft">Table to display:</th>
       <tr>
       <tr class="trCentered">
@@ -94,7 +104,7 @@ th, td {
         <td class="trCentered">
           <?php $pageno = isset($_POST['pCount'])?$_POST['pCount']:''; ?>
           <select name='pCount' id='pCount' onchange="updateRowsCount('');">
-          <?php for($i=25;$i<=200; $i+=25):?>
+          <?php for($i=25;$i<=1000; $i+=25):?>
               <option value="<?php echo $i;?>" <?php echo $i==$pageno? 'selected':'';?> ><?php echo $i;?></option>
           <?php endfor;?>
           </select>
@@ -105,15 +115,25 @@ th, td {
       </tr>
       <tr class="trCentered">
         <td class="tdRight">
-            <button type="submit" value="GetPrevious" name="submitPrev"> << </button>
           <button type="submit" value="Submit Request" name="submit">Display</button>
-            <button type="submit" value="GetNext" name="submitNext"> >> </button>
         </td>
         <td class="trCentered">
           <span id="pCountLabel"></span>
+          <input type="hidden" id="hiddenRecCount" name="hiddenRecCount" value="">
         </td>
         <td class="tdLeft">
           <button onclick="history.go(-1);">Back</button>
+        </td>
+      </tr>
+      <tr class="trCentered">
+        <td class="tdRight">
+          <button type="submit" value="GetPrevious" name="submitPrev" id="btnSubmitPrev"> << </button>
+        </td>
+        <td class="trCentered">
+          <button type="submit" value="resetRowLimit" name="resetRowLimit">Reset rows</button>
+        </td>
+        <td class="tdLeft">
+          <button type="submit" value="GetNext" name="submitNext" id="btnSubmitNext"> >> </button>
         </td>
       </tr>
   </table>
@@ -146,6 +166,7 @@ th, td {
   </div>
 </div>
 </form>
+
 </body>
 </html>
 <script type="text/JavaScript">
@@ -155,19 +176,150 @@ th, td {
     //alert('User name: ' + userIUN);
   }
 </script>
+
 <?php
+//set the buttons text: submitNext
+      if (!isset($_SESSION['nextRecsCount'])) {
+        echo '<script type="text/JavaScript"> document.getElementById("rowsNum").innerHTML = '.
+              " >> ".
+              ';</script>';
+      } else {
+        echo '<script type="text/JavaScript"> document.getElementById("rowsNum").innerHTML = "'.
+              ($_SESSION['nextRecsCount']).
+              '";</script>';
+        echo '<script type="text/JavaScript"> document.getElementById("btnSubmitNext").innerHTML = "next >> '.
+              ($_SESSION['nextRecsCount']).
+                    '";</script>';
+        echo '<script type="text/JavaScript"> document.getElementById("btnSubmitPrev").innerHTML = "<< prev '.
+              ($_SESSION['nextRecsCount']).
+              '";</script>';
+      }
+ ?>
+<?php
+//$recsCount = isset($_POST['pCount'])? $_POST['pCount']:'';
+
+$nextRecsCount = 0;
+if(isset($_POST['submit'])) {
+  // $doc = new DomDocument;
+  // // We need to validate our document before refering to the id
+  // $doc->validateOnParse = true;
+  $recsCount = isset($_POST['pCount'])? $_POST['pCount']:'';
+  //$doc->Load('book.xml');
+  //$dom->loadHTMLFile('getUSER.php');
+  //echo "The element whose id is pCount is: " . $doc->getElementById('pCount')->value . "\n<br>";
+  display(0,$recsCount);
+
+} elseif (isset($_POST['resetRowLimit'])) {
+    $_SESSION['nextRecsCount'] = 0;
+    //document.getElementById('hiddenRecCount').value
+    echo '<script type="text/JavaScript"> document.getElementById("hiddenRecCount").value = 0;</script>';
+
+} elseif (isset($_POST['submitNext'])) { //======================== next button >>>> ================
+  //submitNext
+  $recsCount = isset($_POST['pCount'])? $_POST['pCount']:'';
+  echo 'recsCount: '.$recsCount.'<br>';
+
+  $hiddenRecCount = isset($_POST['hiddenRecCount'])? $_POST['hiddenRecCount']:0;
+  echo 'hiddenRecCount: '.$hiddenRecCount.'<br>';
+
+  if (!isset($_SESSION['nextRecsCount'])) {
+    $_SESSION['nextRecsCount'] = $recsCount;
+  } else {
+    $nextRecsCount = $_SESSION['nextRecsCount'];
+  }
+  echo 'Showning next records(nextRecsCount): '.$nextRecsCount.'<br>';
+
+  display($nextRecsCount,$recsCount);
+  if (($nextRecsCount + $recsCount) > 999999) {
+    $nextRecsCount = 0;
+  } else {
+    $nextRecsCount = $nextRecsCount + $recsCount;
+  }
+
+  $_SESSION['nextRecsCount'] = $nextRecsCount;
+  echo '<script type="text/JavaScript"> alert("$_SESSION[nextRecsCount]: " + '.($_SESSION['nextRecsCount']). ' );</script>';
+  //echo 'Showning next records($_SESSION[nextRecsCount]): '.($_SESSION['nextRecsCount']).'<br>';
+
+}  elseif (isset($_POST['submitPrev'])) {
+  $recsCount = isset($_POST['pCount'])? $_POST['pCount']:'';
+  echo 'recsCount: '.$recsCount.'<br>';
+  $hiddenRecCount = isset($_POST['hiddenRecCount'])? $_POST['hiddenRecCount']:0;
+  echo 'hiddenRecCount: '.$hiddenRecCount.'<br>';
+
+  if (!isset($_SESSION['nextRecsCount'])) {
+    $_SESSION['nextRecsCount'] = $recsCount;
+  } else {
+    $nextRecsCount = $_SESSION['nextRecsCount'];
+  }
+  echo 'Showning next records(nextRecsCount): '.$nextRecsCount.'<br>';
+
+  display($nextRecsCount,$recsCount);
+
+  if (($nextRecsCount - $recsCount) < 0) {
+    $nextRecsCount = 0;
+  } else {
+    $nextRecsCount = $nextRecsCount - $recsCount;
+  }
+  $_SESSION['nextRecsCount'] = $nextRecsCount;
+  echo '<script type="text/JavaScript"> alert("$_SESSION[nextRecsCount]: " + '.($_SESSION['nextRecsCount']). ' );</script>';
+
+} elseif (isset($_POST['detailsShow'])) {
+  //echo 'HellO!';
+  //divDetails
+  echo '<script type="text/JavaScript"> document.getElementById("divDetails").style.display = "";</script>';
+  // echo '<script type="text/JavaScript">'
+  //       .'document.getElementById("divButton").innerHTML = \'<button type="submit" value="getStat" name="getStat" onclick="getUserData()"> Get Statistics </button>\';</script>';
+  // echo '<br/><hr/><br/>';
+  //getUserDataPHP();
+  // $("#finSubmit").unbind("click");
+  // $("#finSubmit").bind("click", getUserData);
+  //$varDetails = $_POST['detailsShow'];
+  //var_dump(isset($varDetails));
+
+} elseif (isset($_POST['filterShow'])) {
+  //divDetails
+  echo '<script type="text/JavaScript"> document.getElementById("divFilters").style.display = "";</script>';
+}
+
+if (isset($_POST['getStat'])) {
+  // code...
+  getUserDataPHP();
+}
+if (isset($_POST['getFilteredData'])) {
+  getFilteredUserData();
+}
+
+
 //echo displayAllTAbles(); //displayAllTAbles - to place a selection of tables
-function display() {
+function display($startFrom = 0, $recordsDisplayCount = 1) {
   // if (isset($_GET['page'])) {
   //   echo 'Pages Count: '.$_GET['page'];
   // }
-  $pagesCount = isset($_POST['pCount'])? $_POST['pCount']:'';
   //$pagesCount = $_GET['pCount'];
-  echo 'Showing first '. $pagesCount.' records';
+  $pagesCount = $recordsDisplayCount;
+  $tabName = $_POST['tabName'];
   //$sql = "SELECT * FROM Orders LIMIT 30";
+  if (strcasecmp($tabName, "tabusers") == 0) {
+    // The strcasecmp() function is a built-in function in PHP and is used to compare two given strings.
+    //  It is case-insensitive:  strcasecmp($string1, $string2)
+    /* This function returns an integer based on the conditions as described below:
 
+      strcasecmp() returns 0 – if the two strings are equal.
+      strcasecmp() returns < 0 – if string1 is less than string2
+      strcasecmp() returns > 0 – if string1 is greater than string2
+    */
+    $countUniqueuId = getCountBy('uId',1);
+    $countUniqueuIUN = getCountBy('uIUN',1);
+    $countUniqueuFName = getCountBy('uFName',1);
+    echo 'Total records('. $countUniqueuId .'),<br> where unique'.
+          '  By[uIUN]: '. $countUniqueuIUN.
+          ' ;  By[uFName]:  '.$countUniqueuFName.
+          ' records<br>';
+  }
+
+  echo 'Showing first '. $pagesCount.' records<br>';
   $outVar = "<br>";
-    $tabName = $_POST['tabName'];
+
     $connection = createConnection (DBHOST, DBUSER, DBPASS, DBNAME);
     //test if connection failed
     if(mysqli_connect_errno()){
@@ -178,7 +330,7 @@ function display() {
     }
     //echo '<br> ... still alive<br>';
     //get results from database
-    $query = "SELECT * FROM ".$tabName." LIMIT ".$pagesCount;
+    $query = "SELECT * FROM ".$tabName." LIMIT ".$startFrom.", ".$pagesCount.";";
     $result = mysqli_query($connection,$query);
     $run = $connection->query($query) or die("Last error: {$connection->error}\n");
     $all_property = array();  //declare an array for saving property
@@ -190,16 +342,22 @@ function display() {
         array_push($all_property, $property->name);  //save those to array
     }
     echo '</tr>'; //end tr tag
-
+    $ind = 0;
     //showing all data
     while ($row = mysqli_fetch_array($result)) {
-        echo "<tr>";
         foreach ($all_property as $item) {
-            echo '<td>' . $row[$item] . '</td>'; //get items using property value
+          $strToShow =  $row[$item];
+          if (strlen($strToShow) > 20) {
+            $strToShow = '<textarea readonly rows="4" cols="20">'.$strToShow.'</textarea>';
+          }
+            echo '<td>' . $strToShow . '</td>'; //get items using property value
         }
         echo '</tr>';
+        $ind++;
     }
     echo "</table>";
+    echo "<hr/>displayed rows: ".$ind."<br>";
+    mysqli_close($connection);
     //echo $outVar;
 ?>
         <script type="text/JavaScript">
@@ -250,6 +408,7 @@ function getUserDataPHP() {
       echo '</tr>';
   }
   echo "</table>";
+  mysqli_close($connection);
 }
 
 function getFilteredUserData() {
@@ -320,45 +479,8 @@ function getFilteredUserData() {
       echo '</tr>';
   }
   echo "</table>";
+  mysqli_close($connection);
 }
-
-
-if(isset($_POST['submit'])) {
-  $doc = new DomDocument;
-  // We need to validate our document before refering to the id
-  $doc->validateOnParse = true;
-  //$doc->Load('book.xml');
-  //$dom->loadHTMLFile('getUSER.php');
-  //echo "The element whose id is pCount is: " . $doc->getElementById('pCount')->value . "\n<br>";
-  display();
-} elseif (isset($_POST['detailsShow'])) {
-  //echo 'HellO!';
-  //divDetails
-  echo '<script type="text/JavaScript"> document.getElementById("divDetails").style.display = "";</script>';
-  // echo '<script type="text/JavaScript">'
-  //       .'document.getElementById("divButton").innerHTML = \'<button type="submit" value="getStat" name="getStat" onclick="getUserData()"> Get Statistics </button>\';</script>';
-  // echo '<br/><hr/><br/>';
-  //getUserDataPHP();
-  // $("#finSubmit").unbind("click");
-  // $("#finSubmit").bind("click", getUserData);
-  //$varDetails = $_POST['detailsShow'];
-  //var_dump(isset($varDetails));
-
-} elseif (isset($_POST['filterShow'])) {
-  //divDetails
-  echo '<script type="text/JavaScript"> document.getElementById("divFilters").style.display = "";</script>';
-}
-
-if (isset($_POST['getStat'])) {
-  // code...
-  getUserDataPHP();
-}
-if (isset($_POST['getFilteredData'])) {
-  getFilteredUserData();
-}
-
-
-
 // if(isset($_POST['update']))
 // {
 //       $tabName = $_POST['tabName'];
@@ -417,8 +539,49 @@ function displayDBTAblesInAList() {
     }
     //echo 'outVar: '.$outVar."<br>";
     //$outVar = $outVar . "</select>";
-
+mysqli_close($connection);
 return $outVar;
+}
+
+function getCountBy($colName,$isUnique = 0) {
+  $tabName = $_POST['tabName'];
+  if ($tabName == "") {
+    die("Error! Nodata provided!<br>");
+  }
+  //echo "isUnique: ".$isUnique." vardump: ".var_dump($isUnique)."<br>";
+  //echo 'tabName: '.$tabName.'<br><br>';
+  $query = "SELECT * FROM '.$tabName.';";
+  //getting statistics by a certain field name, default - unique records (1):
+  if ($isUnique == 0) {
+    // not uniqe, but all records to count
+    $query = "SELECT ".$colName." FROM ".$tabName.";";
+    //echo 'All $query: '.$query.'<br>';
+  } else {
+    //count only uniqe
+    $query = "SELECT DISTINCT ".$colName." FROM ".$tabName.";";
+   //echo 'Unique $query: '.$query.'<br>';
+  }
+  $connection = createConnection (DBHOST, DBUSER, DBPASS, DBNAME);
+    if(mysqli_connect_errno()){
+        die("connection failed: "
+            . mysqli_connect_error()
+            . " (" . mysqli_connect_errno()
+            . ")");
+    }
+    //$query = "SELECT uIUN FROM ".$tabName.";";
+    $result = mysqli_query($connection,$query);
+    $run = $connection->query($query) or die("Last error: {$connection->error}\n");
+    //$all_property = array();  //declare an array for saving property
+    //showing property
+    $countCol = 0;
+
+    while ($row = mysqli_fetch_array($result)) {
+        $countCol++;
+    }
+
+    mysqli_close($connection);
+    return $countCol;
+
 }
 
 ?>
