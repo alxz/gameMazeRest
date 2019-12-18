@@ -291,11 +291,8 @@ if(isset($_POST['submit'])) {
     } else {
       display($nextRecsCount,$recsCount);
       $nextRecsCount = $nextRecsCount + $recsCount;
-
     }
-
   }
-
 
   $_SESSION['nextRecsCount'] = $nextRecsCount;
   //echo '<script type="text/JavaScript"> alert("$_SESSION[nextRecsCount]: " + '.($_SESSION['nextRecsCount']). ' );</script>';
@@ -348,7 +345,9 @@ if (isset($_POST['getStat'])) {
   getUserDataPHP();
 }
 if (isset($_POST['getFilteredData'])) {
-  getFilteredUserData();
+  $recsCount = isset($_POST['pCount'])? $_POST['pCount']:10;
+  echo 'only show: '.$recsCount.' records<br>';
+  getFilteredUserData($recsCount);
 }
 
 
@@ -421,7 +420,6 @@ function display($startFrom = 0, $recordsDisplayCount = 1) {
     //showing all data
     while ($row = mysqli_fetch_array($result)) {
         foreach ($all_property as $item) {
-
           $strCellData = $row[$item];
           if (($item == 'uRetryCount') && ($row[$item] > $GLOBALS[retryLimit])) {
               echo '<td class="allColsTableTd" style="color:red;"><strong>' . $strCellData . '</strong></td>';
@@ -441,7 +439,7 @@ function display($startFrom = 0, $recordsDisplayCount = 1) {
         $ind++;
     }
     echo "</table>";
-    echo "<hr/>displayed rows: ".$ind."<br>";
+    echo "<hr/>Total: ".$ind." rows displayed <br>";
     mysqli_close($connection);
     //echo $outVar;
 ?>
@@ -496,7 +494,7 @@ function getUserDataPHP() {
   mysqli_close($connection);
 }
 
-function getFilteredUserData() {
+function getFilteredUserData($limitRecords = 10) {
   $outVar = "<br>";
     //$tabName = $_POST['tabName']; //tabusers
       $tabName = 'tabusers';
@@ -538,7 +536,7 @@ function getFilteredUserData() {
     echo "Sorted by userIUN show all results: <".$_POST['allStat']."> and <".$_POST['allFinished']."><br>";
 
   }
-
+  $query = $query.' LIMIT '.$limitRecords;
   //$query = "SELECT * FROM ".$tabName." WHERE uIsFinished=1 AND uIUN LIKE '".$userID."%'"." ORDER BY uTimer,uRetryCount,uTotalScore ASC";
   $result = mysqli_query($connection,$query);
   $run = $connection->query($query) or die("Last error: {$connection->error}\n");
@@ -555,6 +553,7 @@ function getFilteredUserData() {
   echo '</tr>'; //end tr tag
   // echo 'Var countCol: '.$countCol.'<br>';
   $tabWidth = (int)(100 / $countCol);
+  $ind = 0;
   //showing all data
   while ($row = mysqli_fetch_array($result)) {
       echo "<tr>";
@@ -567,8 +566,10 @@ function getFilteredUserData() {
         }
       }
       echo '</tr>';
+      $ind++;
   }
   echo "</table>";
+  echo "<hr/>Total: ".$ind." rows displayed <br>";
   mysqli_close($connection);
 }
 
@@ -640,5 +641,7 @@ function getCountBy($colName,$isUnique = 0) {
     return $countCol;
 
 }
-
+// To sort by date:
+// $date = date_create_from_format('d/m/Y:H:i:s', $s);
+// $date->getTimestamp();
 ?>
