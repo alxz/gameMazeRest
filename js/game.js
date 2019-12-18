@@ -351,11 +351,17 @@ App.prototype.start = function () {
     }
 
     function collectKey(player, key) {
+        try {
+          userTimer.start();
+        } catch (e) {
+          console.log('Error! Can\'t start a timer!',e.toString());
+        }
 
         if (isPause) return;
         // if (theGameIsStarted === false) {
         //   //if the game has started then change the boolean flag:
         //   theGameIsStarted = true;
+        //   userTimer.start();
         //   console.log("theGameIsStarted: " + theGameIsStarted);
         // }
         playSound(pickupKey);
@@ -1150,7 +1156,7 @@ userTimer = new easytimer.Timer();
 // var startTime = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds(); //Date.now();
 var endTime;
 var secondsElapsed = 0;
-userTimer.start();  // -------- UNPAUSE when required!!! TIMER
+//userTimer.start();  // -------- UNPAUSE when required!!! TIMER
 
 userTimer.addEventListener('secondsUpdated', function (e) {
     $('#userTimer').html(userTimer.getTimeValues().toString());
