@@ -2,17 +2,23 @@
 require_once('../lib/functions.php');
 require_once('../lib/classes.php');
 require_once('../lib/config.php');
-//this is used to retrieve userID
-// $service_url = 'https://www.mymuhc.muhc.mcgill.ca/a/a.php';
-// <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+require_once('./exportData.php');
 session_start();
 if (!isset($_SESSION['time'])) {
     $_SESSION['time'] = date("H:i:s");
 }
 $GLOBALS[retryLimit] = 3;
-//$_SESSION['nextRecsCount'] = 0;
+if(isset($_POST['saveToCSV'])) { //=========== EXPORT To CSV ================
+  $tabsToSave = "";
+  if (!isset($_POST['tabsFromDB'])) {
+    $tabsToSave = 'tabusers';
+  } else {
+      $tabsToSave = ($_POST['tabsFromDB']);
+  }
+  saveToCSVPHP($tabsToSave);
+  exit;
+}
 ?>
-<!DOCTYPE HTML>
 <html>
 <head>
   <meta charset="UTF-8">
@@ -37,12 +43,7 @@ $GLOBALS[retryLimit] = 3;
         document.getElementById('hiddenRecCount').value = selectedValue;
         console.log('pCount = ' + selectedValue);
         console.log('hiddenRecCount.value = ' + hiddenRecCount.value);
-        // <?php
-        //   $_SESSION['nextRecsCount'] = 0;
-        // ?>
-        //resultsContainer.value = '' + selectedValue + '';
       }
-
       function updateRetryLimit(formId) {
         // check updateRetryLimit
         const retryLimit = document.getElementById('retryLimit').value;
@@ -50,7 +51,6 @@ $GLOBALS[retryLimit] = 3;
         //$GLOBALS['retryLimit']
       }
   </script>
-  <!-- /updateRowsCount -->
 </head>
 <style>
 .data-table{
@@ -83,7 +83,6 @@ th, td {
   padding-bottom: 5px;
   border-bottom: 1px solid #ddd;
 }
-
 .trCentered {
   align-items: center;
   text-align: center;
@@ -95,6 +94,7 @@ th, td {
   padding-left: 20px;
   padding-top: 10px;
   width: 30%;
+  font-size: 0.8em;
 }
 .tdRight {
   text-align: right;
@@ -103,11 +103,13 @@ th, td {
   padding-right: 20px;
   padding-top: 10px;
   width: 30%;
+  font-size: 0.8em;
 }
 .tdCenter {
   text-align: center;
   align: cite;
   width: 30%;
+  padding-top: 10px;
   font-size: 0.8em;
 }
 </style>
@@ -136,7 +138,7 @@ th, td {
           <?php $pageno = isset($_POST['pCount'])?$_POST['pCount']:''; ?>
           <select name='pCount' id='pCount' onchange="updateRowsCount('');">
           <?php for($i=50;$i<=1000; $i+=50):?>
-              <option value="<?php echo $i;?>" <?php echo $i==$pageno? 'selected':'';?> ><?php echo $i;?></option>
+              <option value="<?php echo $i;?>"<?php echo $i==$pageno? 'selected':'';?>><?php echo $i;?></option>
           <?php endfor;?>
           </select>
         </td>
@@ -146,16 +148,17 @@ th, td {
       </tr>
       <tr class="trCentered">
         <td class="tdRight">
-          <button type="submit" value="Submit Request" name="submit">Display</button>
+          <button type="submit" value="Submit Request" name="submit">Display All</button>
         </td>
-        <td class="trCentered">
+        <td class="tdCenter">
           <button type="submit" value="filterShow" name="filterShow">Show Filters</button>
           &nbsp; &nbsp; &nbsp;
           <button type="submit" value="detailsShow" name="detailsShow">User Details</button>
 
         </td>
         <td class="tdLeft">
-          <button onclick="history.go(-1);">Go Page Back</button>
+          <button type="submit" value="saveToCSV" name="saveToCSV">Export->CSV</button>
+          <!-- <button onclick="history.go(-1);">Go Page Back</button> -->
         </td>
       </tr>
   </table>
@@ -176,7 +179,7 @@ th, td {
     <?php $retryLimit = isset($_POST['retryLimit'])?$_POST['retryLimit']:''; ?>
     <select name='retryLimit' id='retryLimit' onchange="updateRetryLimit('');">
     <?php for($i=1;$i<=10; $i++):?>
-        <option value="<?php echo $i;?>" <?php echo $i==$retryLimit? 'selected':'';?> ><?php echo $i;?></option>
+        <option value="<?php echo $i;?>" <?php echo $i==$retryLimit? 'selected':'';?>><?php echo $i;?></option>
     <?php endfor;?>
     </select>
     <input type="hidden" id="retryLimitLabel" name="retryLimitLabel" value="">
@@ -218,9 +221,7 @@ th, td {
     //alert('User name: ' + userIUN);
   }
 </script>
-
 <?php
-//set the buttons text: submitNext
       if (!isset($_SESSION['nextRecsCount'])) {
         echo '<script type="text/JavaScript"> document.getElementById("rowsNum").innerHTML = '.
               " 0 ".
@@ -241,11 +242,6 @@ th, td {
       } else {
         $GLOBALS[retryLimit] = ($_POST['retryLimit']);
       }
-
- ?>
-<?php
-//$recsCount = isset($_POST['pCount'])? $_POST['pCount']:'';
-
 $nextRecsCount = 0;
 if(isset($_POST['submit'])) {
   $recsCount = isset($_POST['pCount'])? $_POST['pCount']:'';
@@ -259,28 +255,23 @@ if(isset($_POST['submit'])) {
         '";</script>';
   echo '<script type="text/JavaScript"> document.getElementById("hiddenRecCount").value = 0;</script>';
   display(0,$recsCount);
-
 } elseif (isset($_POST['resetRowLimit'])) {
     $_SESSION['nextRecsCount'] = 0;
     //document.getElementById('hiddenRecCount').value
     echo '<script type="text/JavaScript"> document.getElementById("hiddenRecCount").value = 0;</script>';
-
 } elseif (isset($_POST['submitNext'])) { //======================== next button >>>> ================
   //submitNext
   $recsCount = isset($_POST['pCount'])? $_POST['pCount']:'';
   $countUniqueuId = getCountBy('uId',1);
   //echo 'recsCount: '.$recsCount.'<br>';
-
   $hiddenRecCount = isset($_POST['hiddenRecCount'])? $_POST['hiddenRecCount']:$recsCount;
   //echo 'hiddenRecCount: '.$hiddenRecCount.'<br>';
-
   if (!isset($_SESSION['nextRecsCount'])) {
     $_SESSION['nextRecsCount'] = $recsCount;
   } else {
     $nextRecsCount = $_SESSION['nextRecsCount'];
   }
   //echo 'Showning next records(nextRecsCount): '.$nextRecsCount.'<br>';
-
   if (($nextRecsCount + $recsCount) > $countUniqueuId) {
     $nextRecsCount = 0; //(($nextRecsCount + $recsCount) - ($countUniqueuId));
     display($nextRecsCount,$recsCount);
@@ -293,26 +284,19 @@ if(isset($_POST['submit'])) {
       $nextRecsCount = $nextRecsCount + $recsCount;
     }
   }
-
   $_SESSION['nextRecsCount'] = $nextRecsCount;
-  //echo '<script type="text/JavaScript"> alert("$_SESSION[nextRecsCount]: " + '.($_SESSION['nextRecsCount']). ' );</script>';
-  //echo 'Showning next records($_SESSION[nextRecsCount]): '.($_SESSION['nextRecsCount']).'<br>';
-
 }  elseif (isset($_POST['submitPrev'])) {  // ===================== <<<<< previous button ==============
-
   $recsCount = isset($_POST['pCount'])? $_POST['pCount']:'';
   $countUniqueuId = getCountBy('uId',1);
   //echo 'recsCount: '.$recsCount.'<br>';
   $hiddenRecCount = isset($_POST['hiddenRecCount'])? $_POST['hiddenRecCount']:$recsCount;
   //echo 'hiddenRecCount: '.$hiddenRecCount.'<br>';
-
   if (!isset($_SESSION['nextRecsCount'])) {
     $_SESSION['nextRecsCount'] = $recsCount;
   } else {
     $nextRecsCount = $_SESSION['nextRecsCount'];
   }
   //echo 'Showning next records(nextRecsCount): '.$nextRecsCount.'<br>';
-
   if (($nextRecsCount - $recsCount) < 0) {
     $nextRecsCount = 0;
   } else {
@@ -320,28 +304,13 @@ if(isset($_POST['submit'])) {
   }
   display($nextRecsCount,$recsCount);
   $_SESSION['nextRecsCount'] = $nextRecsCount;
-  //echo '<script type="text/JavaScript"> alert("$_SESSION[nextRecsCount]: " + '.($_SESSION['nextRecsCount']). ' );</script>';
-
 } elseif (isset($_POST['detailsShow'])) {
-  //echo 'HellO!';
-  //divDetails
   echo '<script type="text/JavaScript"> document.getElementById("divDetails").style.display = "";</script>';
-  // echo '<script type="text/JavaScript">'
-  //       .'document.getElementById("divButton").innerHTML = \'<button type="submit" value="getStat" name="getStat" onclick="getUserData()"> Get Statistics </button>\';</script>';
-  // echo '<br/><hr/><br/>';
-  //getUserDataPHP();
-  // $("#finSubmit").unbind("click");
-  // $("#finSubmit").bind("click", getUserData);
-  //$varDetails = $_POST['detailsShow'];
-  //var_dump(isset($varDetails));
-
 } elseif (isset($_POST['filterShow'])) {
   //divDetails
   echo '<script type="text/JavaScript"> document.getElementById("divFilters").style.display = "";</script>';
 }
-
 if (isset($_POST['getStat'])) {
-  // code...
   getUserDataPHP();
 }
 if (isset($_POST['getFilteredData'])) {
@@ -349,14 +318,8 @@ if (isset($_POST['getFilteredData'])) {
   echo 'only show: '.$recsCount.' records<br>';
   getFilteredUserData($recsCount);
 }
-
-
 //echo displayAllTAbles(); //displayAllTAbles - to place a selection of tables
 function display($startFrom = 0, $recordsDisplayCount = 1) {
-  // if (isset($_GET['page'])) {
-  //   echo 'Pages Count: '.$_GET['page'];
-  // }
-  //$pagesCount = $_GET['pCount'];
   $pagesCount = $recordsDisplayCount;
   $tabName = $_POST['tabName'];
   //$sql = "SELECT * FROM Orders LIMIT 30";
@@ -364,7 +327,6 @@ function display($startFrom = 0, $recordsDisplayCount = 1) {
     // The strcasecmp() function is a built-in function in PHP and is used to compare two given strings.
     //  It is case-insensitive:  strcasecmp($string1, $string2)
     /* This function returns an integer based on the conditions as described below:
-
       strcasecmp() returns 0 – if the two strings are equal.
       strcasecmp() returns < 0 – if string1 is less than string2
       strcasecmp() returns > 0 – if string1 is greater than string2
@@ -372,13 +334,11 @@ function display($startFrom = 0, $recordsDisplayCount = 1) {
     $countUniqueuId = getCountBy('uId',1);
     $countUniqueuIUN = getCountBy('uIUN',1);
     $countUniqueuFName = getCountBy('uFName',1);
-
     if (!isset($_SESSION['nextRecsCount'])) {
       $_SESSION['nextRecsCount'] = $recordsDisplayCount;
     } else {
       $_SESSION['nextRecsCount'] = $recordsDisplayCount;
     }
-
     //navTabCenterCell
     // div id="divNavBtn" class="naviButtonsDiv"
     echo '<script type="text/JavaScript"> document.getElementById("divNavBtn").style.display = "";</script>';
@@ -390,10 +350,8 @@ function display($startFrom = 0, $recordsDisplayCount = 1) {
     echo '<script type="text/JavaScript"> document.getElementById("navTabCenterCell").innerHTML = "'.
           $msgStr.'";</script>';
   }
-
   // echo 'Showing up to '. $pagesCount.' records<br>';
   $outVar = "<br>";
-
     $connection = createConnection (DBHOST, DBUSER, DBPASS, DBNAME);
     //test if connection failed
     if(mysqli_connect_errno()){
@@ -426,7 +384,6 @@ function display($startFrom = 0, $recordsDisplayCount = 1) {
           } else {
             echo '<td class="allColsTableTd">' . $strCellData . '</td>'; //get items using property value
           }
-
           // $strToShow =  $row[$item];
           // // if (strlen($strToShow) > 5) {
           // //   //$strToShow = '<textarea readonly rows="4" cols="20">'.$strToShow.'</textarea>';
@@ -442,8 +399,7 @@ function display($startFrom = 0, $recordsDisplayCount = 1) {
     echo "<hr/>Total: ".$ind." rows displayed <br>";
     mysqli_close($connection);
     //echo $outVar;
-?>
-        <script type="text/JavaScript">
+?><script type="text/JavaScript">
           var toDisplay = '<?php echo $outVar ?>';
           var resultsContainer = document.getElementById("dbShow");
           resultsContainer.innerHTML = `${toDisplay}`;
@@ -452,10 +408,8 @@ function display($startFrom = 0, $recordsDisplayCount = 1) {
           //alert ('selected: '+selectedValue);
           resultsContainer = document.getElementById('tabName');
           resultsContainer.value = `${selectedValue}`;
-        </script>
-<?php
+  </script><?php
 }
-
 function getUserDataPHP() {
   $outVar = "<br>";
     //$tabName = $_POST['tabName']; //tabusers
@@ -493,7 +447,6 @@ function getUserDataPHP() {
   echo "</table>";
   mysqli_close($connection);
 }
-
 function getFilteredUserData($limitRecords = 10) {
   $outVar = "<br>";
     //$tabName = $_POST['tabName']; //tabusers
@@ -514,27 +467,21 @@ function getFilteredUserData($limitRecords = 10) {
   if (!empty($_POST['allStat']) && !empty($_POST['allFinished']) && empty($_POST['sortBestTime']))  {
     $query = "SELECT * FROM ".$tabName." WHERE uIsFinished=1 ";
     echo "Show only finished users results not sorted: <".$_POST['allFinished']."><br>";
-
   } elseif  (!empty($_POST['allStat']) && !empty($_POST['sortBestTime'])) {
     $query = "SELECT * FROM ".$tabName." ORDER BY uTimer,uRetryCount,uTotalScore ASC";
     echo "Show all but sort by uTimer,uRetryCount,uTotalScore ASC: <".$_POST['allStat']."><br>";
-
   } elseif (!empty($_POST['allFinished']) && ($_POST['allFinished'] == "getFinished") && empty($_POST['sortBestTime'])) {
     $query = "SELECT * FROM ".$tabName." WHERE uIsFinished=1 ORDER BY uId ASC";
     echo "Show only finished users results sorted by user IUN: <".$_POST['allFinished']."><br>";
-
   } elseif (!empty($_POST['sortBestTime']) && !empty($_POST['allFinished'])) {
     $query = "SELECT * FROM ".$tabName." WHERE uIsFinished=1 ORDER BY uTimer ASC";
     echo "Show best time for Finished ONLY: <".$_POST['sortBestTime']."><br>";
-
   } elseif (!empty($_POST['sortBestTime']) && empty($_POST['allFinished'])) {
     $query = "SELECT * FROM ".$tabName." ORDER BY uTimer,uId,uRetryCount ASC";
     echo "Show best time for Finished ONLY sorted by Best Time, IUN and retries count: <".$_POST['sortBestTime']."><br>";
-
   } else {
     $query = "SELECT * FROM ".$tabName." ORDER BY uId ASC";
     echo "Sorted by userIUN show all results: <".$_POST['allStat']."> and <".$_POST['allFinished']."><br>";
-
   }
   $query = $query.' LIMIT '.$limitRecords;
   //$query = "SELECT * FROM ".$tabName." WHERE uIsFinished=1 AND uIUN LIKE '".$userID."%'"." ORDER BY uTimer,uRetryCount,uTotalScore ASC";
@@ -572,7 +519,6 @@ function getFilteredUserData($limitRecords = 10) {
   echo "<hr/>Total: ".$ind." rows displayed <br>";
   mysqli_close($connection);
 }
-
 function displayDBTAblesInAList() {
   //to create a select HTML object with tables names
   $outVar = "";
@@ -600,7 +546,6 @@ function displayDBTAblesInAList() {
 mysqli_close($connection);
 return $outVar;
 }
-
 function getCountBy($colName,$isUnique = 0) {
   $tabName = $_POST['tabName'];
   if ($tabName == "") {
@@ -632,16 +577,9 @@ function getCountBy($colName,$isUnique = 0) {
     //$all_property = array();  //declare an array for saving property
     //showing property
     $countCol = 0;
-
     while ($row = mysqli_fetch_array($result)) {
         $countCol++;
     }
-
     mysqli_close($connection);
     return $countCol;
-
-}
-// To sort by date:
-// $date = date_create_from_format('d/m/Y:H:i:s', $s);
-// $date->getTimestamp();
-?>
+}?>
