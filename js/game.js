@@ -1090,15 +1090,36 @@ App.prototype.start = function () {
             // "Some words are better left unsaid."
             // /<p><h3><span id="finScrTxtLine1" class="finMessage">Félicitations! Congratulations!</span></h3></p>
             finScr.innerHTML = "";
-            finScr.innerHTML = '<br><br><br><hr/><p><h3><span id="finScrTxtLine1" class="finMessage">Merci Beaucoup! Thank you!</span></h3></p><hr/><br>'
+            var finalLastStrMsg = "";
+            finalLastStrMsg = '<br><br><br><hr/><p><h3><span id="finScrTxtLine1" class="finMessage">Merci Beaucoup! Thank you!</span></h3></p><hr/><br>';
+            var userStat = "";
+            var request = new XMLHttpRequest();
+            var url = "./rest/getIUN.php";
+            var params = "userId=" + userIUN;
+            request.open('POST', url, true);
+            request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            request.onreadystatechange = function() {
+                if (request.readyState === XMLHttpRequest.DONE) {
+                  if (request.status === 200) {
+                    var response = JSON.parse(request.response);
+                    if (response.result) {
+                      userStat = "The username you typed has been used!";
+                    }else{
+                      userStat = response.result;
+                    }
+                  }
+                }
+              };
+              request.send(params);
+            finScr.innerHTML = finalLastStrMsg + '<br><div><p> ' + userStat + ' </p></div><br>';
             setTimeout(function () {
-                finScr.innerHTML = '<br><br><br><hr/><p><h3><span id="finScrTxtLine1" class="finMessage">Merci Beaucoup! Thank you!</span></h3></p><hr/><br>'
+                finScr.innerHTML = finalLastStrMsg + '<br><div><p> ' + userStat + ' </p></div><br>';// '<br><br><br><hr/><p><h3><span id="finScrTxtLine1" class="finMessage">Merci Beaucoup! Thank you!</span></h3></p><hr/><br>';
             }, 2200);
 
         } else {
             alert ('This survey has already been submitted! Going backwards!');
         }
-        goBack() ; //go back to the previous page
+        //goBack() ; //go back to the previous page
     }
 
     $("#finSubmit").unbind("click");
