@@ -7,7 +7,7 @@
      $userID = $_POST['userId'];
      $userID = chop($userId,"@MUHCAD.MUHCFRD.CA");
     } else {
-      $userID = "pacs";
+      $userID = "";
     }
       $tabName = 'tabusers';
       $connection = createConnection (DBHOST, DBUSER, DBPASS, DBNAME);
@@ -38,10 +38,11 @@
           }
         }
       mysqli_close($connection);
-    $userScoreHistory = array ( 'userScoreHistory' => $lineData);
+    $userScoreHistory = array ('userScoreHistory' => $lineData);
     header('Content-Type: application/json');
     //echo json_encode($userScoreHistory);
     //https://poanchen.github.io/blog/2016/10/16/how-to-create-simple-rest-api-in-php-and-call-them-in-js
-    echo json_encode($userScoreHistory, JSON_PRETTY_PRINT);
+//echo json_encode($userScoreHistory, JSON_PRETTY_PRINT);
+echo json_encode($userScoreHistory);
 
 ?>

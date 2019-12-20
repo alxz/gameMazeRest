@@ -375,6 +375,7 @@ App.prototype.start = function () {
             key.disableBody(true, true);
             isPause = false;
             player.doorKeys++;
+            player.doorKeys+=10;
             totalQestionsAnswered++;
 
             //save the state to the table:
@@ -1092,28 +1093,35 @@ App.prototype.start = function () {
             finScr.innerHTML = "";
             var finalLastStrMsg = "";
             finalLastStrMsg = '<br><br><br><hr/><p><h3><span id="finScrTxtLine1" class="finMessage">Merci Beaucoup! Thank you!</span></h3></p><hr/><br>';
-            var userStat = "";
-            var request = new XMLHttpRequest();
-            var url = "./rest/getIUN.php";
-            var params = "userId=" + userIUN;
-            request.open('POST', url, true);
-            request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            request.onreadystatechange = function() {
-                if (request.readyState === XMLHttpRequest.DONE) {
-                  if (request.status === 200) {
-                    var response = JSON.parse(request.response);
-                    if (response.result) {
-                      userStat = "The username you typed has been used!";
-                    }else{
-                      userStat = response.result;
-                    }
-                  }
-                }
-              };
-              request.send(params);
-            finScr.innerHTML = finalLastStrMsg + '<br><div><p> ' + userStat + ' </p></div><br>';
+            var userStat = finalLastStrMsg;
+            // var userStat = "";
+            // var request = new XMLHttpRequest();
+            // var url = "./rest/getIUN.php";
+            // var params = "userId=" + userIUN;
+            // console.log("params: " + params + " url: "+ url);
+            // request.open('POST', url, true);
+            // request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            // request.onreadystatechange = function() {
+            //     if (request.readyState === XMLHttpRequest.DONE) {
+            //       if (request.status === 200) {
+            //         var response = JSON.parse(request.response);
+            //         console.log(JSON.stringify(response));
+            //         console.log(" request.status: "+ request.status);
+            //         if (response == "") {
+            //           userStat = "The user IUN not found!";
+            //           console.log("Error in request: ",userStat);
+            //         }else{
+            //           //userStat = response.userScoreHistory;
+            //           userStat = getTableFromResponce(response);
+            //           console.log("Request successfull: ",userStat);
+            //         }
+            //       }
+            //     }
+            //   };
+            //   request.send(params);
+            finScr.innerHTML = finalLastStrMsg + '<br><div><p><h5><span id="finScrTxtLine1" class="finMessage">' + userStat + ' </span></h5></p></div><br>';
             setTimeout(function () {
-                finScr.innerHTML = finalLastStrMsg + '<br><div><p> ' + userStat + ' </p></div><br>';// '<br><br><br><hr/><p><h3><span id="finScrTxtLine1" class="finMessage">Merci Beaucoup! Thank you!</span></h3></p><hr/><br>';
+                finScr.innerHTML = finalLastStrMsg + '<br><div><p><h5><span id="finScrTxtLine1" class="finMessage"> ' + userStat + ' </span></h5></p></div><br>';// '<br><br><br><hr/><p><h3><span id="finScrTxtLine1" class="finMessage">Merci Beaucoup! Thank you!</span></h3></p><hr/><br>';
             }, 2200);
 
         } else {
@@ -1135,6 +1143,16 @@ App.prototype.start = function () {
 };
 
 var starsCount =0;
+
+function getTableFromResponce(objResponce) {
+  var myObj = objResponce.userScoreHistory;
+  var result = [];
+  for(var i in myObj)
+      result.push([i, myObj [i]]);
+
+
+  return result;
+}
 
 function star(starX) {
   try {

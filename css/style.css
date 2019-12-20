@@ -17,6 +17,14 @@ h1{
   background-color: #444;
   color: #fff;
 }
+h5{
+  font-weight: 240;
+  margin: 0px;
+  padding: 10px;
+  font-size: 18px;
+  background-color: #444;
+  color: #fff;
+}
 .question{
 	font-family: arial, sans-serif;
   font-size: 22px;

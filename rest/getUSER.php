@@ -173,9 +173,11 @@ th, td {
      &nbsp; &nbsp;
     <input type="checkbox" value="getFinished" name="allFinished" >All Finished</input>
      &nbsp; &nbsp;
+    <input type="checkbox" value="getUniqMinTimeFin" name="getUniqMinTimeFin" >Uniqe IUN with MinTime</input>
+      &nbsp; &nbsp;
     <input type="checkbox" value="sortBestTime" name="sortBestTime" >Sort By Best time </input>
     &nbsp; &nbsp;
-    Mark Retry Limit over:&nbsp;
+    Mark Retry Limit>:&nbsp;
     <?php $retryLimit = isset($_POST['retryLimit'])?$_POST['retryLimit']:''; ?>
     <select name='retryLimit' id='retryLimit' onchange="updateRetryLimit('');">
     <?php for($i=1;$i<=10; $i++):?>
@@ -479,6 +481,16 @@ function getFilteredUserData($limitRecords = 10) {
   } elseif (!empty($_POST['sortBestTime']) && empty($_POST['allFinished'])) {
     $query = "SELECT * FROM ".$tabName." ORDER BY uTimer,uId,uRetryCount ASC";
     echo "Show best time for Finished ONLY sorted by Best Time, IUN and retries count: <".$_POST['sortBestTime']."><br>";
+  } elseif (!empty($_POST['getUniqMinTimeFin']) && empty($_POST['allFinished'])) {
+    //getUniqMinTimeFin
+    //$query = "SELECT * FROM ".$tabName." ORDER BY uTimer,uId,uRetryCount ASC";
+    // $query = "SELECT MIN(t1.uTimer) AS uId,uIUN,uRetryCount,uTimer".
+    //         " FROM ( SELECT 'uId', 'uIUN', 'uFName', 'uRetryCount', 'uTimer', 'uTotalScore', 'uIsFinished', 'timestart', 'timefinish', 'listofquestions', 'comment', 'sessionId'".
+    //         " FROM ".$tabName." WHERE uIsFinished = 1 GROUP BY uTimer,uId,uIUN,uRetryCount ) t1";
+    $query = "SELECT * FROM ".$tabName.
+            " WHERE uTimer=(SELECT MIN(uTimer) ".
+                   " FROM ".$tabName." AS t ".
+                   " WHERE t.uIUN = ".$tabName.".uIUN AND uIsFinished=1 ) ORDER BY uTimer,uId";
   } else {
     $query = "SELECT * FROM ".$tabName." ORDER BY uId ASC";
     echo "Sorted by userIUN show all results: <".$_POST['allStat']."> and <".$_POST['allFinished']."><br>";
@@ -499,7 +511,7 @@ function getFilteredUserData($limitRecords = 10) {
   }
   echo '</tr>'; //end tr tag
   // echo 'Var countCol: '.$countCol.'<br>';
-  $tabWidth = (int)(100 / $countCol);
+  //$tabWidth = (int)(100 / $countCol);
   $ind = 0;
   //showing all data
   while ($row = mysqli_fetch_array($result)) {
@@ -507,9 +519,9 @@ function getFilteredUserData($limitRecords = 10) {
       foreach ($all_property as $item) {
         $strCellData = $row[$item];
         if (($item == 'uRetryCount') && ($row[$item] > $GLOBALS[retryLimit])) {
-            echo '<td style="color:red; width: '.$tabWidth.'; "><strong>' . $strCellData . '</strong></td>';
+            echo '<td style="color:red; "><strong>' . $strCellData . '</strong></td>';
         } else {
-          echo '<td style="width: '.$tabWidth.';">' . $strCellData . '</td>'; //get items using property value
+          echo '<td >' . $strCellData . '</td>'; //get items using property value
         }
       }
       echo '</tr>';
