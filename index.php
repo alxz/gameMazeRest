@@ -71,8 +71,11 @@
          <input type="text" name="customIUN" onchange="updateCustomIUN(this.value)" value="" size="15">
        </td><td style="width: 280px;">
          &nbsp; &nbsp;
-         Timer: <span id="userTimer"></span> &nbsp; &nbsp; &nbsp;
+         Timer: <span id="userTimer"></span> &nbsp;
        </td><td>
+         <label for="silentCheckBox">Mute</label>
+         <input type="checkbox" id="silentCheckBox" name="silentCheckBox" value="0" onchange="updateSilentCheckBox(this.value)">
+        </td><td>&nbsp; &nbsp; &nbsp;
            <button id="langChange" class="buttonAsLink">
              <span id="languages"><?php echo $langLabel ?></span>
            </button>

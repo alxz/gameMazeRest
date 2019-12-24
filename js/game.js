@@ -2,6 +2,7 @@ var App = function () {
 };
 // by Alexey Zapromyotov (c) 2019
 var customIUN="";
+var isSilent = false;
 App.prototype.start = function () {
     var config = {
         type: Phaser.CANVAS,
@@ -72,7 +73,7 @@ App.prototype.start = function () {
     const divScoreText = document.getElementById("divScoreText");
     const submitAnswerButton = document.getElementById("submitAnswerButton");
     const submitMsgContainer = document.getElementById("submitMsg");
-
+    const isSilentCheckBox = document.getElementById("silentCheckBox");
     // var tryUserIUN ="";
     // try {
     //     tryUserIUN = document.getElementById("userIUNBox").innerHTML;
@@ -695,8 +696,11 @@ App.prototype.start = function () {
       //         sound.play();
       //     }
       // }
-      if (!sound.isPlaying) {
+      if ((!sound.isPlaying) && (!isSilent)) {
           sound.play();
+      }
+      if (isSilent) {
+        sound.stop();
       }
     }
 
@@ -1094,35 +1098,39 @@ App.prototype.start = function () {
             var finalLastStrMsg = "";
             finalLastStrMsg = '<br><br><br><hr/><p><h3><span id="finScrTxtLine1" class="finMessage">Merci Beaucoup! Thank you!</span></h3></p><hr/><br>';
             var userStat = finalLastStrMsg;
-            // var userStat = "";
-            // var request = new XMLHttpRequest();
-            // var url = "./rest/getIUN.php";
-            // var params = "userId=" + userIUN;
-            // console.log("params: " + params + " url: "+ url);
-            // request.open('POST', url, true);
-            // request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            // request.onreadystatechange = function() {
-            //     if (request.readyState === XMLHttpRequest.DONE) {
-            //       if (request.status === 200) {
-            //         var response = JSON.parse(request.response);
-            //         console.log(JSON.stringify(response));
-            //         console.log(" request.status: "+ request.status);
-            //         if (response == "") {
-            //           userStat = "The user IUN not found!";
-            //           console.log("Error in request: ",userStat);
-            //         }else{
-            //           //userStat = response.userScoreHistory;
-            //           userStat = getTableFromResponce(response);
-            //           console.log("Request successfull: ",userStat);
-            //         }
-            //       }
-            //     }
-            //   };
-            //   request.send(params);
+            var userStat = "";
+            var request = new XMLHttpRequest();
+            var url = "./rest/getIUN.php";
+            var params = "userId=" + userIUN;
+            console.log("params: " + params + " url: "+ url);
+            request.open('POST', url, true);
+            request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            request.onreadystatechange = function() {
+              console.log("Request is sent");
+                if (request.readyState === XMLHttpRequest.DONE) {
+
+                  console.log("Request status: ", request.status );
+                  if (request.status === 200) {
+                    var response = JSON.parse(request.response);
+                    console.log(JSON.stringify(response));
+                    console.log(" request.status: "+ request.status);
+                    if (response == "") {
+                      userStat = "The user IUN not found!";
+                      console.log("Error in request: ",userStat);
+                    }else{
+                      //userStat = response.userScoreHistory;
+                      userStat = getTableFromResponce(response);
+                      console.log("Request successfull: ",userStat);
+                    }
+                  }
+                }
+              };
+            //  request.send(params);
             finScr.innerHTML = finalLastStrMsg + '<br><div><p><h5><span id="finScrTxtLine1" class="finMessage">' + userStat + ' </span></h5></p></div><br>';
             setTimeout(function () {
-                finScr.innerHTML = finalLastStrMsg + '<br><div><p><h5><span id="finScrTxtLine1" class="finMessage"> ' + userStat + ' </span></h5></p></div><br>';// '<br><br><br><hr/><p><h3><span id="finScrTxtLine1" class="finMessage">Merci Beaucoup! Thank you!</span></h3></p><hr/><br>';
-            }, 2200);
+                finScr.innerHTML = finalLastStrMsg + '<br><div><p><h5><span id="finScrTxtLine1" class="finMessage">' + userStat + ' </span></h5></p></div><br>';
+            // '<br><br><br><hr/><p><h3><span id="finScrTxtLine1" class="finMessage">Merci Beaucoup! Thank you!</span></h3></p><hr/><br>';
+            }, 3200);
 
         } else {
             alert ('This survey has already been submitted! Going backwards!');
@@ -1253,6 +1261,21 @@ function updateCustomIUN(val) {
     }
     console.log('updateCustomIUN is updated! Now: ' + customIUN);
 }
+
+function updateSilentCheckBox(val) {
+  //silentCheckBox = val;
+  var element = document.getElementById("silentCheckBox");
+  if (element != null) {
+      //silentCheckBox = document.getElementById("silentCheckBox").value;
+      if (element.checked) {
+        isSilent = true;
+      } else {
+        isSilent = false;
+      }
+  }
+  console.log('updateSilentCheckBox is updated! Now: ' + silentCheckBox);
+}
+
 function msieversion()
 {  //checking if this is IE or something else?
   var ua = window.navigator.userAgent;

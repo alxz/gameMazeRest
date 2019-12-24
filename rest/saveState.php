@@ -1,15 +1,11 @@
 <?php
-
 require_once('../lib/functions.php');
 require_once('../lib/classes.php');
 require_once('../lib/config.php');
-
 $jsondata = file_get_contents("php://input");
-
 $resultSet = json_decode( $jsondata, true ); // 2nd arg true to convert objects to associative arrays
 $opCode = $resultSet['opCode'];
 $data = $resultSet['data'];
-
 // $sql = "INSERT INTO tabusers (uIUN, uFName, uLName, uRetryCount, uTimer, uTotalScore, uIsFinished, timestart, timefinish, listofquestions, comment, sessionid)
 // VALUES ('$userIUN', '$userFName', '$userLName', $retyCount, $timeElapsed, $scoreTotal, $isFinished, '$timeStarted', '$timeFinish', '$listOfQuestions', '$comments', '$sessionId')";
 
