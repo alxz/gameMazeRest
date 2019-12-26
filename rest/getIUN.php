@@ -3,10 +3,10 @@
         require_once('../lib/functions.php');
         require_once('../lib/classes.php');
     // by Alexey Zapromyotov (c) 2019
-    $jsondata = file_get_contents("php://input");
-    $resultSet = json_decode( $jsondata, true ); // 2nd arg true to convert objects to associative arrays
-    $opCode = $resultSet['opCode'];
-    $userID = $resultSet['uIUN'];
+    //$jsondata = file_get_contents("php://input");
+    //$resultSet = json_decode( $jsondata, true ); // 2nd arg true to convert objects to associative arrays
+    $opCode = $_GET['opCode']; //$resultSet['opCode'];
+    $userID = $_GET['userId'];//$resultSet['uIUN'];
 
     if ( $opCode == 'ALLSTAT') {
       $tabName = 'tabusers';
@@ -16,6 +16,15 @@
               . mysqli_connect_error()
               . " (" . mysqli_connect_errno()
               . ")");
+      } else {
+          $tabName = 'tabusers';
+          $connection = createConnection (DBHOST, DBUSER, DBPASS, DBNAME);
+          if(mysqli_connect_errno()){
+              die("connection failed: "
+                  . mysqli_connect_error()
+                  . " (" . mysqli_connect_errno()
+                  . ")");
+          }
       }
       //$userID = 'ZAAL6006';
       //$query = "SELECT * FROM ".$tabName." WHERE uIUN='".$userID."' ORDER BY uTimer,uRetryCount,uTotalScore ASC";

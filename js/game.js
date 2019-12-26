@@ -376,7 +376,7 @@ App.prototype.start = function () {
             key.disableBody(true, true);
             isPause = false;
             player.doorKeys++;
-            player.doorKeys+=10;
+            //player.doorKeys+=10;
             totalQestionsAnswered++;
 
             //save the state to the table:
@@ -850,7 +850,6 @@ App.prototype.start = function () {
                       //   ${currentQuestion.answers[ind].key} :
                       //   ${questMsg}
                       //   </label>`
-
               }
               // add this question and its answers to the output
               //var answerMsg = Base64Decode(currentQuestion.question);
@@ -868,7 +867,6 @@ App.prototype.start = function () {
               //        </div>`
               //   );
             }
-
             // finally combine our output list into one string of HTML and put it on the page
             quizContainer.innerHTML = output.join("");
             submitAnswerButton.style.display = '';
@@ -1096,41 +1094,58 @@ App.prototype.start = function () {
             // /<p><h3><span id="finScrTxtLine1" class="finMessage">Félicitations! Congratulations!</span></h3></p>
             finScr.innerHTML = "";
             var finalLastStrMsg = "";
-            finalLastStrMsg = '<br><br><br><hr/><p><h3><span id="finScrTxtLine1" class="finMessage">Merci Beaucoup! Thank you!</span></h3></p><hr/><br>';
+            finalLastStrMsg = '<br><br><br><hr/><p><h3><span class="finMessage">Merci Beaucoup! Thank you!</span></h3></p><hr/><br>';
             var userStat = finalLastStrMsg;
             var userStat = "";
-            var request = new XMLHttpRequest();
-            var url = "./rest/getIUN.php";
-            var params = "userId=" + userIUN;
-            console.log("params: " + params + " url: "+ url);
-            request.open('POST', url, true);
-            request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            request.onreadystatechange = function() {
-              console.log("Request is sent");
-                if (request.readyState === XMLHttpRequest.DONE) {
+            // var request = new XMLHttpRequest();
+            // var url = "./rest/getIUN.php";
+            // var params = "userId=" + userIUN;
+            // console.log("params: " + params + " url: "+ url);
+            // request.open('POST', url, true);
+            // request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            // request.onreadystatechange = function() {
+            //   console.log("Request is sent");
+            //     if (request.readyState === XMLHttpRequest.DONE) {
+            //       console.log("Request status: ", request.status );
+            //       if (request.status === 200) {
+            //         var response = JSON.parse(request.response);
+            //         console.log(JSON.stringify(response));
+            //         console.log(" request.status: "+ request.status);
+            //         if (response == "") {
+            //           userStat = "The user IUN not found!";
+            //           console.log("Error in request: ",userStat);
+            //         }else{
+            //           userStat = response.userScoreHistory;
+            //           userStat = getTableFromResponce(response);
+            //           console.log("Request successfull: ",userStat);
+            //         }
+            //       } else {
+            //             userStat = "The user IUN not found!";
+            //             console.log("Error in request: ",userStat + " req-status: " + request.status);
+            //     }
+            //   } else   {
+            //         console.log("Error in request: request ready is not ready! ");
+            //     }
+            // };
 
-                  console.log("Request status: ", request.status );
-                  if (request.status === 200) {
-                    var response = JSON.parse(request.response);
-                    console.log(JSON.stringify(response));
-                    console.log(" request.status: "+ request.status);
-                    if (response == "") {
-                      userStat = "The user IUN not found!";
-                      console.log("Error in request: ",userStat);
-                    }else{
-                      //userStat = response.userScoreHistory;
-                      userStat = getTableFromResponce(response);
-                      console.log("Request successfull: ",userStat);
-                    }
-                  }
-                }
-              };
-            //  request.send(params);
-            finScr.innerHTML = finalLastStrMsg + '<br><div><p><h5><span id="finScrTxtLine1" class="finMessage">' + userStat + ' </span></h5></p></div><br>';
-            setTimeout(function () {
-                finScr.innerHTML = finalLastStrMsg + '<br><div><p><h5><span id="finScrTxtLine1" class="finMessage">' + userStat + ' </span></h5></p></div><br>';
-            // '<br><br><br><hr/><p><h3><span id="finScrTxtLine1" class="finMessage">Merci Beaucoup! Thank you!</span></h3></p><hr/><br>';
-            }, 3200);
+            var url = "./rest/getIUN.php";
+            var formData = {
+                'userId': userIUN,
+                'opCode': 'ALLSTAT'
+            };
+
+            $.get(url, formData).done(function (data) {
+                alert("Data Loaded: " + data);
+                userStat = getTableFromResponce(data);
+
+                //  request.send(params);
+                finScr.innerHTML = finalLastStrMsg + '<br><p><h5><span class="finMessage">' + userStat + ' </span></h5></p><br>';
+
+                setTimeout(function () {
+                    // finScr.innerHTML = finalLastStrMsg + '<br><div><p><h5><span id="finScrTxtLine1" class="finMessage">' + userStat + ' </span></h5></p></div><br>';
+                    // '<br><br><br><hr/><p><h3><span id="finScrTxtLine1" class="finMessage">Merci Beaucoup! Thank you!</span></h3></p><hr/><br>';
+                }, 3200);
+            });
 
         } else {
             alert ('This survey has already been submitted! Going backwards!');
@@ -1154,12 +1169,20 @@ var starsCount =0;
 
 function getTableFromResponce(objResponce) {
   var myObj = objResponce.userScoreHistory;
-  var result = [];
-  for(var i in myObj)
-      result.push([i, myObj [i]]);
-
-
-  return result;
+  var returnStr = "";
+  var myStr = "";
+  var myRow = "";
+    for(let i in myObj) {
+        myRow = "";
+      for (let j in i) {
+          myRow = myRow + myObj[i][j] + " || ";
+      }
+      myStr = myStr + myRow + "<br>";
+      console.log('myRow',myRow);
+    }
+    returnStr = "<p>" + myStr + "</p>";
+    console.log('returnStr: ',returnStr);
+  return returnStr;
 }
 
 function star(starX) {
