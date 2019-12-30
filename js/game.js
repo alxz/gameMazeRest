@@ -1171,17 +1171,27 @@ function getTableFromResponce(objResponce) {
   var myObj = [];
   myObj = objResponce.userScoreHistory;
   var returnStr = "";
-  var myStr = "<table class='headTable'>";
+  var myStr = "<table class='headTable'><tr><th class='headTableTD' colspan='4'> Results history: </th><tr>";
+  myStr = myStr + "<tr><td class='headTableTD'>System ID * </td><td class='headTableTD'>Provided IUN * </td> "+
+           "<td class='headTableTD'>Time Elapsed * </td> <td class='headTableTD'>Date/Time</td></tr>";
   var myRow = "";
+  var timeFull;
   //console.log(JSON.stringify(objResponce));
   //console.dir(myObj);
   //console.log("===================================");
   for (var i = 0; i < myObj.length; i++) {
     if (myObj[i][7] != "No") {
       myRow = "<tr>";
-      myRow = myRow + "<td class='headTableTD'>" + myObj[i][1] + "</td><td class='headTableTD'>" + myObj[i][2] +
-              "</td><td class='headTableTD'>" + myObj[i][5] + "</td><td class='headTableTD'>" + myObj[i][8] ;
-      myStr = myStr +  myRow + "</tr>";
+      timeFull = myObj[i][5];
+      if (timeFull > 60) {
+        var minSpent = Math.floor(timeFull / 60);
+        var secSpent = (timeFull % 60);
+        timeFull = minSpent + " min. " + secSpent;
+      }
+       timeFull += " sec. ";
+      myRow += "<td class='headTableTD'>" + myObj[i][1] + "</td><td class='headTableTD'>" + myObj[i][2] +
+              "</td><td class='headTableTD'>" + timeFull + "</td><td class='headTableTD'>" + myObj[i][8] ;
+      myStr += myRow + "</tr>";
     }
   }
   //myStr = myRow;
