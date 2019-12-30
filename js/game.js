@@ -1168,16 +1168,15 @@ App.prototype.start = function () {
 var starsCount =0;
 
 function getTableFromResponce(objResponce) {
-  var myObj = [];
-  myObj = objResponce.userScoreHistory;
+  var myObj = objResponce.userScoreHistory;
   var returnStr = "";
-  var myStr = "<table class='headTable'><tr><th class='headTableTD' colspan='4'> Results history: </th><tr>";
+  var myStr = "<table class='headTable'><tr><th class='headTableTD' colspan='5'> Results history: </th><tr>";
   myStr = myStr + "<tr><td class='headTableTD'>System ID * </td><td class='headTableTD'>Provided IUN * </td> "+
-           "<td class='headTableTD'>Time Elapsed * </td> <td class='headTableTD'>Date/Time</td></tr>";
+           "<td class='headTableTD'>Time Elapsed * </td><td class='headTableTD'>Answered * </td><td class='headTableTD'>Date/Time</td></tr>";
   var myRow = "";
   var timeFull;
   //console.log(JSON.stringify(objResponce));
-  //console.dir(myObj);
+  console.dir(myObj);
   //console.log("===================================");
   for (var i = 0; i < myObj.length; i++) {
     if (myObj[i][7] != "No") {
@@ -1185,18 +1184,23 @@ function getTableFromResponce(objResponce) {
       timeFull = myObj[i][5];
       if (timeFull > 60) {
         var minSpent = Math.floor(timeFull / 60);
+        if (minSpent > 60) {
+          //var hrsSpent = Math.floor(minSpent / 60);
+          minSpent = Math.floor(minSpent / 60) + " hrs. " + (minSpent % 60);
+        }
         var secSpent = (timeFull % 60);
         timeFull = minSpent + " min. " + secSpent;
       }
        timeFull += " sec. ";
       myRow += "<td class='headTableTD'>" + myObj[i][1] + "</td><td class='headTableTD'>" + myObj[i][2] +
-              "</td><td class='headTableTD'>" + timeFull + "</td><td class='headTableTD'>" + myObj[i][8] ;
+              "</td><td class='headTableTD'>" + timeFull + "</td><td class='headTableTD'>" + myObj[i][6] +
+              "</td><td class='headTableTD'>" + myObj[i][8] ;
       myStr += myRow + "</tr>";
     }
   }
   //myStr = myRow;
     returnStr = myStr + "</table>";
-    console.log('returnStr: ',returnStr);
+    //console.log('returnStr: ',returnStr);
   return returnStr;
 }
 
