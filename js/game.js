@@ -1135,7 +1135,7 @@ App.prototype.start = function () {
             };
 
             $.get(url, formData).done(function (data) {
-                alert("Data Loaded: " + data);
+                //alert("Data Loaded: " + data);
                 userStat = getTableFromResponce(data);
 
                 //  request.send(params);
@@ -1168,19 +1168,24 @@ App.prototype.start = function () {
 var starsCount =0;
 
 function getTableFromResponce(objResponce) {
-  var myObj = objResponce.userScoreHistory;
+  var myObj = [];
+  myObj = objResponce.userScoreHistory;
   var returnStr = "";
-  var myStr = "";
+  var myStr = "<table class='headTable'>";
   var myRow = "";
-    for(let i in myObj) {
-        myRow = "";
-      for (let j in i) {
-          myRow = myRow + myObj[i][j] + " || ";
-      }
-      myStr = myStr + myRow + "<br>";
-      console.log('myRow',myRow);
+  //console.log(JSON.stringify(objResponce));
+  //console.dir(myObj);
+  //console.log("===================================");
+  for (var i = 0; i < myObj.length; i++) {
+    if (myObj[i][7] != "No") {
+      myRow = "<tr>";
+      myRow = myRow + "<td class='headTableTD'>" + myObj[i][1] + "</td><td class='headTableTD'>" + myObj[i][2] +
+              "</td><td class='headTableTD'>" + myObj[i][5] + "</td><td class='headTableTD'>" + myObj[i][8] ;
+      myStr = myStr +  myRow + "</tr>";
     }
-    returnStr = "<p>" + myStr + "</p>";
+  }
+  //myStr = myRow;
+    returnStr = myStr + "</table>";
     console.log('returnStr: ',returnStr);
   return returnStr;
 }
