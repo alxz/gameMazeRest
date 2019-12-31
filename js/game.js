@@ -1155,13 +1155,11 @@ App.prototype.start = function () {
 
     $("#finSubmit").unbind("click");
     $("#finSubmit").bind("click", submitFinalAnswer);
-
     // //checking if the browser is IE or others
     // if (!isBrowserIE) {
     // }
     // $("#finExit").unbind("click");
     // $("#finExit").bind("click", opneAnotherURL);
-
     // by Alexey Zapromyotov (c) 2019
 };
 
@@ -1176,8 +1174,18 @@ function getTableFromResponce(objResponce) {
   var myRow = "";
   var timeFull;
   //console.log(JSON.stringify(objResponce));
-  console.dir(myObj);
+  //console.dir(myObj);
   //console.log("===================================");
+  // sorting:
+  myObj.sort(desc);
+      function asc(a, b) {
+        return (a[8] == b[8] ? 0 : a[8] < b[8] ? -1 : 1);
+      }
+
+      function desc(a, b) {
+        return asc(b, a);
+      }
+  // end of sorting ====================================
   for (var i = 0; i < myObj.length; i++) {
     if (myObj[i][7] != "No") {
       myRow = "<tr>";
