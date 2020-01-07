@@ -3,6 +3,7 @@ require_once('../lib/functions.php');
 require_once('../lib/classes.php');
 require_once('../lib/config.php');
 require_once('./exportData.php');
+require_once('./exportFilterData.php');
 session_start();
 if (!isset($_SESSION['time'])) {
     $_SESSION['time'] = date("H:i:s");
@@ -15,7 +16,9 @@ if(isset($_POST['saveToCSV'])) { //=========== EXPORT To CSV ================
   } else {
       $tabsToSave = ($_POST['tabsFromDB']);
   }
-  saveToCSVPHP($tabsToSave);
+  //saveToCSVPHP($tabsToSave);
+  //exit;
+  saveSetToCSV($tabsToSave);
   exit;
 }
 ?>
