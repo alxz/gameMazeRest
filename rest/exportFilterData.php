@@ -40,6 +40,10 @@ function saveSetToCSV($tabName, $filename = "export.csv", $delimiter=";") {
           //array_push($fields,"Q".($i)."True");
           array_push($fields,"Q".$i."-Fail");
         }
+      } elseif (($property->name) == 'comment') {
+        array_push($fields,"stars");
+        array_push($fields,"likes");
+        array_push($fields,"commentText");
       } else {
           array_push($fields,$property->name);
       }
@@ -111,6 +115,28 @@ function saveSetToCSV($tabName, $filename = "export.csv", $delimiter=";") {
               //array_push($lineData, $bigArrayT[$z]);
               array_push($lineData, $bigArrayF[$z]);
             }
+          } elseif ($item == 'comment') {
+              //$strCellDataArray = explode(';', $strCellData);
+              //preg_split("/(\/|\?|=)/", $foo);
+              if (($strCellData == "" )|| ($strCellData == "Inserted:")) {
+                $qStars = "";
+                $qLikes = "";
+                $qCommments = "";
+              } else {
+                $strCellDataArray = preg_split("/(1\)Stars:|2\)Likes:|3\)Suggest:)/", $strCellData);
+                $qStarsStr = trim($strCellDataArray[1]);
+                //$qStarsArr = explode(':', $qStarsStr);
+                $qStars = $qStarsStr;
+                $qLikesStr = trim($strCellDataArray[2]);
+                //$qLikesArr = explode(':', $qLikesStr);
+                $qLikes = $qLikesStr;
+                $qCommmentsStr = trim($strCellDataArray[3]);
+                //$qCommmentsArr = explode(':', $qCommmentsStr);
+                $qCommments = $qCommmentsStr;
+              }
+              array_push($lineData, $qStars);
+              array_push($lineData, $qLikes);
+              array_push($lineData, $qCommments);
           } else {
             array_push($lineData, $strCellData);
           }
