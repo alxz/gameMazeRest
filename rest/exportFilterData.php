@@ -35,12 +35,18 @@ function saveSetToCSV($tabName, $filename = "export.csv", $delimiter=";") {
     while ($property = mysqli_fetch_field($result)) {
       array_push($all_property, $property->name);  //save those to array
       //set column headers
-      array_push($fields,$property->name);
+      if (($property->name) == 'listofquestions') {
+        for ($i=1; $i < 28; $i++) {
+          //array_push($fields,"Q".($i)."True");
+          array_push($fields,"Q".$i."-Fail");
+        }
+      } else {
+          array_push($fields,$property->name);
+      }
     }
     fputcsv($f, $fields, $delimiter);
     $lineData =array();
-    $myArray =array(100);
-    $ind = 0;
+    $strCellDataArray =array();
     //to calculate max number of cols for questions user faced with:
     //  $maxQuestionsCount = is_array($listQuestions) || $listQuestions instanceof Countable ? count($listQuestions) : 0;
 
@@ -53,22 +59,68 @@ function saveSetToCSV($tabName, $filename = "export.csv", $delimiter=";") {
             $strCellData = $status;
           }
           if ($item == 'listofquestions') {
-            $myArray = explode(';', $strCellData);
-            //print_r($myArray);
+            $qAssocArray = array();
+            $qArrayTrue = array();
+            $qArrayFalse = array();
+            $strCellDataArray = explode(';', $strCellData);
+            //print_r($strCellDataArray);
             //$strCellData = $status;
-            array_merge($lineData, $myArray);
+            $maxSize = sizeof($strCellDataArray);
+            $bigStr = "";
+            //$maxSize = count($strCellDataArray);
+            foreach ($strCellDataArray as $value){
+              $subElementArr = explode(':', $value);
+              $qState =  trim(strtoupper($subElementArr[0]));
+              //echo  $subElementArr[1]." - Element State: ".$qState." \n";
+              if ($qState == strtoupper ('qT')) {
+                  //echo  $subElementArr[1]." - True \n";
+                  array_push($qArrayTrue,$subElementArr[1]);
+              }
+              if ($qState == strtoupper ('qF')) {
+                  //echo  $subElementArr[1]." - False \n";
+                  array_push($qArrayFalse,$subElementArr[1]);
+              }
+            }
+            $uniqueQArrayTrue = (array_unique($qArrayTrue));
+            $uniqueQArrayFalse = (array_unique($qArrayFalse));
+            $bigArray  = array_fill(1,27,"null");
+            $bigArrayT = array_fill(1,27,0);
+            $bigArrayF = array_fill(1,27,0);
+            sort($qArrayTrue);
+            sort($qArrayFalse);
+              foreach ($qArrayTrue as $arrValue) {
+                // populating array of questions numbers with question counts:
+                  $bigArrayT[$arrValue] +=1;
+              }
+              foreach ($qArrayFalse as $arrValue) {
+                // populating array of questions numbers with question counts:
+                  $bigArrayF[$arrValue] +=1;
+              }
+            $z=0;
+            foreach ($bigArray as $value) {
+              $z +=1;
+              // if ($bigArrayF[$z] == "") {
+              //   $bigArrayF[$z] = "0";
+              // }
+              // if ($bigArrayT[$z] == "") {
+              //   $bigArrayT[$z] = "0";
+              // }
+              //$bigStr = $bigStr."Q".$z.": "."T:".$bigArrayT[$z]." , F:".$bigArrayF[$z].";";
+              // $bigStr = "T:".$bigArrayT[$z].",F:".$bigArrayF[$z];
+              // array_push($lineData, $bigStr);
+              //array_push($lineData, $bigArrayT[$z]);
+              array_push($lineData, $bigArrayF[$z]);
+            }
           } else {
             array_push($lineData, $strCellData);
           }
         }
         fputcsv($f, $lineData, $delimiter);
         $lineData = array();
-        $ind++;
     }
     fpassthru($f);
     fclose($f);
     $f = ob_get_clean();
     mysqli_close($connection);
-
 }
 ?>
