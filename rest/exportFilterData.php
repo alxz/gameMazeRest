@@ -37,8 +37,9 @@ function saveSetToCSV($tabName, $filename = "export.csv", $delimiter=";") {
       //set column headers
       if (($property->name) == 'listofquestions') {
         for ($i=1; $i < 28; $i++) {
-          //array_push($fields,"Q".($i)."True");
-          array_push($fields,"Q".$i."-Fail");
+          // assuming there are no more than 27 questions in the list
+          array_push($fields,"Q".$i."-Succed");
+          array_push($fields,"Q".$i."-Failed");
         }
       } elseif (($property->name) == 'comment') {
         array_push($fields,"stars");
@@ -53,7 +54,6 @@ function saveSetToCSV($tabName, $filename = "export.csv", $delimiter=";") {
     $strCellDataArray =array();
     //to calculate max number of cols for questions user faced with:
     //  $maxQuestionsCount = is_array($listQuestions) || $listQuestions instanceof Countable ? count($listQuestions) : 0;
-
     //showing all data
     while ($row = mysqli_fetch_array($result)) {
         foreach ($all_property as $item) {
@@ -70,7 +70,6 @@ function saveSetToCSV($tabName, $filename = "export.csv", $delimiter=";") {
             //print_r($strCellDataArray);
             //$strCellData = $status;
             $maxSize = sizeof($strCellDataArray);
-            $bigStr = "";
             //$maxSize = count($strCellDataArray);
             foreach ($strCellDataArray as $value){
               $subElementArr = explode(':', $value);
@@ -85,11 +84,10 @@ function saveSetToCSV($tabName, $filename = "export.csv", $delimiter=";") {
                   array_push($qArrayFalse,$subElementArr[1]);
               }
             }
-            $uniqueQArrayTrue = (array_unique($qArrayTrue));
-            $uniqueQArrayFalse = (array_unique($qArrayFalse));
-            $bigArray  = array_fill(1,27,"null");
-            $bigArrayT = array_fill(1,27,0);
-            $bigArrayF = array_fill(1,27,0);
+            // assuming there are no more than 27 questions in the list
+            $bigArray  = array_fill(1,27,"null"); // an array for all questions/answers
+            $bigArrayT = array_fill(1,27,0); // an array for a Succeded questions/answers [also $uniqueQArrayTrue = (array_unique($qArrayTrue))]
+            $bigArrayF = array_fill(1,27,0); // an array for a Failed questions/answers [also  $uniqueQArrayFalse = (array_unique($qArrayFalse))]
             sort($qArrayTrue);
             sort($qArrayFalse);
               foreach ($qArrayTrue as $arrValue) {
@@ -100,20 +98,11 @@ function saveSetToCSV($tabName, $filename = "export.csv", $delimiter=";") {
                 // populating array of questions numbers with question counts:
                   $bigArrayF[$arrValue] +=1;
               }
-            $z=0;
-            foreach ($bigArray as $value) {
-              $z +=1;
-              // if ($bigArrayF[$z] == "") {
-              //   $bigArrayF[$z] = "0";
-              // }
-              // if ($bigArrayT[$z] == "") {
-              //   $bigArrayT[$z] = "0";
-              // }
-              //$bigStr = $bigStr."Q".$z.": "."T:".$bigArrayT[$z]." , F:".$bigArrayF[$z].";";
-              // $bigStr = "T:".$bigArrayT[$z].",F:".$bigArrayF[$z];
-              // array_push($lineData, $bigStr);
-              //array_push($lineData, $bigArrayT[$z]);
-              array_push($lineData, $bigArrayF[$z]);
+            //$z=0;
+            foreach ($bigArray as $key=>$value) {
+              //$z +=1;
+              array_push($lineData, $bigArrayT[$key]);
+              array_push($lineData, $bigArrayF[$key]);
             }
           } elseif ($item == 'comment') {
               //$strCellDataArray = explode(';', $strCellData);
